@@ -1,4 +1,4 @@
-ANIMOA V1.5.2 — LANCEMENT
+ANIMOA V1.5.3 — LANCEMENT
 ============================
 
 1. Aucune installation n'est nécessaire.
@@ -6,7 +6,8 @@ ANIMOA V1.5.2 — LANCEMENT
 3. Double-clique sur C:\Dev\Animoa\OUVRIR_ANIMOA.bat.
 4. Si Windows bloque le fichier .bat, ouvre directement index.html.
 5. Utilise toujours le même navigateur pour retrouver tes données.
-6. Une mise à jour des fichiers conserve normalement les données déjà enregistrées dans ce navigateur.
+6. L'application démarre désormais sans animal exemple.
+7. Une mise à jour des fichiers conserve normalement les autres compagnons déjà enregistrés.
 
 Nom : Animoa
 Signature : Toute sa vie, près de vous.

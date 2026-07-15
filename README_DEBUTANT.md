@@ -1,4 +1,4 @@
-# Animoa V1.5.2 — prototype local et partageable
+# Animoa V1.5.3 — prototype local et partageable
 
 **Animoa** est le carnet de vie numérique de l'animal.
 
@@ -35,12 +35,13 @@ Les données enregistrées dans le navigateur sont normalement conservées lors 
 - navigation mobile et affichage ordinateur ;
 - fenêtres centrées verticalement.
 
-## Changements de la V1.5.2
+## Changements de la V1.5.3
 
 - retrait de l'importation et de l'exportation visibles dans le menu ;
 - date de naissance saisissable directement au format `JJ/MM/AAAA`, sans calendrier ;
 - correction du clignotement de la barre Santé : la catégorie change désormais sans reconstruire toute la page ;
-- texte adapté à une utilisation locale ou depuis GitHub Pages.
+- texte adapté à une utilisation locale ou depuis GitHub Pages ;
+- suppression de l’animal exemple Nala et démarrage sur un écran « Ajouter un nouveau compagnon ».
 
 ## Principe du projet
 
@@ -50,3 +51,4 @@ Les données enregistrées dans le navigateur sont normalement conservées lors 
 - affichage propre sur ordinateur ;
 - aucune API payante ;
 - aucune fonction sans besoin réel.
+

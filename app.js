@@ -31,92 +31,13 @@
   const placeholderImage = 'assets/pet-placeholder.svg';
 
   const defaultData = {
-    version: 3,
-    activePetId: 'pet-nala',
-    pets: [
-      {
-        id: 'pet-nala',
-        name: 'Nala',
-        species: 'Chien',
-        breed: 'Golden Retriever',
-        birthDate: '2022-04-18',
-        sex: 'Femelle',
-        color: 'Sable',
-        identification: '250269000000001',
-        allergies: 'Aucune allergie connue',
-        importantInfo: 'Très sociable. Sensible aux changements alimentaires.',
-        image: placeholderImage,
-        createdAt: '2026-01-01'
-      }
-    ],
-    health: [
-      {
-        id: 'health-1',
-        petId: 'pet-nala',
-        type: 'Vaccin',
-        title: 'Rappel annuel',
-        date: '2026-07-27',
-        status: 'planned',
-        professional: 'Clinique des Tilleuls',
-        note: 'Vaccination annuelle à renouveler.',
-        reminder: true
-      },
-      {
-        id: 'health-2',
-        petId: 'pet-nala',
-        type: 'Rendez-vous',
-        title: 'Contrôle vétérinaire',
-        date: '2026-09-05',
-        status: 'planned',
-        professional: 'Dr Martin',
-        note: 'Contrôle général.',
-        reminder: true
-      },
-      {
-        id: 'health-3',
-        petId: 'pet-nala',
-        type: 'Traitement',
-        title: 'Antiparasitaire',
-        date: '2026-06-10',
-        status: 'done',
-        professional: '',
-        note: 'Comprimé mensuel administré.',
-        reminder: false
-      }
-    ],
-    expenses: [
-      { id: 'expense-1', petId: 'pet-nala', date: '2026-07-04', category: 'Nourriture', amount: 44.9, note: 'Croquettes' },
-      { id: 'expense-2', petId: 'pet-nala', date: '2026-07-10', category: 'Accessoires', amount: 18.5, note: 'Nouvelle laisse' },
-      { id: 'expense-3', petId: 'pet-nala', date: '2026-06-10', category: 'Médicaments', amount: 15.9, note: 'Antiparasitaire' }
-    ],
-    weights: [
-      { id: 'weight-1', petId: 'pet-nala', date: '2026-02-10', value: 27.8, note: '' },
-      { id: 'weight-2', petId: 'pet-nala', date: '2026-03-12', value: 28.1, note: '' },
-      { id: 'weight-3', petId: 'pet-nala', date: '2026-05-08', value: 28.3, note: '' },
-      { id: 'weight-4', petId: 'pet-nala', date: '2026-07-10', value: 28.5, note: 'Pesée à la maison' }
-    ],
-    memories: [
-      {
-        id: 'memory-1',
-        petId: 'pet-nala',
-        date: '2026-07-08',
-        title: 'Première baignade de l’été',
-        type: 'Moment important',
-        note: 'Nala a sauté dans l’eau sans hésiter.',
-        image: placeholderImage,
-        favorite: true
-      },
-      {
-        id: 'memory-2',
-        petId: 'pet-nala',
-        date: '2026-04-18',
-        title: 'Ses 4 ans',
-        type: 'Anniversaire',
-        note: 'Une longue balade et son jouet préféré.',
-        image: placeholderImage,
-        favorite: false
-      }
-    ]
+    version: 4,
+    activePetId: null,
+    pets: [],
+    health: [],
+    expenses: [],
+    weights: [],
+    memories: []
   };
 
   const navItems = [
@@ -244,15 +165,41 @@
     if (status === 'planned' && dateValue < today) throw new Error('Une information à venir ne peut pas avoir une date passée. Modifie la date ou indique « Effectué ».');
   }
 
+  function migrateLegacyData(value) {
+    const source = value && typeof value === 'object' ? value : {};
+    if (Number(source.version || 0) >= 4) return source;
+
+    const pets = Array.isArray(source.pets) ? source.pets : [];
+    const hasLegacyNala = pets.some((pet) => pet?.id === 'pet-nala');
+    if (!hasLegacyNala) return { ...source, version: 4 };
+
+    const remainingPets = pets.filter((pet) => pet?.id !== 'pet-nala');
+    const keepOtherPetRecords = (items) => Array.isArray(items)
+      ? items.filter((item) => item?.petId !== 'pet-nala')
+      : [];
+
+    return {
+      ...source,
+      version: 4,
+      activePetId: source.activePetId === 'pet-nala' ? (remainingPets[0]?.id || null) : source.activePetId,
+      pets: remainingPets,
+      health: keepOtherPetRecords(source.health),
+      expenses: keepOtherPetRecords(source.expenses),
+      weights: keepOtherPetRecords(source.weights),
+      memories: keepOtherPetRecords(source.memories)
+    };
+  }
+
   function normalizeData(value) {
+    const migrated = migrateLegacyData(value);
     const normalized = {
-      ...(value || {}),
-      version: 3,
-      pets: Array.isArray(value?.pets) ? value.pets : [],
-      health: Array.isArray(value?.health) ? value.health.map((item) => ({ ...item, type: normalizeHealthType(item.type) })) : [],
-      expenses: Array.isArray(value?.expenses) ? value.expenses : [],
-      weights: Array.isArray(value?.weights) ? value.weights.map(normalizeWeightItem) : [],
-      memories: Array.isArray(value?.memories) ? value.memories : []
+      ...migrated,
+      version: 4,
+      pets: Array.isArray(migrated.pets) ? migrated.pets : [],
+      health: Array.isArray(migrated.health) ? migrated.health.map((item) => ({ ...item, type: normalizeHealthType(item.type) })) : [],
+      expenses: Array.isArray(migrated.expenses) ? migrated.expenses : [],
+      weights: Array.isArray(migrated.weights) ? migrated.weights.map(normalizeWeightItem) : [],
+      memories: Array.isArray(migrated.memories) ? migrated.memories : []
     };
     if (!normalized.pets.some((pet) => pet.id === normalized.activePetId)) normalized.activePetId = normalized.pets[0]?.id || null;
     return normalized;
@@ -264,7 +211,9 @@
       if (!saved) return normalizeData(clone(defaultData));
       const parsed = JSON.parse(saved);
       if (!parsed || !Array.isArray(parsed.pets)) return normalizeData(clone(defaultData));
-      return normalizeData(parsed);
+      const normalized = normalizeData(parsed);
+      if (Number(parsed.version || 0) < 4) localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+      return normalized;
     } catch (error) {
       console.warn('Impossible de lire les données Animoa', error);
       return clone(defaultData);
@@ -391,6 +340,25 @@
       mediaUrlCache.clear();
     } catch (error) {
       console.warn('Nettoyage des photos impossible', error);
+    }
+  }
+
+
+  async function cleanupUnusedMedia() {
+    try {
+      const usedIds = new Set([...mediaRefsFrom()].map((ref) => ref.slice(MEDIA_PREFIX.length)));
+      const db = await openMediaDb();
+      const storedIds = await new Promise((resolve, reject) => {
+        const transaction = db.transaction(MEDIA_STORE_NAME, 'readonly');
+        const request = transaction.objectStore(MEDIA_STORE_NAME).getAllKeys();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error || new Error('Lecture des photos impossible.'));
+      });
+      for (const id of storedIds) {
+        if (!usedIds.has(String(id))) await deleteMediaRef(`${MEDIA_PREFIX}${id}`);
+      }
+    } catch (error) {
+      console.warn('Nettoyage des anciennes photos impossible', error);
     }
   }
 
@@ -1165,7 +1133,7 @@
               <div><p class="list-title">${escapeHtml(pet.name)}</p><p class="list-subtitle">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}</p></div>
               <button class="secondary-button" data-select-pet="${pet.id}">${pet.id === data.activePetId ? 'Actif' : 'Choisir'}</button>
             </article>`).join('')}
-        </div>` : `<article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun animal</strong><p>Crée un profil pour commencer un nouveau carnet de vie.</p><button class="primary-button" data-add="pet">Ajouter un animal</button></article>`}
+        </div>` : `<article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Ajoute ton premier compagnon pour créer son carnet de vie.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article>`}
       </div>`;
   }
 
@@ -1213,9 +1181,9 @@
           </div>
         </article>
         <article class="card card-pad">
-          <h2 style="margin-top:0">Données de démonstration</h2>
-          <p class="chart-caption">La réinitialisation efface les modifications locales et remet Nala avec les données de départ.</p>
-          <button class="danger-button" data-action="reset-data">Réinitialiser Animoa</button>
+          <h2 style="margin-top:0">Effacer les données</h2>
+          <p class="chart-caption">Cette action supprime les compagnons et toutes les informations enregistrées dans ce navigateur.</p>
+          <button class="danger-button" data-action="reset-data">Effacer toutes les données</button>
         </article>
         <div class="settings-note"><strong>Animoa</strong><br />Toute sa vie, près de vous.<br /><br />Prototype sans compte : les données restent uniquement dans ce navigateur.</div>
       </div>`;
@@ -1226,7 +1194,7 @@
   }
 
   function renderNoPet() {
-    return `<div class="page-stack"><div class="page-header"><div><p class="eyebrow">Bienvenue</p><h1>Ajoute ton premier animal</h1><p>Animoa commencera par créer son carnet de vie.</p></div></div><article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun animal</strong><p>Quelques informations suffisent pour commencer.</p><button class="primary-button" data-add="pet">Créer son profil</button></article></div>`;
+    return `<div class="page-stack"><div class="page-header"><div><p class="eyebrow">Bienvenue</p><h1>Ajoute ton premier compagnon</h1><p>Animoa commencera par créer son carnet de vie.</p></div></div><article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Quelques informations suffisent pour commencer.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article></div>`;
   }
 
   function emptyList(message) {
@@ -1290,7 +1258,7 @@
         <button class="add-choice" data-add="expense"><span>€</span>Dépense</button>
         <button class="add-choice" data-add="weight"><span>⚖️</span>Poids</button>
         <button class="add-choice" data-add="memory"><span>📷</span>Souvenir</button>
-        <button class="add-choice" data-add="pet"><span>🐾</span>Animal</button>
+        <button class="add-choice" data-add="pet"><span>🐾</span>Compagnon</button>
       </div>
     `, 'Ajout rapide');
   }
@@ -1375,7 +1343,7 @@
     const species = pet?.species || 'Chien';
     const limits = displayWeightLimits(species);
     return `<form id="petForm" class="form-grid" data-editing="${editing ? pet.id : ''}" data-weight-id="${latestWeight?.id || ''}" data-original-weight="${currentWeight ?? ''}" data-original-weight-date="${latestWeight?.date || ''}">
-      <div class="form-row"><label for="petName">Nom</label><input id="petName" name="name" required value="${escapeHtml(pet?.name || '')}" placeholder="Ex. Nala" /></div>
+      <div class="form-row"><label for="petName">Nom</label><input id="petName" name="name" required value="${escapeHtml(pet?.name || '')}" placeholder="Ex. Milo" /></div>
       <div class="form-columns desktop-three"><div class="form-row"><label for="petSpecies">Espèce</label><select id="petSpecies" name="species"><option ${optionSelected(species, 'Chien')}>Chien</option><option ${optionSelected(species, 'Chat')}>Chat</option><option ${optionSelected(species, 'Lapin')}>Lapin</option><option ${optionSelected(species, 'Oiseau')}>Oiseau</option><option ${optionSelected(species, 'Autre')}>Autre</option></select></div><div class="form-row"><label for="petBreed">Race, variété ou type</label><input id="petBreed" name="breed" value="${escapeHtml(pet?.breed || '')}" /></div><div class="form-row"><label for="petSex">Sexe</label><select id="petSex" name="sex"><option value="Non renseigné" ${optionSelected(pet?.sex || 'Non renseigné', 'Non renseigné')}>Non renseigné</option><option ${optionSelected(pet?.sex, 'Femelle')}>Femelle</option><option ${optionSelected(pet?.sex, 'Mâle')}>Mâle</option></select></div></div>
       <div class="form-columns"><div class="form-row"><label for="petBirth">Date de naissance</label><input id="petBirth" name="birthDate" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="JJ/MM/AAAA" value="${escapeHtml(isoDateToFrench(pet?.birthDate || ''))}" aria-describedby="petBirthHelp" /><span id="petBirthHelp" class="form-help">Écris directement les 8 chiffres, par exemple 15062009.</span></div><div class="form-row"><label for="petColor">Couleur</label><input id="petColor" name="color" value="${escapeHtml(pet?.color || '')}" /></div></div>
       <div class="weight-profile-box"><div><strong>Poids actuel</strong><span>Cette valeur reste liée à l’historique de poids.</span></div><div class="form-columns"><div class="form-row"><label for="petCurrentWeight">Poids (${settings.weightUnit})</label><input id="petCurrentWeight" name="currentWeight" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" value="${currentWeight ?? ''}" placeholder="Facultatif" /></div><div class="form-row"><label for="petCurrentWeightDate">Date de pesée</label><input id="petCurrentWeightDate" name="currentWeightDate" type="date" max="${todayIso()}" value="${latestWeight?.date || todayIso()}" /></div></div><span id="petWeightGuide" class="form-help">Pour un ${limits.label} : ${limits.min.toLocaleString('fr-FR', { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div>
@@ -1699,14 +1667,14 @@
 
 
   function requestResetAnimoa() {
-    openModal('Réinitialiser Animoa ?', `
+    openModal('Effacer toutes les données ?', `
       <div class="delete-confirmation">
         <div class="delete-warning-icon">!</div>
         <p><strong>Toutes les données locales seront effacées.</strong></p>
-        <p>Animaux, santé, dépenses, poids, souvenirs et photos seront remplacés par les données de démonstration.</p>
+        <p>Compagnons, santé, dépenses, poids, souvenirs et photos seront définitivement supprimés de ce navigateur.</p>
         <div class="delete-actions">
           <button class="secondary-button" data-action="close-modal">Annuler</button>
-          <button class="danger-button" data-action="confirm-reset-data">Oui, tout réinitialiser</button>
+          <button class="danger-button" data-action="confirm-reset-data">Oui, tout effacer</button>
         </div>
       </div>
     `, 'Action sensible', { sensitive: true });
@@ -1723,12 +1691,12 @@
       await clearMediaStore();
       closeModal();
       setPage('home');
-      showToast('Animoa a été réinitialisé.');
+      showToast('Toutes les données ont été effacées.');
     } catch (error) {
       data = snapshot;
       settings = settingsSnapshot;
       try { saveData(); saveSettings(); } catch {}
-      showToast(error.message || 'Réinitialisation impossible.');
+      showToast(error.message || 'Suppression des données impossible.');
     }
   }
 
@@ -1846,6 +1814,7 @@
     }
     data = normalizeData(data);
     try { saveData(); } catch (error) { console.warn('Migration des données incomplète', error); }
+    await cleanupUnusedMedia();
     renderNavigation();
     renderPage();
   }
