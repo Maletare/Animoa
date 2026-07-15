@@ -131,6 +131,7 @@
   let currentPage = 'home';
   let currentHealthFilter = 'Tous';
   let healthTabsScrollLeft = 0;
+  let healthRestoreFrame = null;
   let toastTimer = null;
   let drawerCloseTimer = null;
   let modalCloseTimer = null;
@@ -542,6 +543,34 @@
     return local.toISOString().slice(0, 10);
   }
 
+
+  function isoDateToFrench(value) {
+    const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return match ? `${match[3]}/${match[2]}/${match[1]}` : '';
+  }
+
+  function formatDirectDateEntry(value) {
+    const digits = String(value || '').replace(/\D/g, '').slice(0, 8);
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+  }
+
+  function parseFrenchDate(value, label = 'La date') {
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+    const match = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+    if (!match) throw new Error(`${label} doit être écrite au format JJ/MM/AAAA.`);
+    const day = Number(match[1]);
+    const month = Number(match[2]);
+    const year = Number(match[3]);
+    const date = new Date(year, month - 1, day, 12, 0, 0);
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+      throw new Error(`${label} n’est pas valide.`);
+    }
+    return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  }
+
   function daysUntil(dateValue) {
     const today = new Date(`${todayIso()}T12:00:00`);
     const target = new Date(`${dateValue}T12:00:00`);
@@ -705,7 +734,6 @@
       memories: renderMemories,
       animals: renderAnimals,
       pet: renderPetProfile,
-      backup: renderBackup,
       settings: renderSettings
     };
     const render = pages[currentPage] || renderHome;
@@ -715,7 +743,13 @@
     mainContent.classList.remove('page-refresh');
     requestAnimationFrame(() => mainContent.classList.add('page-refresh'));
     if (currentPage === 'weight') requestAnimationFrame(drawWeightChart);
-    if (currentPage === 'health') requestAnimationFrame(restoreHealthTabsPosition);
+    if (currentPage === 'health') {
+      if (healthRestoreFrame) cancelAnimationFrame(healthRestoreFrame);
+      healthRestoreFrame = requestAnimationFrame(() => {
+        healthRestoreFrame = null;
+        restoreHealthTabsPosition();
+      });
+    }
     updateReminderBadge();
   }
 
@@ -823,11 +857,9 @@
     return `<article class="card empty-state"><div style="font-size:2rem">📷</div><strong>Aucun souvenir</strong><p>Ajoute une photo ou une anecdote.</p><button class="primary-button" data-add="memory">Ajouter</button></article>`;
   }
 
-  function renderHealth() {
-    const pet = activePet();
+  function healthViewData(filter = currentHealthFilter) {
     const allItems = petItems('health').map((item) => ({ ...item, type: normalizeHealthType(item.type) }));
-    const selectedType = HEALTH_TYPES.includes(currentHealthFilter) ? currentHealthFilter : 'Tous';
-    currentHealthFilter = selectedType;
+    const selectedType = HEALTH_TYPES.includes(filter) ? filter : 'Tous';
     const items = allItems
       .filter((item) => selectedType === 'Tous' || item.type === selectedType)
       .sort((a, b) => b.date.localeCompare(a.date));
@@ -835,33 +867,87 @@
       result[item.type] = (result[item.type] || 0) + 1;
       return result;
     }, {});
-    const selectedLabel = selectedType === 'Tous' ? 'Tout le dossier' : selectedType;
+    return {
+      allItems,
+      selectedType,
+      items,
+      counts,
+      selectedLabel: selectedType === 'Tous' ? 'Tout le dossier' : selectedType
+    };
+  }
+
+  function renderHealth() {
+    const pet = activePet();
+    const view = healthViewData();
+    currentHealthFilter = view.selectedType;
 
     return `
       <div class="page-stack">
         ${pageHeader('Santé', `Le dossier médical de ${escapeHtml(pet.name)}.`, 'health')}
         <section class="health-filter-panel" aria-label="Filtrer le carnet de santé">
           <div class="health-filter-heading">
-            <div><p class="eyebrow">Catégories</p><strong>${escapeHtml(selectedLabel)}</strong></div>
-            <span>${items.length} élément${items.length > 1 ? 's' : ''}</span>
+            <div><p class="eyebrow">Catégories</p><strong id="healthFilterLabel">${escapeHtml(view.selectedLabel)}</strong></div>
+            <span id="healthFilterCount">${view.items.length} élément${view.items.length > 1 ? 's' : ''}</span>
           </div>
           <div class="health-tabs-shell">
             <button class="health-tab-arrow" data-action="health-scroll-left" aria-label="Voir les catégories précédentes">‹</button>
             <div class="section-tabs health-tabs" id="healthTabs" role="tablist">${HEALTH_TYPES.map((type) => {
-              const count = type === 'Tous' ? allItems.length : (counts[type] || 0);
-              return `<button class="tab-chip ${selectedType === type ? 'active' : ''}" data-health-filter="${type}" aria-pressed="${selectedType === type}" role="tab"><span>${type}</span><small>${count}</small></button>`;
+              const count = type === 'Tous' ? view.allItems.length : (view.counts[type] || 0);
+              return `<button class="tab-chip ${view.selectedType === type ? 'active' : ''}" data-health-filter="${type}" aria-pressed="${view.selectedType === type}" role="tab"><span>${type}</span><small>${count}</small></button>`;
             }).join('')}</div>
             <button class="health-tab-arrow" data-action="health-scroll-right" aria-label="Voir les catégories suivantes">›</button>
           </div>
           <p class="health-swipe-hint">Fais glisser le bandeau sur le côté, ou utilise les flèches.</p>
         </section>
         <article class="card card-pad">
-          <div class="card-title-row"><h2>${escapeHtml(selectedLabel)}</h2><span class="summary-note">${items.length} élément${items.length > 1 ? 's' : ''}</span></div>
-          <div class="list" style="margin-top:14px">
-            ${items.length ? items.map(renderHealthItem).join('') : emptyList(`Aucune information dans « ${selectedLabel} ».`)}
+          <div class="card-title-row"><h2 id="healthListTitle">${escapeHtml(view.selectedLabel)}</h2><span id="healthListCount" class="summary-note">${view.items.length} élément${view.items.length > 1 ? 's' : ''}</span></div>
+          <div class="list" id="healthList" style="margin-top:14px">
+            ${view.items.length ? view.items.map(renderHealthItem).join('') : emptyList(`Aucune information dans « ${view.selectedLabel} ».`)}
           </div>
         </article>
       </div>`;
+  }
+
+  function applyHealthFilter(filter) {
+    const view = healthViewData(filter);
+    currentHealthFilter = view.selectedType;
+
+    const tabs = document.getElementById('healthTabs');
+    if (!tabs || currentPage !== 'health') {
+      renderPage();
+      return;
+    }
+
+    if (healthRestoreFrame) {
+      cancelAnimationFrame(healthRestoreFrame);
+      healthRestoreFrame = null;
+    }
+    const preservedScrollLeft = tabs.scrollLeft;
+
+    tabs.querySelectorAll('[data-health-filter]').forEach((button) => {
+      const active = button.dataset.healthFilter === view.selectedType;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+
+    const countText = `${view.items.length} élément${view.items.length > 1 ? 's' : ''}`;
+    const filterLabel = document.getElementById('healthFilterLabel');
+    const filterCount = document.getElementById('healthFilterCount');
+    const listTitle = document.getElementById('healthListTitle');
+    const listCount = document.getElementById('healthListCount');
+    const list = document.getElementById('healthList');
+
+    if (filterLabel) filterLabel.textContent = view.selectedLabel;
+    if (filterCount) filterCount.textContent = countText;
+    if (listTitle) listTitle.textContent = view.selectedLabel;
+    if (listCount) listCount.textContent = countText;
+    if (list) list.innerHTML = view.items.length
+      ? view.items.map(renderHealthItem).join('')
+      : emptyList(`Aucune information dans « ${view.selectedLabel} ».`);
+
+    tabs.scrollLeft = preservedScrollLeft;
+    healthTabsScrollLeft = preservedScrollLeft;
+    updateHealthScrollButtons();
   }
 
   function renderHealthItem(item) {
@@ -1114,24 +1200,6 @@
     return `<div class="profile-row"><span class="profile-label">${label}</span><span class="profile-value">${escapeHtml(value)}</span></div>`;
   }
 
-  function renderBackup() {
-    return `
-      <div class="page-stack">
-        <div class="page-header"><div><p class="eyebrow">Sécurité</p><h1>Sauvegarde</h1><p>Garde une copie de toutes tes données.</p></div></div>
-        <article class="card card-pad">
-          <h2 style="margin-top:0">Exporter les données</h2>
-          <p class="chart-caption">Télécharge un fichier JSON contenant les animaux, la santé, les dépenses, le poids et les souvenirs. Les photos enregistrées sont incluses.</p>
-          <div class="button-row"><button class="primary-button" data-action="export-data">Télécharger la sauvegarde</button></div>
-        </article>
-        <article class="card card-pad">
-          <h2 style="margin-top:0">Importer une sauvegarde</h2>
-          <p class="chart-caption">Choisis un fichier précédemment exporté par Animoa. Les données actuelles seront remplacées après confirmation.</p>
-          <div class="form-row"><input id="backupFile" type="file" accept="application/json,.json" /></div>
-          <div class="button-row" style="margin-top:12px"><button class="secondary-button" data-action="import-data">Importer</button></div>
-        </article>
-        <div class="settings-note">Les données restent sur cet appareil. Pense à faire une sauvegarde avant de vider les données de ton navigateur ou de changer d’ordinateur.</div>
-      </div>`;
-  }
 
   function renderSettings() {
     return `
@@ -1149,7 +1217,7 @@
           <p class="chart-caption">La réinitialisation efface les modifications locales et remet Nala avec les données de départ.</p>
           <button class="danger-button" data-action="reset-data">Réinitialiser Animoa</button>
         </article>
-        <div class="settings-note"><strong>Animoa</strong><br />Toute sa vie, près de vous.<br /><br />Prototype local sans API payante, sans compte et sans envoi de données.</div>
+        <div class="settings-note"><strong>Animoa</strong><br />Toute sa vie, près de vous.<br /><br />Prototype sans compte : les données restent uniquement dans ce navigateur.</div>
       </div>`;
   }
 
@@ -1309,7 +1377,7 @@
     return `<form id="petForm" class="form-grid" data-editing="${editing ? pet.id : ''}" data-weight-id="${latestWeight?.id || ''}" data-original-weight="${currentWeight ?? ''}" data-original-weight-date="${latestWeight?.date || ''}">
       <div class="form-row"><label for="petName">Nom</label><input id="petName" name="name" required value="${escapeHtml(pet?.name || '')}" placeholder="Ex. Nala" /></div>
       <div class="form-columns desktop-three"><div class="form-row"><label for="petSpecies">Espèce</label><select id="petSpecies" name="species"><option ${optionSelected(species, 'Chien')}>Chien</option><option ${optionSelected(species, 'Chat')}>Chat</option><option ${optionSelected(species, 'Lapin')}>Lapin</option><option ${optionSelected(species, 'Oiseau')}>Oiseau</option><option ${optionSelected(species, 'Autre')}>Autre</option></select></div><div class="form-row"><label for="petBreed">Race, variété ou type</label><input id="petBreed" name="breed" value="${escapeHtml(pet?.breed || '')}" /></div><div class="form-row"><label for="petSex">Sexe</label><select id="petSex" name="sex"><option value="Non renseigné" ${optionSelected(pet?.sex || 'Non renseigné', 'Non renseigné')}>Non renseigné</option><option ${optionSelected(pet?.sex, 'Femelle')}>Femelle</option><option ${optionSelected(pet?.sex, 'Mâle')}>Mâle</option></select></div></div>
-      <div class="form-columns"><div class="form-row"><label for="petBirth">Date de naissance</label><input id="petBirth" name="birthDate" type="date" max="${todayIso()}" value="${escapeHtml(pet?.birthDate || '')}" /></div><div class="form-row"><label for="petColor">Couleur</label><input id="petColor" name="color" value="${escapeHtml(pet?.color || '')}" /></div></div>
+      <div class="form-columns"><div class="form-row"><label for="petBirth">Date de naissance</label><input id="petBirth" name="birthDate" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="JJ/MM/AAAA" value="${escapeHtml(isoDateToFrench(pet?.birthDate || ''))}" aria-describedby="petBirthHelp" /><span id="petBirthHelp" class="form-help">Écris directement les 8 chiffres, par exemple 15062009.</span></div><div class="form-row"><label for="petColor">Couleur</label><input id="petColor" name="color" value="${escapeHtml(pet?.color || '')}" /></div></div>
       <div class="weight-profile-box"><div><strong>Poids actuel</strong><span>Cette valeur reste liée à l’historique de poids.</span></div><div class="form-columns"><div class="form-row"><label for="petCurrentWeight">Poids (${settings.weightUnit})</label><input id="petCurrentWeight" name="currentWeight" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" value="${currentWeight ?? ''}" placeholder="Facultatif" /></div><div class="form-row"><label for="petCurrentWeightDate">Date de pesée</label><input id="petCurrentWeightDate" name="currentWeightDate" type="date" max="${todayIso()}" value="${latestWeight?.date || todayIso()}" /></div></div><span id="petWeightGuide" class="form-help">Pour un ${limits.label} : ${limits.min.toLocaleString('fr-FR', { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div>
       <div class="form-row"><label for="petPhoto">Photo</label><input id="petPhoto" name="photo" type="file" accept="image/*" /><span class="form-help">Laisse vide pour conserver la photo actuelle. La nouvelle photo sera automatiquement allégée.</span></div>
       <div class="form-row"><label for="petIdentification">Identification</label><input id="petIdentification" name="identification" value="${escapeHtml(pet?.identification || '')}" placeholder="Puce, tatouage..." /></div>
@@ -1389,7 +1457,7 @@
         const oldImage = existing?.image;
         const image = await fileToMediaRef(file) || oldImage || placeholderImage;
         const species = String(formData.get('species'));
-        const birthDate = String(formData.get('birthDate') || '');
+        const birthDate = parseFrenchDate(formData.get('birthDate'), 'La date de naissance');
         validatePastOrToday(birthDate, 'La date de naissance');
         const petData = {
           id: existing?.id || uid('pet'),
@@ -1629,98 +1697,6 @@
     `, memory.favorite ? 'Souvenir favori' : 'Souvenir');
   }
 
-  async function exportData() {
-    try {
-      showToast('Préparation de la sauvegarde…');
-      const media = {};
-      const refs = [...new Set([...data.pets, ...data.memories].map((item) => item.image).filter((ref) => typeof ref === 'string' && ref.startsWith(MEDIA_PREFIX)))];
-      for (const ref of refs) {
-        const blob = await getMediaBlob(ref);
-        if (blob) media[ref] = await blobToDataUrl(blob);
-      }
-      const payload = { exportedAt: new Date().toISOString(), app: 'Animoa', version: 3, data, settings, media };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `animoa-sauvegarde-${todayIso()}.json`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      showToast('Sauvegarde téléchargée, photos comprises.');
-    } catch (error) {
-      showToast(error.message || 'Sauvegarde impossible.');
-    }
-  }
-
-  function replaceImportedMediaRefs(importedData, replacementMap) {
-    [...(importedData.pets || []), ...(importedData.memories || [])].forEach((item) => {
-      if (replacementMap[item.image]) item.image = replacementMap[item.image];
-    });
-  }
-
-  function requestImportData() {
-    const file = document.getElementById('backupFile')?.files?.[0];
-    if (!file) return showToast('Choisis d’abord un fichier JSON.');
-    openModal('Importer cette sauvegarde ?', `
-      <div class="delete-confirmation">
-        <div class="delete-warning-icon">!</div>
-        <p><strong>Les données actuelles seront remplacées.</strong></p>
-        <p>Animaux, santé, dépenses, poids, souvenirs, photos et réglages seront remplacés par le contenu du fichier choisi.</p>
-        <div class="delete-actions">
-          <button class="secondary-button" data-action="close-modal">Annuler</button>
-          <button class="primary-button" data-action="confirm-import-data">Oui, importer</button>
-        </div>
-      </div>
-    `, 'Sauvegarde', { sensitive: true });
-  }
-
-  async function importData() {
-    const input = document.getElementById('backupFile');
-    const file = input?.files?.[0];
-    if (!file) return showToast('Choisis d’abord un fichier JSON.');
-    const snapshot = clone(data);
-    const settingsSnapshot = { ...settings };
-    const oldMediaRefs = mediaRefsFrom(snapshot);
-    const createdMediaRefs = [];
-    try {
-      const parsed = JSON.parse(await file.text());
-      const importedData = clone(parsed.data || parsed);
-      if (!importedData || !Array.isArray(importedData.pets) || !Array.isArray(importedData.health)) throw new Error('Ce fichier ne semble pas être une sauvegarde Animoa valide.');
-
-      const replacementMap = {};
-      for (const [ref, dataUrl] of Object.entries(parsed.media || {})) {
-        if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) continue;
-        try {
-          const newRef = await putMediaBlob(await dataUrlToBlob(dataUrl));
-          replacementMap[ref] = newRef;
-          createdMediaRefs.push(newRef);
-        } catch {
-          if (dataUrl.length > 650000) throw new Error('Le navigateur ne peut pas stocker les photos de cette sauvegarde. Essaie avec le navigateur habituel d’Animoa.');
-          replacementMap[ref] = dataUrl;
-        }
-      }
-      replaceImportedMediaRefs(importedData, replacementMap);
-      data = normalizeData(importedData);
-      settings = normalizeSettings(parsed.settings || settingsSnapshot);
-      saveData();
-      saveSettings();
-      closeModal();
-      setPage('home');
-
-      const newMediaRefs = mediaRefsFrom(data);
-      await Promise.all([...oldMediaRefs].filter((ref) => !newMediaRefs.has(ref)).map(deleteMediaRef));
-      showToast('Sauvegarde importée.');
-    } catch (error) {
-      data = snapshot;
-      settings = settingsSnapshot;
-      try { saveData(); saveSettings(); } catch {}
-      await Promise.all(createdMediaRefs.map(deleteMediaRef));
-      closeModal();
-      showToast(error.message || 'Import impossible.');
-    }
-  }
 
   function requestResetAnimoa() {
     openModal('Réinitialiser Animoa ?', `
@@ -1768,8 +1744,7 @@
     if (filter) {
       const tabs = document.getElementById('healthTabs');
       healthTabsScrollLeft = tabs?.scrollLeft || healthTabsScrollLeft;
-      currentHealthFilter = HEALTH_TYPES.includes(filter) ? filter : normalizeHealthType(filter);
-      renderPage();
+      applyHealthFilter(HEALTH_TYPES.includes(filter) ? filter : normalizeHealthType(filter));
       return;
     }
 
@@ -1796,9 +1771,6 @@
     if (action === 'edit-pet') openModal('Modifier le profil', petForm(activePet()), 'Profil');
     if (action === 'request-delete-pet') requestDeletePet();
     if (action === 'confirm-delete-pet') deletePet(target.dataset.petId);
-    if (action === 'export-data') exportData();
-    if (action === 'import-data') requestImportData();
-    if (action === 'confirm-import-data') importData();
     if (action === 'save-settings') {
       settings.currency = document.getElementById('currencySetting').value;
       settings.weightUnit = document.getElementById('weightSetting').value;
@@ -1836,6 +1808,14 @@
   document.addEventListener('change', (event) => {
     if (event.target.id === 'healthStatus') syncHealthDateRules(true);
     if (event.target.id === 'petSpecies') syncPetWeightGuide();
+  });
+
+
+  document.addEventListener('input', (event) => {
+    if (event.target.id === 'petBirth') {
+      const formatted = formatDirectDateEntry(event.target.value);
+      if (event.target.value !== formatted) event.target.value = formatted;
+    }
   });
 
   document.addEventListener('scroll', (event) => {
