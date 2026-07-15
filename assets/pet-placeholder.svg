@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dfece7"/><stop offset="1" stop-color="#f8e9df"/></linearGradient></defs>
+  <rect width="600" height="420" fill="url(#g)"/>
+  <circle cx="300" cy="190" r="105" fill="#fff" opacity=".76"/>
+  <ellipse cx="235" cy="130" rx="48" ry="68" fill="#4f7f73" opacity=".82" transform="rotate(-25 235 130)"/>
+  <ellipse cx="365" cy="130" rx="48" ry="68" fill="#4f7f73" opacity=".82" transform="rotate(25 365 130)"/>
+  <circle cx="262" cy="183" r="11" fill="#20312d"/><circle cx="338" cy="183" r="11" fill="#20312d"/>
+  <ellipse cx="300" cy="225" rx="24" ry="18" fill="#20312d"/>
+  <path d="M300 240c-17 24-42 25-58 8M300 240c17 24 42 25 58 8" fill="none" stroke="#20312d" stroke-width="10" stroke-linecap="round"/>
+  <text x="300" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#315f55">Votre compagnon</text>
+</svg>

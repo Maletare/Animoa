@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+<title id="title">Symbole Animoa</title><desc id="desc">Une patte formant un cœur vert sauge avec une touche corail.</desc>
+<g fill="#91AC9E">
+  <ellipse cx="27" cy="35" rx="10" ry="15" transform="rotate(-23 27 35)"/>
+  <ellipse cx="51" cy="23" rx="11" ry="17" transform="rotate(-8 51 23)"/>
+  <ellipse cx="77" cy="23" rx="11" ry="17" transform="rotate(8 77 23)"/>
+  <ellipse cx="101" cy="35" rx="10" ry="15" transform="rotate(23 101 35)"/>
+</g>
+<path d="M64 108C54 99 35 88 27 72C18 55 29 42 43 42C53 42 60 49 64 56C68 49 75 42 85 42C99 42 110 55 101 72C93 88 74 99 64 108Z" fill="none" stroke="#76988A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M97 63C95 79 78 94 64 106" fill="none" stroke="#F07E62" stroke-width="12" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,12 @@
+ANIMOA V1.5.1 — LANCEMENT
+============================
+
+1. Aucune installation n'est nécessaire.
+2. Place le dossier Animoa dans C:\Dev.
+3. Double-clique sur C:\Dev\Animoa\OUVRIR_ANIMOA.bat.
+4. Si Windows bloque le fichier .bat, ouvre directement index.html.
+5. Utilise toujours le même navigateur pour retrouver tes données.
+6. Avant une mise à jour importante, télécharge une sauvegarde depuis Animoa.
+
+Nom : Animoa
+Signature : Toute sa vie, près de vous.

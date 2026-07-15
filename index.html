@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#3f7666" />
+  <title>Animoa — Toute sa vie, près de vous.</title>
+  <link rel="icon" href="assets/animoa-icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="desktop-sidebar" aria-label="Navigation principale">
+      <div class="brand-block official-brand">
+        <img src="assets/animoa-logo.svg" alt="Animoa — Toute sa vie, près de vous." class="brand-logo" />
+      </div>
+      <div id="sidebarPetContext" class="desktop-pet-context" hidden></div>
+      <nav id="desktopNav" class="desktop-nav"></nav>
+      <button class="sidebar-add" data-action="open-add">Ajouter</button>
+      <div class="sidebar-note">Prototype local · aucune donnée envoyée en ligne</div>
+    </aside>
+
+    <div class="app-column">
+      <header class="topbar">
+        <button class="icon-button" data-action="open-menu" aria-label="Ouvrir le menu">☰</button>
+        <div class="topbar-brand">
+          <img src="assets/animoa-wordmark.svg" alt="Animoa" class="topbar-logo" />
+          <span>Toute sa vie, près de vous.</span>
+        </div>
+        <button class="icon-button notification-button" data-action="show-reminders" aria-label="Voir les rappels">
+          🔔<span id="reminderBadge" class="badge" hidden>0</span>
+        </button>
+      </header>
+
+      <div id="petContextBar" class="pet-context-bar" hidden></div>
+
+      <main id="mainContent" class="main-content" tabindex="-1"></main>
+
+      <nav id="mobileNav" class="mobile-nav" aria-label="Navigation mobile"></nav>
+    </div>
+  </div>
+
+  <div id="drawerBackdrop" class="backdrop" hidden></div>
+  <aside id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
+    <div class="drawer-header">
+      <div class="brand-block compact official-brand">
+        <img src="assets/animoa-wordmark.svg" alt="Animoa" class="drawer-logo" />
+      </div>
+      <button class="icon-button" data-action="close-menu" aria-label="Fermer">✕</button>
+    </div>
+    <div id="drawerPetContext" class="drawer-pet-context" hidden></div>
+    <nav id="drawerNav" class="drawer-nav"></nav>
+    <div class="drawer-footer">
+      <button class="drawer-link" data-page="animals">🐾 Mes animaux</button>
+      <button class="drawer-link" data-page="backup">💾 Sauvegarde</button>
+      <button class="drawer-link" data-page="settings">⚙️ Paramètres</button>
+    </div>
+  </aside>
+
+  <div id="modalBackdrop" class="modal-backdrop" hidden></div>
+  <section id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalTitle">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow" id="modalEyebrow">Ajouter</p>
+        <h2 id="modalTitle">Nouvelle information</h2>
+      </div>
+      <button class="icon-button" data-action="close-modal" aria-label="Fermer">✕</button>
+    </div>
+    <div id="modalBody" class="modal-body"></div>
+  </section>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
