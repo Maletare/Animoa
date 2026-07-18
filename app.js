@@ -992,7 +992,7 @@
 
   function renderPage() {
     const pet = activePet();
-    if (!pet && currentPage !== 'animals') currentPage = 'animals';
+    if (!pet && !['animals', 'settings'].includes(currentPage)) currentPage = 'animals';
 
     const pages = {
       home: renderHome,
