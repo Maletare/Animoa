@@ -25,6 +25,10 @@
       email: 'Adresse e-mail',
       password: 'Mot de passe',
       passwordHelp: '8 caractères minimum',
+      invitationCode: 'Code d’invitation',
+      invitationHelp: 'Animoa est actuellement accessible uniquement sur invitation.',
+      invitationRequired: 'Indiquez le code d’invitation.',
+      invitationInvalid: 'Le code d’invitation est incorrect.',
       forgot: 'Mot de passe oublié ?',
       noAccount: 'Pas encore de compte ?',
       alreadyAccount: 'Déjà un compte ?',
@@ -61,6 +65,10 @@
       email: 'Email address',
       password: 'Password',
       passwordHelp: 'At least 8 characters',
+      invitationCode: 'Invitation code',
+      invitationHelp: 'Animoa is currently available by invitation only.',
+      invitationRequired: 'Enter the invitation code.',
+      invitationInvalid: 'The invitation code is incorrect.',
       forgot: 'Forgot your password?',
       noAccount: 'Don’t have an account yet?',
       alreadyAccount: 'Already have an account?',
@@ -161,6 +169,7 @@
       <form id="authForm" class="auth-form" data-mode="${signup ? 'signup' : 'login'}">
         <label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required placeholder="nom@exemple.fr" /></label>
         <label><span>${c('password')}</span><input name="password" type="password" autocomplete="${signup ? 'new-password' : 'current-password'}" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label>
+        ${signup ? `<label><span>${c('invitationCode')}</span><input name="invitationCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required placeholder="ANIMOA-••••" /><small>${c('invitationHelp')}</small></label>` : ''}
         <button class="primary-button auth-submit" type="submit">${signup ? c('signup') : c('login')}</button>
       </form>
       ${!signup ? `<button class="auth-text-button" data-auth-action="forgot">${c('forgot')}</button>` : ''}
@@ -204,6 +213,7 @@
     const message = String(error?.message || '').toLowerCase();
     if (message.includes('invalid login') || message.includes('invalid credentials')) return c('invalid');
     if (message.includes('password') && message.includes('characters')) return c('passwordLength');
+    if (message.includes('code d’invitation') || message.includes("code d'invitation") || message.includes('invitation code')) return c('invitationInvalid');
     return error?.message || c('genericError');
   }
 
@@ -288,8 +298,10 @@
       const values = new FormData(form);
       const email = String(values.get('email') || '').trim();
       const password = String(values.get('password') || '');
+      const invitationCode = String(values.get('invitationCode') || '').trim();
       if (!email.includes('@')) return renderLogin(form.dataset.mode, c('emailRequired'));
       if (password.length < 8) return renderLogin(form.dataset.mode, c('passwordLength'));
+      if (form.dataset.mode === 'signup' && !invitationCode) return renderLogin(form.dataset.mode, c('invitationRequired'));
       setBusy(form, true);
       try {
         if (form.dataset.mode === 'signup') {
@@ -297,7 +309,10 @@
           const { data, error } = await client.auth.signUp({
             email,
             password,
-            options: { emailRedirectTo: redirectTo, data: { language: lang() } }
+            options: {
+              emailRedirectTo: redirectTo,
+              data: { language: lang(), invitation_code: invitationCode }
+            }
           });
           if (error) throw error;
           if (data.session) {

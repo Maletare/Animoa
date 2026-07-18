@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v2-20260718-settings-fix-1';
+const CACHE_NAME = 'animoa-v2-20260718-invitation-1';
 
 const CORE = [
   '/',
