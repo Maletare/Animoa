@@ -1,13 +1,49 @@
-ANIMOA V1.5.3 — LANCEMENT
-============================
+ANIMOA — RAPPELS AUTOMATIQUES 24 H AVANT
+================================================
 
-1. Aucune installation n'est nécessaire.
-2. Place le dossier Animoa dans C:\Dev.
-3. Double-clique sur C:\Dev\Animoa\OUVRIR_ANIMOA.bat.
-4. Si Windows bloque le fichier .bat, ouvre directement index.html.
-5. Utilise toujours le même navigateur pour retrouver tes données.
-6. L'application démarre désormais sans animal exemple.
-7. Une mise à jour des fichiers conserve normalement les autres compagnons déjà enregistrés.
+Ce dossier est un module séparé. Il ne remplace pas l'application Animoa.
 
-Nom : Animoa
-Signature : Toute sa vie, près de vous.
+CONTENU
+-------
+1. supabase/functions/animoa-reminders-24h/index.ts
+   Fonction Supabase qui lit les événements, récupère l'adresse du compte
+   et envoie l'e-mail avec Brevo.
+
+2. INSTALLATION_RAPPELS_24H.sql
+   Crée le journal anti-doublon et programme l'exécution automatique.
+
+3. email-templates/rappel-evenement-24h.html
+   Aperçu visuel uniquement. Ne pas le coller dans les e-mails
+   Authentication de Supabase.
+
+FONCTIONNEMENT ACTUEL
+--------------------
+L'application Animoa enregistre la date d'un événement, mais pas son heure.
+
+- Sans heure : l'e-mail part la veille à partir de 8 h, heure de Paris.
+- Avec une future propriété "time" au format HH:MM : la fonction enverra
+  automatiquement le message dans les 24 heures précédant l'événement.
+- Un événement n'est envoyé qu'une seule fois.
+- En cas d'échec Brevo, la fonction réessaie jusqu'à 5 fois.
+- La langue utilisée est le français ou l'anglais choisi dans Animoa.
+
+SECRETS À AJOUTER DANS SUPABASE
+--------------------------------
+BREVO_API_KEY=la clé API Brevo
+ANIMOA_CRON_SECRET=un long secret aléatoire
+ANIMOA_APP_URL=https://animoa.fr
+ANIMOA_SENDER_EMAIL=contact@animoa.fr
+ANIMOA_SENDER_NAME=Animoa
+ANIMOA_REMINDER_SEND_HOUR=8
+
+Ne jamais mettre la clé Brevo dans l'application, GitHub ou un fichier public.
+
+IMPORTANT
+---------
+Le même ANIMOA_CRON_SECRET doit être :
+- enregistré dans Edge Functions > Secrets ;
+- placé dans INSTALLATION_RAPPELS_24H.sql à la place de
+  ANIMOA_CRON_SECRET_A_REMPLACER avant l'exécution du SQL.
+
+La fonction doit être déployée avec la vérification JWT désactivée,
+car elle effectue elle-même le contrôle du secret du cron.

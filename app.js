@@ -3,14 +3,18 @@
 
   const STORAGE_KEY = 'animoa_v1_clean_data';
   const SETTINGS_KEY = 'animoa_v1_clean_settings';
+  const UPDATED_AT_KEY = 'animoa_v1_clean_updated_at';
   const MEDIA_DB_NAME = 'animoa_media_v1';
   const MEDIA_STORE_NAME = 'images';
   const MEDIA_PREFIX = 'media:';
+  const CLOUD_PREFIX = 'cloud:';
 
   const HEALTH_TYPES = ['Tous', 'Vaccin', 'Rendez-vous', 'Traitement', 'Médicament', 'Analyse', 'Document'];
   const KG_PER_LB = 0.45359237;
   const SUPPORTED_CURRENCIES = new Set(['EUR', 'CHF', 'CAD']);
   const SUPPORTED_WEIGHT_UNITS = new Set(['kg', 'lb']);
+  const SUPPORTED_LANGUAGES = new Set(['fr', 'en']);
+  const SUPPORTED_THEMES = new Set(['light', 'dark', 'system']);
   const WEIGHT_GUIDES_KG = {
     Chien: { min: 0.2, max: 120, step: 0.1, label: 'chien' },
     Chat: { min: 0.2, max: 20, step: 0.05, label: 'chat' },
@@ -57,6 +61,11 @@
   let drawerCloseTimer = null;
   let modalCloseTimer = null;
   let mediaDbPromise = null;
+  let cloudSaveTimer = null;
+  let cloudHydrating = false;
+  let cloudLoadFailed = false;
+  let cloudRetrying = false;
+  let syncState = 'local';
   const mediaUrlCache = new Map();
 
   const mainContent = document.getElementById('mainContent');
@@ -75,6 +84,189 @@
   const petContextBar = document.getElementById('petContextBar');
   const sidebarPetContext = document.getElementById('sidebarPetContext');
   const drawerPetContext = document.getElementById('drawerPetContext');
+  const sidebarSyncStatus = document.getElementById('sidebarSyncStatus');
+
+  function currentUserId() {
+    return window.AnimoaAuth?.getUser?.()?.id || null;
+  }
+
+  function storageKey(base) {
+    const userId = currentUserId();
+    return userId ? `${base}:${userId}` : base;
+  }
+
+  function localUpdatedAt() {
+    const value = Number(localStorage.getItem(storageKey(UPDATED_AT_KEY)) || 0);
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  function markLocalUpdated(date = Date.now()) {
+    localStorage.setItem(storageKey(UPDATED_AT_KEY), String(date));
+  }
+
+  function appLocale() {
+    return settings?.language === 'en' ? 'en-GB' : 'fr-FR';
+  }
+
+  function translateText(value) {
+    return window.AnimoaI18n?.translateText?.(value) ?? value;
+  }
+
+  function translateTree(root) {
+    window.AnimoaI18n?.translateTree?.(root);
+  }
+
+  function resolvedTheme() {
+    if (settings?.theme === 'dark' || settings?.theme === 'light') return settings.theme;
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function renderStaticChrome() {
+    const english = settings?.language === 'en';
+    const tagline = english ? 'Their whole life, close to you.' : 'Toute sa vie, près de vous.';
+    const taglineNode = document.querySelector('.topbar-brand span');
+    if (taglineNode) taglineNode.textContent = tagline;
+    const animalsButton = document.querySelector('.drawer-footer [data-page="animals"]');
+    const settingsButton = document.querySelector('.drawer-footer [data-page="settings"]');
+    if (animalsButton) animalsButton.innerHTML = english ? '🐾 My pets' : '🐾 Mes animaux';
+    if (settingsButton) settingsButton.innerHTML = english ? '⚙️ Settings' : '⚙️ Paramètres';
+    document.querySelectorAll('[aria-label="Navigation principale"], [aria-label="Main navigation"]').forEach((node) => node.setAttribute('aria-label', english ? 'Main navigation' : 'Navigation principale'));
+    document.querySelectorAll('[aria-label="Navigation mobile"], [aria-label="Mobile navigation"]').forEach((node) => node.setAttribute('aria-label', english ? 'Mobile navigation' : 'Navigation mobile'));
+  }
+
+  function applyPreferences() {
+    const language = SUPPORTED_LANGUAGES.has(settings?.language) ? settings.language : 'fr';
+    if (window.AnimoaI18n?.getLanguage?.() !== language) window.AnimoaI18n?.setLanguage?.(language);
+    document.documentElement.dataset.themePreference = settings?.theme || 'system';
+    document.documentElement.dataset.theme = resolvedTheme();
+    document.documentElement.lang = language;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', resolvedTheme() === 'dark' ? '#13221f' : '#23b9ad');
+    renderStaticChrome();
+  }
+
+  function setSyncStatus(state, detail = '') {
+    syncState = state;
+    if (!sidebarSyncStatus) return;
+    const labels = { syncing: 'Synchronisation en cours…', synced: 'Synchronisé', offline: 'Hors ligne', local: 'Mode local de prévisualisation' };
+    const icons = { syncing: '↻', synced: '✓', offline: '!', local: '•' };
+    sidebarSyncStatus.innerHTML = `<span class="sync-dot ${state}">${icons[state] || '•'}</span><span>${translateText(labels[state] || detail || '')}</span>`;
+    sidebarSyncStatus.title = detail || '';
+  }
+
+  async function flushCloudSave() {
+    clearTimeout(cloudSaveTimer);
+    cloudSaveTimer = null;
+    if (cloudLoadFailed) {
+      setSyncStatus('offline');
+      return false;
+    }
+    if (cloudHydrating || !window.AnimoaCloud?.available?.()) {
+      setSyncStatus(window.AnimoaAuth?.isLocalPreview?.() ? 'local' : 'offline');
+      return false;
+    }
+    setSyncStatus('syncing');
+    try {
+      await window.AnimoaCloud.saveBundle(data, settings);
+      setSyncStatus('synced');
+      return true;
+    } catch (error) {
+      console.warn('Synchronisation Animoa impossible', error);
+      setSyncStatus('offline', error.message || 'Synchronisation impossible');
+      showToast('Impossible de synchroniser les données. Elles restent enregistrées sur cet appareil.');
+      throw error;
+    }
+  }
+
+  function scheduleCloudSave() {
+    if (cloudLoadFailed) {
+      setSyncStatus('offline');
+      return;
+    }
+    if (cloudHydrating || !window.AnimoaCloud?.available?.()) {
+      setSyncStatus(window.AnimoaAuth?.isLocalPreview?.() ? 'local' : 'offline');
+      return;
+    }
+    clearTimeout(cloudSaveTimer);
+    setSyncStatus('syncing');
+    cloudSaveTimer = setTimeout(() => {
+      flushCloudSave().catch(() => {});
+    }, 250);
+  }
+
+  async function hydrateUserState() {
+    const userId = currentUserId();
+    if (userId) {
+      const userDataKey = `${STORAGE_KEY}:${userId}`;
+      const userSettingsKey = `${SETTINGS_KEY}:${userId}`;
+      const legacyClaimedBy = localStorage.getItem('animoa_legacy_migration_owner');
+
+      if (localStorage.getItem(userDataKey)) {
+        data = loadData();
+      } else if (!legacyClaimedBy && localStorage.getItem(STORAGE_KEY)) {
+        try {
+          data = normalizeData(JSON.parse(localStorage.getItem(STORAGE_KEY)));
+        } catch {
+          data = normalizeData(clone(defaultData));
+        }
+        localStorage.setItem(userDataKey, JSON.stringify(data));
+        localStorage.setItem('animoa_legacy_migration_owner', userId);
+        localStorage.removeItem(STORAGE_KEY);
+      } else {
+        data = normalizeData(clone(defaultData));
+        localStorage.setItem(userDataKey, JSON.stringify(data));
+      }
+
+      if (localStorage.getItem(userSettingsKey)) {
+        settings = loadSettings();
+      } else {
+        const canMigrateLegacySettings = !legacyClaimedBy && localStorage.getItem(SETTINGS_KEY);
+        if (canMigrateLegacySettings) {
+          try { settings = normalizeSettings(JSON.parse(localStorage.getItem(SETTINGS_KEY))); }
+          catch { settings = normalizeSettings(); }
+          localStorage.setItem('animoa_legacy_migration_owner', userId);
+          localStorage.removeItem(SETTINGS_KEY);
+        } else {
+          settings = normalizeSettings({ language: window.AnimoaI18n?.getLanguage?.() || 'fr', theme: 'system' });
+        }
+        localStorage.setItem(userSettingsKey, JSON.stringify(settings));
+      }
+    } else {
+      data = loadData();
+      settings = loadSettings();
+    }
+
+    if (!window.AnimoaCloud?.available?.()) {
+      setSyncStatus(window.AnimoaAuth?.isLocalPreview?.() ? 'local' : 'offline');
+      return;
+    }
+
+    setSyncStatus('syncing');
+    try {
+      const bundle = await window.AnimoaCloud.loadBundle();
+      const localTimestamp = localUpdatedAt();
+      const remoteTimestamp = bundle?.updated_at ? Date.parse(bundle.updated_at) : 0;
+      if (bundle?.data && localTimestamp > remoteTimestamp) {
+        await window.AnimoaCloud.saveBundle(data, settings);
+      } else if (bundle?.data) {
+        cloudHydrating = true;
+        data = normalizeData(bundle.data);
+        settings = normalizeSettings(bundle.settings || settings);
+        localStorage.setItem(storageKey(STORAGE_KEY), JSON.stringify(data));
+        localStorage.setItem(storageKey(SETTINGS_KEY), JSON.stringify(settings));
+        markLocalUpdated(Number.isFinite(remoteTimestamp) ? remoteTimestamp : Date.now());
+        cloudHydrating = false;
+      } else {
+        await window.AnimoaCloud.saveBundle(data, settings);
+      }
+      cloudLoadFailed = false;
+      setSyncStatus('synced');
+    } catch (error) {
+      cloudHydrating = false;
+      cloudLoadFailed = true;
+      console.warn('Chargement des données du compte impossible', error);
+      setSyncStatus('offline', error.message || 'Synchronisation impossible');
+    }
+  }
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
@@ -134,7 +326,7 @@
   function formatWeightNumber(valueKg, maximumFractionDigits = 2) {
     const displayed = displayWeightValue(valueKg);
     if (!Number.isFinite(displayed)) return '—';
-    return displayed.toLocaleString('fr-FR', { maximumFractionDigits });
+    return displayed.toLocaleString(appLocale(), { maximumFractionDigits });
   }
 
   function formatWeight(valueKg, maximumFractionDigits = 2) {
@@ -146,7 +338,7 @@
     if (!Number.isFinite(valueKg) || valueKg <= 0) throw new Error('Indique un poids valide.');
     if (valueKg < guide.min || valueKg > guide.max) {
       const limits = displayWeightLimits(species);
-      throw new Error(`Ce poids semble incohérent pour un ${guide.label}. Indique une valeur entre ${limits.min.toLocaleString('fr-FR', { maximumFractionDigits: 3 })} et ${limits.max.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} ${settings.weightUnit}.`);
+      throw new Error(`Ce poids semble incohérent pour un ${guide.label}. Indique une valeur entre ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} et ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.`);
     }
   }
 
@@ -207,12 +399,12 @@
 
   function loadData() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(storageKey(STORAGE_KEY));
       if (!saved) return normalizeData(clone(defaultData));
       const parsed = JSON.parse(saved);
       if (!parsed || !Array.isArray(parsed.pets)) return normalizeData(clone(defaultData));
       const normalized = normalizeData(parsed);
-      if (Number(parsed.version || 0) < 4) localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+      if (Number(parsed.version || 0) < 4) localStorage.setItem(storageKey(STORAGE_KEY), JSON.stringify(normalized));
       return normalized;
     } catch (error) {
       console.warn('Impossible de lire les données Animoa', error);
@@ -223,13 +415,15 @@
   function normalizeSettings(value = {}) {
     return {
       currency: SUPPORTED_CURRENCIES.has(value.currency) ? value.currency : 'EUR',
-      weightUnit: SUPPORTED_WEIGHT_UNITS.has(value.weightUnit) ? value.weightUnit : 'kg'
+      weightUnit: SUPPORTED_WEIGHT_UNITS.has(value.weightUnit) ? value.weightUnit : 'kg',
+      language: SUPPORTED_LANGUAGES.has(value.language) ? value.language : (window.AnimoaI18n?.getLanguage?.() || 'fr'),
+      theme: SUPPORTED_THEMES.has(value.theme) ? value.theme : 'system'
     };
   }
 
   function loadSettings() {
     try {
-      return normalizeSettings(JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'));
+      return normalizeSettings(JSON.parse(localStorage.getItem(storageKey(SETTINGS_KEY)) || '{}'));
     } catch {
       return normalizeSettings();
     }
@@ -237,8 +431,10 @@
 
   function saveData() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      localStorage.setItem(storageKey(STORAGE_KEY), JSON.stringify(data));
+      markLocalUpdated();
       updateReminderBadge();
+      scheduleCloudSave();
     } catch (error) {
       if (error?.name === 'QuotaExceededError' || error?.code === 22) {
         throw new Error('Le stockage local est plein. Les photos sont maintenant séparées des données ; recharge Animoa puis réessaie.');
@@ -249,7 +445,10 @@
 
   function saveSettings() {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      localStorage.setItem(storageKey(SETTINGS_KEY), JSON.stringify(settings));
+      markLocalUpdated();
+      applyPreferences();
+      scheduleCloudSave();
     } catch {
       throw new Error('Impossible d’enregistrer les paramètres.');
     }
@@ -271,7 +470,7 @@
     return mediaDbPromise;
   }
 
-  async function putMediaBlob(blob, id = uid('image')) {
+  async function putMediaBlob(blob, id = uid(`image-${currentUserId() || 'local'}`)) {
     const db = await openMediaDb();
     await new Promise((resolve, reject) => {
       const transaction = db.transaction(MEDIA_STORE_NAME, 'readwrite');
@@ -295,15 +494,25 @@
     });
   }
 
-  function mediaRefsFrom(sourceData = data) {
+  function allImageRefsFrom(sourceData = data) {
     return new Set(
-      [...(sourceData.pets || []), ...(sourceData.memories || [])]
-        .map((item) => item.image)
-        .filter((ref) => typeof ref === 'string' && ref.startsWith(MEDIA_PREFIX))
+      [...(sourceData.pets || []), ...(sourceData.memories || []), ...(sourceData.health || [])]
+        .flatMap((item) => [item.image, item.attachment])
+        .filter((ref) => typeof ref === 'string' && (ref.startsWith(MEDIA_PREFIX) || ref.startsWith(CLOUD_PREFIX)))
     );
   }
 
+  function mediaRefsFrom(sourceData = data) {
+    return new Set([...allImageRefsFrom(sourceData)].filter((ref) => ref.startsWith(MEDIA_PREFIX)));
+  }
+
   async function deleteMediaRef(ref) {
+    if (ref?.startsWith(CLOUD_PREFIX)) {
+      try { await window.AnimoaCloud?.deleteImage?.(ref); }
+      catch (error) { console.warn('Suppression de la photo distante impossible', error); }
+      mediaUrlCache.delete(ref);
+      return;
+    }
     if (!ref?.startsWith(MEDIA_PREFIX)) return;
     const id = ref.slice(MEDIA_PREFIX.length);
     try {
@@ -323,24 +532,20 @@
   }
 
   async function deleteMediaIfUnused(ref) {
-    if (!ref?.startsWith(MEDIA_PREFIX)) return;
-    if (!mediaRefsFrom().has(ref)) await deleteMediaRef(ref);
+    if (!ref || (!ref.startsWith(MEDIA_PREFIX) && !ref.startsWith(CLOUD_PREFIX))) return;
+    if (!allImageRefsFrom().has(ref)) await deleteMediaRef(ref);
   }
 
-  async function clearMediaStore() {
+  async function clearMediaStore(refsToDelete = []) {
+    const refs = [...new Set(refsToDelete.filter(Boolean))];
+    for (const ref of refs) await deleteMediaRef(ref);
     try {
-      const db = await openMediaDb();
-      await new Promise((resolve, reject) => {
-        const transaction = db.transaction(MEDIA_STORE_NAME, 'readwrite');
-        transaction.objectStore(MEDIA_STORE_NAME).clear();
-        transaction.oncomplete = resolve;
-        transaction.onerror = () => reject(transaction.error);
-      });
-      mediaUrlCache.forEach((url) => URL.revokeObjectURL(url));
-      mediaUrlCache.clear();
+      if (window.AnimoaCloud?.available?.()) await window.AnimoaCloud.clearUserImages();
     } catch (error) {
-      console.warn('Nettoyage des photos impossible', error);
+      console.warn('Nettoyage des photos distantes impossible', error);
     }
+    mediaUrlCache.forEach((url) => { if (String(url).startsWith('blob:')) URL.revokeObjectURL(url); });
+    mediaUrlCache.clear();
   }
 
 
@@ -354,8 +559,10 @@
         request.onsuccess = () => resolve(request.result || []);
         request.onerror = () => reject(request.error || new Error('Lecture des photos impossible.'));
       });
+      const namespacePrefix = `image-${currentUserId() || 'local'}-`;
       for (const id of storedIds) {
-        if (!usedIds.has(String(id))) await deleteMediaRef(`${MEDIA_PREFIX}${id}`);
+        const storedId = String(id);
+        if (storedId.startsWith(namespacePrefix) && !usedIds.has(storedId)) await deleteMediaRef(`${MEDIA_PREFIX}${storedId}`);
       }
     } catch (error) {
       console.warn('Nettoyage des anciennes photos impossible', error);
@@ -376,7 +583,27 @@
     });
   }
 
+  function detectedFileType(file) {
+    if (file?.type) return file.type;
+    const extension = String(file?.name || '').toLowerCase().split('.').pop();
+    const types = {
+      jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp',
+      gif: 'image/gif', heic: 'image/heic', heif: 'image/heif',
+      pdf: 'application/pdf', doc: 'application/msword',
+      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    };
+    return types[extension] || 'application/octet-stream';
+  }
+
+  function fileWithDetectedType(file) {
+    if (!file || file.type) return file;
+    const type = detectedFileType(file);
+    try { return new File([file], file.name || 'fichier', { type, lastModified: file.lastModified || Date.now() }); }
+    catch { return file.slice(0, file.size, type); }
+  }
+
   async function compressImage(file) {
+    file = fileWithDetectedType(file);
     if (!file) return null;
     if (!file.type.startsWith('image/')) throw new Error('Le fichier choisi n’est pas une image.');
     if (file.size > 20 * 1024 * 1024) throw new Error('Cette image est trop volumineuse. Choisis une photo de moins de 20 Mo.');
@@ -400,20 +627,50 @@
     return blob;
   }
 
-  async function fileToMediaRef(file) {
-    if (!file) return null;
-    const blob = await compressImage(file);
+  async function storeBlob(blob, fileName = 'image.webp') {
+    let cloudError = null;
+    try {
+      const cloudRef = await window.AnimoaCloud?.uploadFile?.(blob, fileName);
+      if (cloudRef) return cloudRef;
+    } catch (error) {
+      cloudError = error;
+      console.warn('Stockage distant indisponible, conservation locale', error);
+    }
     try {
       return await putMediaBlob(blob);
-    } catch (error) {
+    } catch (localError) {
       const fallback = await blobToDataUrl(blob);
-      if (fallback.length > 650000) throw error;
+      if (fallback.length > 650000) throw (cloudError || localError);
       return fallback;
     }
   }
 
+  async function fileToMediaRef(file) {
+    if (!file) return null;
+    const blob = await compressImage(file);
+    return storeBlob(blob, 'image.webp');
+  }
+
+  async function fileToAttachmentRef(file) {
+    if (!file) return null;
+    const preparedFile = fileWithDetectedType(file);
+    if (preparedFile.size > 15 * 1024 * 1024) throw new Error('Ce fichier est trop volumineux. Choisis un fichier de moins de 15 Mo.');
+    if (preparedFile.type.startsWith('image/')) return fileToMediaRef(preparedFile);
+    return storeBlob(preparedFile, file.name || 'document.bin');
+  }
+
   async function resolveImageRef(ref) {
     if (!ref) return placeholderImage;
+    if (ref.startsWith(CLOUD_PREFIX)) {
+      try {
+        const url = await window.AnimoaCloud?.getImageUrl?.(ref);
+        if (!url) return placeholderImage;
+        return url;
+      } catch (error) {
+        console.warn('Photo Animoa distante indisponible', error);
+        return placeholderImage;
+      }
+    }
     if (!ref.startsWith(MEDIA_PREFIX)) return ref;
     if (mediaUrlCache.has(ref)) return mediaUrlCache.get(ref);
     try {
@@ -453,17 +710,57 @@
       try {
         const sourceBlob = await dataUrlToBlob(item.image);
         const compactBlob = await compressImage(sourceBlob);
-        try {
-          item.image = await putMediaBlob(compactBlob);
-        } catch {
-          item.image = await blobToDataUrl(compactBlob);
-        }
+        item.image = await storeBlob(compactBlob, 'image.webp');
         changed = true;
       } catch (error) {
         console.warn('Migration d’une ancienne photo impossible', error);
       }
     }
     if (changed) saveData();
+  }
+
+  async function migrateLocalMediaToCloud() {
+    if (!window.AnimoaCloud?.available?.()) return;
+    const targets = [
+      ...data.pets.map((item) => ({ item, field: 'image', fileName: 'image.webp' })),
+      ...data.memories.map((item) => ({ item, field: 'image', fileName: 'image.webp' })),
+      ...data.health.map((item) => ({ item, field: 'attachment', fileName: item.attachmentName || 'document.bin' }))
+    ].filter(({ item, field }) => typeof item[field] === 'string' && item[field].startsWith(MEDIA_PREFIX));
+    if (!targets.length) return;
+
+    const uploadedByLocalRef = new Map();
+    const replacements = [];
+    for (const target of targets) {
+      const localRef = target.item[target.field];
+      try {
+        let cloudRef = uploadedByLocalRef.get(localRef);
+        if (!cloudRef) {
+          const blob = await getMediaBlob(localRef);
+          if (!blob) continue;
+          const fileName = blob.type === 'image/webp' ? 'image.webp' : target.fileName;
+          cloudRef = await window.AnimoaCloud.uploadFile(blob, fileName);
+          if (!cloudRef) continue;
+          uploadedByLocalRef.set(localRef, cloudRef);
+        }
+        replacements.push({ target, localRef, cloudRef });
+        target.item[target.field] = cloudRef;
+      } catch (error) {
+        console.warn('Synchronisation d’un ancien fichier impossible', error);
+      }
+    }
+    if (!replacements.length) return;
+
+    try {
+      saveData();
+      await window.AnimoaCloud.saveBundle(data, settings);
+      setSyncStatus('synced');
+      for (const localRef of new Set(replacements.map((entry) => entry.localRef))) await deleteMediaRef(localRef);
+    } catch (error) {
+      for (const { target, localRef } of replacements) target.item[target.field] = localRef;
+      localStorage.setItem(storageKey(STORAGE_KEY), JSON.stringify(data));
+      for (const cloudRef of new Set(replacements.map((entry) => entry.cloudRef))) await deleteMediaRef(cloudRef);
+      console.warn('Migration des fichiers locaux vers le compte incomplète', error);
+    }
   }
 
   function uid(prefix) {
@@ -499,7 +796,7 @@
     if (!value) return 'Non renseigné';
     const date = new Date(`${value}T12:00:00`);
     if (Number.isNaN(date.getTime())) return value;
-    return new Intl.DateTimeFormat('fr-FR', options.short
+    return new Intl.DateTimeFormat(appLocale(), options.short
       ? { day: '2-digit', month: '2-digit', year: 'numeric' }
       : { day: 'numeric', month: 'long', year: 'numeric' }
     ).format(date);
@@ -542,7 +839,7 @@
   function daysUntil(dateValue) {
     const today = new Date(`${todayIso()}T12:00:00`);
     const target = new Date(`${dateValue}T12:00:00`);
-    return Math.ceil((target - today) / 86400000);
+    return Math.ceil((target.getTime() - today.getTime()) / 86400000);
   }
 
   function ageText(dateValue) {
@@ -560,7 +857,7 @@
   }
 
   function formatCurrency(value) {
-    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: settings.currency }).format(Number(value || 0));
+    return new Intl.NumberFormat(appLocale(), { style: 'currency', currency: settings.currency }).format(Number(value || 0));
   }
 
   function latestByDate(items) {
@@ -618,7 +915,7 @@
   }
 
   function showToast(message) {
-    toast.textContent = message;
+    toast.textContent = translateText(message);
     toast.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
@@ -666,10 +963,13 @@
     mobileNav.innerHTML = `
       ${navButton(navItems[0], 'mobile')}
       ${navButton(navItems[1], 'mobile')}
-      <button class="nav-button add" data-action="open-add" aria-label="Ajouter"><img src="assets/animoa-action-paw.svg" alt="" /></button>
+      <button class="nav-button add" data-action="open-add" aria-label="Ajouter"><img src="assets/animoa-icon-official.png" alt="" /></button>
       ${navButton(navItems[2], 'mobile')}
       ${navButton(navItems[3], 'mobile')}
     `;
+    translateTree(desktopNav);
+    translateTree(drawerNav);
+    translateTree(mobileNav);
   }
 
   function navButton(item, mode) {
@@ -707,6 +1007,10 @@
     const render = pages[currentPage] || renderHome;
     mainContent.innerHTML = render();
     renderPetContexts();
+    translateTree(mainContent);
+    translateTree(petContextBar);
+    translateTree(sidebarPetContext);
+    translateTree(drawerPetContext);
     hydrateImages(mainContent);
     mainContent.classList.remove('page-refresh');
     requestAnimationFrame(() => mainContent.classList.add('page-refresh'));
@@ -913,6 +1217,7 @@
       ? view.items.map(renderHealthItem).join('')
       : emptyList(`Aucune information dans « ${view.selectedLabel} ».`);
 
+    [filterLabel, filterCount, listTitle, listCount, list].forEach((node) => translateTree(node));
     tabs.scrollLeft = preservedScrollLeft;
     healthTabsScrollLeft = preservedScrollLeft;
     updateHealthScrollButtons();
@@ -1099,7 +1404,7 @@
       ctx.strokeStyle = primary; ctx.lineWidth = 3; ctx.stroke();
       ctx.fillStyle = muted; ctx.textAlign = 'center';
       const date = new Date(`${item.date}T12:00:00`);
-      ctx.fillText(new Intl.DateTimeFormat('fr-FR', { month: 'short' }).format(date), x, height - 10);
+      ctx.fillText(new Intl.DateTimeFormat(appLocale(), { month: 'short' }).format(date), x, height - 10);
     });
   }
 
@@ -1170,22 +1475,31 @@
 
 
   function renderSettings() {
+    const user = window.AnimoaAuth?.getUser?.();
+    const cloudEnabled = window.AnimoaCloud?.available?.();
     return `
       <div class="page-stack">
         <div class="page-header"><div><p class="eyebrow">Application</p><h1>Paramètres</h1><p>Seulement les réglages réellement utiles.</p></div></div>
-        <article class="card card-pad">
-          <div class="form-grid">
+        <article class="card card-pad settings-section">
+          <div class="card-title-row"><div><p class="eyebrow">Préférences</p><h2>Affichage et unités</h2></div></div>
+          <div class="form-grid settings-grid">
+            <div class="form-row"><label for="languageSetting">Langue</label><select id="languageSetting"><option value="fr" ${settings.language === 'fr' ? 'selected' : ''}>Français</option><option value="en" ${settings.language === 'en' ? 'selected' : ''}>English</option></select></div>
+            <div class="form-row"><label for="themeSetting">Apparence</label><select id="themeSetting"><option value="system" ${settings.theme === 'system' ? 'selected' : ''}>Système</option><option value="light" ${settings.theme === 'light' ? 'selected' : ''}>Clair</option><option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>Sombre</option></select></div>
             <div class="form-row"><label for="currencySetting">Devise</label><select id="currencySetting"><option value="EUR" ${settings.currency === 'EUR' ? 'selected' : ''}>Euro (€)</option><option value="CHF" ${settings.currency === 'CHF' ? 'selected' : ''}>Franc suisse (CHF)</option><option value="CAD" ${settings.currency === 'CAD' ? 'selected' : ''}>Dollar canadien (CAD)</option></select></div>
             <div class="form-row"><label for="weightSetting">Unité de poids</label><select id="weightSetting"><option value="kg" ${settings.weightUnit === 'kg' ? 'selected' : ''}>Kilogrammes (kg)</option><option value="lb" ${settings.weightUnit === 'lb' ? 'selected' : ''}>Livres (lb)</option></select></div>
             <div class="button-row"><button class="primary-button" data-action="save-settings">Enregistrer</button></div>
           </div>
         </article>
-        <article class="card card-pad">
-          <h2 style="margin-top:0">Effacer les données</h2>
-          <p class="chart-caption">Cette action supprime les compagnons et toutes les informations enregistrées dans ce navigateur.</p>
+        <article class="card card-pad account-card">
+          <img src="assets/animoa-icon-official.png" alt="" class="account-logo" />
+          <div class="account-copy"><p class="eyebrow">Compte</p><h2>${escapeHtml(user?.email || (window.AnimoaAuth?.isLocalPreview?.() ? 'Mode local de prévisualisation' : 'Animoa'))}</h2><p>${cloudEnabled ? 'Les données de ce compte sont synchronisées avec Supabase.' : 'Les données restent uniquement dans ce navigateur.'}</p><span class="account-sync ${syncState}">${cloudEnabled ? 'Synchronisation sécurisée activée' : 'Mode local de prévisualisation'}</span></div>
+          <button class="secondary-button" data-action="logout">Se déconnecter</button>
+        </article>
+        <article class="card card-pad danger-zone">
+          <div><p class="eyebrow danger-eyebrow">Données enregistrées</p><h2>Effacer toutes les données</h2><p>Cette action supprime le carnet et les photos de ce compte.</p></div>
           <button class="danger-button" data-action="reset-data">Effacer toutes les données</button>
         </article>
-        <div class="settings-note"><strong>Animoa</strong><br />Toute sa vie, près de vous.<br /><br />Prototype sans compte : les données restent uniquement dans ce navigateur.</div>
+        <div class="settings-note"><img src="assets/animoa-wordmark-official.png" alt="Animoa" /><p><strong>Animoa</strong><br />Toute sa vie, près de vous.</p></div>
       </div>`;
   }
 
@@ -1229,6 +1543,7 @@
     modalTitle.textContent = title;
     modalEyebrow.textContent = eyebrow;
     modalBody.innerHTML = body;
+    translateTree(modal);
     hydrateImages(modalBody);
     modalBackdrop.hidden = false;
     modal.setAttribute('aria-hidden', 'false');
@@ -1291,11 +1606,12 @@
     const min = status === 'planned' ? todayIso() : '';
     const max = status === 'done' ? todayIso() : '';
     return `<form id="healthForm" class="form-grid" data-editing="${item?.id || ''}">
-      <div class="form-row"><label for="healthType">Type</label><select id="healthType" name="type" required>${['Vaccin','Rendez-vous','Traitement','Médicament','Analyse','Document','Autre'].map((type) => `<option ${optionSelected(selectedType, type)}>${type}</option>`).join('')}</select></div>
+      <div class="form-row"><label for="healthType">Type</label><select id="healthType" name="type" required>${['Vaccin','Rendez-vous','Traitement','Médicament','Analyse','Document','Autre'].map((type) => `<option value="${type}" ${optionSelected(selectedType, type)}>${type}</option>`).join('')}</select></div>
       <div class="form-row"><label for="healthTitle">Titre</label><input id="healthTitle" name="title" required value="${escapeHtml(item?.title || '')}" placeholder="Ex. Rappel annuel" /></div>
       <div class="form-columns"><div class="form-row"><label for="healthDate">Date</label><input id="healthDate" name="date" type="date" value="${date}" ${min ? `min="${min}"` : ''} ${max ? `max="${max}"` : ''} required /><span id="healthDateHelp" class="form-help"></span></div><div class="form-row"><label for="healthStatus">État</label><select id="healthStatus" name="status"><option value="planned" ${optionSelected(status, 'planned')}>À venir</option><option value="done" ${optionSelected(status, 'done')}>Effectué</option></select></div></div>
       <div class="form-row"><label for="healthProfessional">Vétérinaire ou professionnel</label><input id="healthProfessional" name="professional" value="${escapeHtml(item?.professional || '')}" placeholder="Facultatif" /></div>
       <div class="form-row"><label for="healthNote">Note</label><textarea id="healthNote" name="note" placeholder="Informations utiles">${escapeHtml(item?.note || '')}</textarea></div>
+      ${filePicker('healthAttachment', 'attachment', Boolean(item?.attachment), item?.attachment ? 'Laisse vide pour conserver le fichier actuel.' : 'Ajoute une image ou un document utile.', 'image/*,.pdf,.doc,.docx')}
       <label class="checkbox-row"><input name="reminder" type="checkbox" ${item ? (item.reminder ? 'checked' : '') : 'checked'} /> Créer un rappel dans Animoa</label>
       <button class="primary-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer'}</button>
     </form>`;
@@ -1306,7 +1622,7 @@
     const categories = ['Nourriture','Vétérinaire','Médicaments','Toilettage','Jouets','Accessoires','Assurance','Autre'];
     return `<form id="expenseForm" class="form-grid" data-editing="${item?.id || ''}">
       <div class="form-columns"><div class="form-row"><label for="expenseAmount">Montant</label><input id="expenseAmount" name="amount" type="number" min="0" step="0.01" inputmode="decimal" required value="${item?.amount ?? ''}" placeholder="0,00" /></div><div class="form-row"><label for="expenseDate">Date</label><input id="expenseDate" name="date" type="date" value="${item?.date || todayIso()}" max="${todayIso()}" required /></div></div>
-      <div class="form-row"><label for="expenseCategory">Catégorie</label><select id="expenseCategory" name="category">${categories.map((category) => `<option ${optionSelected(item?.category, category)}>${category}</option>`).join('')}</select></div>
+      <div class="form-row"><label for="expenseCategory">Catégorie</label><select id="expenseCategory" name="category">${categories.map((category) => `<option value="${category}" ${optionSelected(item?.category, category)}>${category}</option>`).join('')}</select></div>
       <div class="form-row"><label for="expenseNote">Description</label><input id="expenseNote" name="note" value="${escapeHtml(item?.note || '')}" placeholder="Ex. Croquettes" /></div>
       <button class="primary-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer la dépense'}</button>
     </form>`;
@@ -1317,10 +1633,18 @@
     const limits = displayWeightLimits(pet?.species || 'Autre');
     const value = item ? displayWeightValue(weightValueKg(item)) : '';
     return `<form id="weightForm" class="form-grid" data-editing="${item?.id || ''}">
-      <div class="form-columns"><div class="form-row"><label for="weightValue">Poids (${settings.weightUnit})</label><input id="weightValue" name="value" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" inputmode="decimal" required value="${value ?? ''}" placeholder="0,0" /><span class="form-help">Pour un ${limits.label}, valeur admise : ${limits.min.toLocaleString('fr-FR', { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div><div class="form-row"><label for="weightDate">Date</label><input id="weightDate" name="date" type="date" value="${item?.date || todayIso()}" max="${todayIso()}" required /></div></div>
+      <div class="form-columns"><div class="form-row"><label for="weightValue">Poids (${settings.weightUnit})</label><input id="weightValue" name="value" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" inputmode="decimal" required value="${value ?? ''}" placeholder="0,0" /><span class="form-help">Pour un ${limits.label}, valeur admise : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div><div class="form-row"><label for="weightDate">Date</label><input id="weightDate" name="date" type="date" value="${item?.date || todayIso()}" max="${todayIso()}" required /></div></div>
       <div class="form-row"><label for="weightNote">Note</label><input id="weightNote" name="note" value="${escapeHtml(item?.note || '')}" placeholder="Facultatif" /></div>
       <button class="primary-button" type="submit">${item ? 'Enregistrer les modifications' : 'Enregistrer le poids'}</button>
     </form>`;
+  }
+
+  function filePicker(fieldId, name, hasExisting, helpText, accept = "image/*") {
+    const isAttachment = name === 'attachment';
+    const actionLabel = isAttachment
+      ? (hasExisting ? 'Remplacer le fichier ou l’image' : 'Ajouter un fichier ou une image')
+      : (hasExisting ? 'Remplacer la photo' : 'Ajouter une photo');
+    return `<div class="form-row file-picker-row"><label>${name === 'attachment' ? 'Fichier ou image' : 'Photo'}</label><div class="file-picker"><input class="file-picker-input" id="${fieldId}" name="${name}" type="file" accept="${accept}" /><label class="file-picker-button" for="${fieldId}"><img src="assets/animoa-icon-official.png" alt="" /><span>${actionLabel}</span></label><span class="file-picker-name">Aucun fichier sélectionné</span></div><span class="form-help">${helpText}</span></div>`;
   }
 
   function memoryForm(item = null) {
@@ -1328,8 +1652,8 @@
     const types = ['Moment important','Première fois','Anniversaire','Anecdote'];
     return `<form id="memoryForm" class="form-grid" data-editing="${item?.id || ''}">
       <div class="form-row"><label for="memoryTitle">Titre</label><input id="memoryTitle" name="title" required value="${escapeHtml(item?.title || '')}" placeholder="Ex. Première baignade" /></div>
-      <div class="form-columns"><div class="form-row"><label for="memoryDate">Date</label><input id="memoryDate" name="date" type="date" value="${item?.date || todayIso()}" max="${todayIso()}" required /></div><div class="form-row"><label for="memoryType">Type</label><select id="memoryType" name="type">${types.map((type) => `<option ${optionSelected(item?.type, type)}>${type}</option>`).join('')}</select></div></div>
-      <div class="form-row"><label for="memoryPhoto">Photo</label><input id="memoryPhoto" name="photo" type="file" accept="image/*" /><span class="form-help">${editing ? 'Laisse vide pour conserver la photo actuelle.' : 'La photo est automatiquement allégée puis stockée séparément.'}</span></div>
+      <div class="form-columns"><div class="form-row"><label for="memoryDate">Date</label><input id="memoryDate" name="date" type="date" value="${item?.date || todayIso()}" max="${todayIso()}" required /></div><div class="form-row"><label for="memoryType">Type</label><select id="memoryType" name="type">${types.map((type) => `<option value="${type}" ${optionSelected(item?.type, type)}>${type}</option>`).join('')}</select></div></div>
+      ${filePicker('memoryPhoto', 'photo', editing, editing ? 'Laisse vide pour conserver la photo actuelle.' : 'La photo est automatiquement allégée puis stockée séparément.')}
       <div class="form-row"><label for="memoryNote">Anecdote</label><textarea id="memoryNote" name="note" placeholder="Raconte ce moment...">${escapeHtml(item?.note || '')}</textarea></div>
       <label class="checkbox-row"><input name="favorite" type="checkbox" ${item?.favorite ? 'checked' : ''} /> Ajouter aux favoris</label>
       <button class="primary-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer le souvenir'}</button>
@@ -1344,10 +1668,10 @@
     const limits = displayWeightLimits(species);
     return `<form id="petForm" class="form-grid" data-editing="${editing ? pet.id : ''}" data-weight-id="${latestWeight?.id || ''}" data-original-weight="${currentWeight ?? ''}" data-original-weight-date="${latestWeight?.date || ''}">
       <div class="form-row"><label for="petName">Nom</label><input id="petName" name="name" required value="${escapeHtml(pet?.name || '')}" placeholder="Ex. Milo" /></div>
-      <div class="form-columns desktop-three"><div class="form-row"><label for="petSpecies">Espèce</label><select id="petSpecies" name="species"><option ${optionSelected(species, 'Chien')}>Chien</option><option ${optionSelected(species, 'Chat')}>Chat</option><option ${optionSelected(species, 'Lapin')}>Lapin</option><option ${optionSelected(species, 'Oiseau')}>Oiseau</option><option ${optionSelected(species, 'Autre')}>Autre</option></select></div><div class="form-row"><label for="petBreed">Race, variété ou type</label><input id="petBreed" name="breed" value="${escapeHtml(pet?.breed || '')}" /></div><div class="form-row"><label for="petSex">Sexe</label><select id="petSex" name="sex"><option value="Non renseigné" ${optionSelected(pet?.sex || 'Non renseigné', 'Non renseigné')}>Non renseigné</option><option ${optionSelected(pet?.sex, 'Femelle')}>Femelle</option><option ${optionSelected(pet?.sex, 'Mâle')}>Mâle</option></select></div></div>
+      <div class="form-columns desktop-three"><div class="form-row"><label for="petSpecies">Espèce</label><select id="petSpecies" name="species"><option value="Chien" ${optionSelected(species, 'Chien')}>Chien</option><option value="Chat" ${optionSelected(species, 'Chat')}>Chat</option><option value="Lapin" ${optionSelected(species, 'Lapin')}>Lapin</option><option value="Oiseau" ${optionSelected(species, 'Oiseau')}>Oiseau</option><option value="Autre" ${optionSelected(species, 'Autre')}>Autre</option></select></div><div class="form-row"><label for="petBreed">Race, variété ou type</label><input id="petBreed" name="breed" value="${escapeHtml(pet?.breed || '')}" /></div><div class="form-row"><label for="petSex">Sexe</label><select id="petSex" name="sex"><option value="Non renseigné" ${optionSelected(pet?.sex || 'Non renseigné', 'Non renseigné')}>Non renseigné</option><option value="Femelle" ${optionSelected(pet?.sex, 'Femelle')}>Femelle</option><option value="Mâle" ${optionSelected(pet?.sex, 'Mâle')}>Mâle</option></select></div></div>
       <div class="form-columns"><div class="form-row"><label for="petBirth">Date de naissance</label><input id="petBirth" name="birthDate" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="JJ/MM/AAAA" value="${escapeHtml(isoDateToFrench(pet?.birthDate || ''))}" aria-describedby="petBirthHelp" /><span id="petBirthHelp" class="form-help">Écris directement les 8 chiffres, par exemple 15062009.</span></div><div class="form-row"><label for="petColor">Couleur</label><input id="petColor" name="color" value="${escapeHtml(pet?.color || '')}" /></div></div>
-      <div class="weight-profile-box"><div><strong>Poids actuel</strong><span>Cette valeur reste liée à l’historique de poids.</span></div><div class="form-columns"><div class="form-row"><label for="petCurrentWeight">Poids (${settings.weightUnit})</label><input id="petCurrentWeight" name="currentWeight" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" value="${currentWeight ?? ''}" placeholder="Facultatif" /></div><div class="form-row"><label for="petCurrentWeightDate">Date de pesée</label><input id="petCurrentWeightDate" name="currentWeightDate" type="date" max="${todayIso()}" value="${latestWeight?.date || todayIso()}" /></div></div><span id="petWeightGuide" class="form-help">Pour un ${limits.label} : ${limits.min.toLocaleString('fr-FR', { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div>
-      <div class="form-row"><label for="petPhoto">Photo</label><input id="petPhoto" name="photo" type="file" accept="image/*" /><span class="form-help">Laisse vide pour conserver la photo actuelle. La nouvelle photo sera automatiquement allégée.</span></div>
+      <div class="weight-profile-box"><div><strong>Poids actuel</strong><span>Cette valeur reste liée à l’historique de poids.</span></div><div class="form-columns"><div class="form-row"><label for="petCurrentWeight">Poids (${settings.weightUnit})</label><input id="petCurrentWeight" name="currentWeight" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" value="${currentWeight ?? ''}" placeholder="Facultatif" /></div><div class="form-row"><label for="petCurrentWeightDate">Date de pesée</label><input id="petCurrentWeightDate" name="currentWeightDate" type="date" max="${todayIso()}" value="${latestWeight?.date || todayIso()}" /></div></div><span id="petWeightGuide" class="form-help">Pour un ${limits.label} : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div>
+      ${filePicker('petPhoto', 'photo', editing, 'Laisse vide pour conserver la photo actuelle. La nouvelle photo sera automatiquement allégée.')}
       <div class="form-row"><label for="petIdentification">Identification</label><input id="petIdentification" name="identification" value="${escapeHtml(pet?.identification || '')}" placeholder="Puce, tatouage..." /></div>
       <div class="form-row"><label for="petAllergies">Allergies</label><input id="petAllergies" name="allergies" value="${escapeHtml(pet?.allergies || '')}" /></div>
       <div class="form-row"><label for="petImportant">Informations importantes</label><textarea id="petImportant" name="importantInfo">${escapeHtml(pet?.importantInfo || '')}</textarea></div>
@@ -1358,6 +1682,7 @@
   async function handleFormSubmit(form) {
     const formData = new FormData(form);
     const snapshot = clone(data);
+    const createdMediaRefs = [];
     const submitButton = form.querySelector('[type="submit"]');
     const originalLabel = submitButton?.textContent;
     if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Enregistrement…'; }
@@ -1366,6 +1691,14 @@
         const status = String(formData.get('status'));
         const date = String(formData.get('date'));
         validateHealthDate(status, date);
+        const existing = data.health.find((item) => item.id === form.dataset.editing);
+        const attachmentFile = form.querySelector('[name="attachment"]')?.files?.[0];
+        const oldAttachment = existing?.attachment;
+        let attachment = oldAttachment || '';
+        if (attachmentFile) {
+          attachment = await fileToAttachmentRef(attachmentFile);
+          if (attachment && attachment !== oldAttachment) createdMediaRefs.push(attachment);
+        }
         const record = {
           petId: activePet().id,
           type: normalizeHealthType(formData.get('type')),
@@ -1374,12 +1707,16 @@
           status,
           professional: String(formData.get('professional') || '').trim(),
           note: String(formData.get('note') || '').trim(),
+          attachment,
+          attachmentName: attachmentFile?.name || existing?.attachmentName || '',
+          attachmentType: attachmentFile ? detectedFileType(attachmentFile) : (existing?.attachmentType || ''),
           reminder: formData.get('reminder') === 'on'
         };
-        const existing = data.health.find((item) => item.id === form.dataset.editing);
         if (existing) Object.assign(existing, record); else data.health.push({ id: uid('health'), ...record });
         currentHealthFilter = record.type;
-        saveData(); closeModal(); setPage('health'); showToast(existing ? 'Information de santé modifiée.' : 'Information de santé enregistrée.');
+        saveData();
+        if (existing && attachmentFile && oldAttachment !== attachment) await deleteMediaIfUnused(oldAttachment);
+        closeModal(); setPage('health'); showToast(existing ? 'Information de santé modifiée.' : 'Information de santé enregistrée.');
       }
 
       if (form.id === 'expenseForm') {
@@ -1411,6 +1748,7 @@
         const file = form.querySelector('[name="photo"]').files[0];
         const oldImage = existing?.image;
         const image = await fileToMediaRef(file) || oldImage || placeholderImage;
+        if (file && image !== oldImage) createdMediaRefs.push(image);
         const record = { petId: activePet().id, title: requiredText(formData.get('title'), 'un titre'), date, type: formData.get('type'), note: String(formData.get('note') || '').trim(), image, favorite: formData.get('favorite') === 'on' };
         if (existing) Object.assign(existing, record); else data.memories.push({ id: uid('memory'), ...record });
         saveData();
@@ -1424,6 +1762,7 @@
         const file = form.querySelector('[name="photo"]').files[0];
         const oldImage = existing?.image;
         const image = await fileToMediaRef(file) || oldImage || placeholderImage;
+        if (file && image !== oldImage) createdMediaRefs.push(image);
         const species = String(formData.get('species'));
         const birthDate = parseFrenchDate(formData.get('birthDate'), 'La date de naissance');
         validatePastOrToday(birthDate, 'La date de naissance');
@@ -1455,6 +1794,10 @@
       }
     } catch (error) {
       data = snapshot;
+      const snapshotRefs = allImageRefsFrom(snapshot);
+      for (const ref of createdMediaRefs) {
+        if (!snapshotRefs.has(ref)) await deleteMediaRef(ref);
+      }
       renderPage();
       showToast(error.message || 'Une erreur est survenue.');
     } finally {
@@ -1489,8 +1832,9 @@
     if (!pet) return showToast('Cet animal n’existe plus.');
     const snapshot = clone(data);
     const memoriesToDelete = data.memories.filter((item) => item.petId === petId);
-    const mediaRefs = [pet.image, ...memoriesToDelete.map((item) => item.image)]
-      .filter((ref) => typeof ref === 'string' && ref.startsWith(MEDIA_PREFIX));
+    const healthToDelete = data.health.filter((item) => item.petId === petId);
+    const mediaRefs = [pet.image, ...memoriesToDelete.map((item) => item.image), ...healthToDelete.map((item) => item.attachment)]
+      .filter((ref) => typeof ref === 'string' && (ref.startsWith(MEDIA_PREFIX) || ref.startsWith(CLOUD_PREFIX)));
 
     try {
       data.pets = data.pets.filter((item) => item.id !== petId);
@@ -1507,7 +1851,7 @@
       renderPage();
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      const stillUsed = new Set([...data.pets, ...data.memories].map((item) => item.image));
+      const stillUsed = allImageRefsFrom(data);
       await Promise.all(mediaRefs.filter((ref) => !stillUsed.has(ref)).map(deleteMediaRef));
       showToast(`${pet.name} a été supprimé.`);
     } catch (error) {
@@ -1527,6 +1871,7 @@
         <p class="eyebrow">${escapeHtml(normalizeHealthType(item.type))}</p>
         <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong><span>État</span><strong>${status}</strong><span>Professionnel</span><strong>${escapeHtml(item.professional || 'Non renseigné')}</strong></div>
         <p>${escapeHtml(item.note || 'Aucune note.')}</p>
+        ${item.attachment ? `<button class="attachment-preview" data-action="open-attachment" data-image-ref="${escapeHtml(item.attachment)}" data-file-type="${escapeHtml(item.attachmentType || '')}" data-file-name="${escapeHtml(item.attachmentName || 'Fichier joint')}"><span>${item.attachmentType?.startsWith('image/') ? '🖼️' : '📎'}</span><span>${escapeHtml(item.attachmentName || 'Voir le fichier ou l’image')}</span></button>` : ''}
         <div class="record-detail-actions"><button class="secondary-button" data-action="edit-health-record" data-record-id="${item.id}">Modifier</button><button class="danger-button" data-action="request-delete-record" data-collection="health" data-record-id="${item.id}" data-label="cette information de santé" data-return-page="health">Supprimer</button></div>
       </div>`, 'Santé');
   }
@@ -1566,10 +1911,8 @@
     try {
       data[collection] = data[collection].filter((record) => record.id !== recordId);
       saveData();
-      if (collection === 'memories' && item.image?.startsWith(MEDIA_PREFIX)) {
-        const stillUsed = [...data.pets, ...data.memories].some((record) => record.image === item.image);
-        if (!stillUsed) await deleteMediaRef(item.image);
-      }
+      const mediaToDelete = [item.image, item.attachment].filter(Boolean);
+      for (const ref of mediaToDelete) if (!allImageRefsFrom(data).has(ref)) await deleteMediaRef(ref);
       closeModal();
       setPage(returnPage || currentPage);
       showToast('Élément supprimé.');
@@ -1589,12 +1932,12 @@
       date.min = today;
       date.removeAttribute('max');
       if (adjustValue && date.value < today) date.value = today;
-      if (help) help.textContent = 'Une information à venir doit être datée d’aujourd’hui ou plus tard.';
+      if (help) help.textContent = translateText('Une information à venir doit être datée d’aujourd’hui ou plus tard.');
     } else {
       date.max = today;
       date.removeAttribute('min');
       if (adjustValue && date.value > today) date.value = today;
-      if (help) help.textContent = 'Une information effectuée doit être datée d’aujourd’hui ou d’une date passée.';
+      if (help) help.textContent = translateText('Une information effectuée doit être datée d’aujourd’hui ou d’une date passée.');
     }
   }
 
@@ -1607,7 +1950,7 @@
     weightField.min = String(limits.min);
     weightField.max = String(limits.max);
     weightField.step = String(limits.step);
-    if (guideField) guideField.textContent = `Pour un ${limits.label} : ${limits.min.toLocaleString('fr-FR', { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString('fr-FR', { maximumFractionDigits: 1 })} ${settings.weightUnit}.`;
+    if (guideField) guideField.textContent = translateText(`Pour un ${limits.label} : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.`);
   }
 
   function restoreHealthTabsPosition() {
@@ -1683,12 +2026,13 @@
   async function resetAnimoa() {
     const snapshot = clone(data);
     const settingsSnapshot = { ...settings };
+    const mediaRefsToDelete = [...allImageRefsFrom(data)];
     try {
       data = normalizeData(clone(defaultData));
-      settings = normalizeSettings();
+      settings = normalizeSettings({ language: settings.language, theme: settings.theme });
       saveData();
       saveSettings();
-      await clearMediaStore();
+      await clearMediaStore(mediaRefsToDelete);
       closeModal();
       setPage('home');
       showToast('Toutes les données ont été effacées.');
@@ -1700,7 +2044,7 @@
     }
   }
 
-  document.addEventListener('click', (event) => {
+  document.addEventListener('click', async (event) => {
     const target = event.target.closest('button, [data-page], [data-add]');
     if (!target) return;
 
@@ -1742,7 +2086,27 @@
     if (action === 'save-settings') {
       settings.currency = document.getElementById('currencySetting').value;
       settings.weightUnit = document.getElementById('weightSetting').value;
-      saveSettings(); renderPage(); showToast('Paramètres enregistrés.');
+      settings.language = document.getElementById('languageSetting').value;
+      settings.theme = document.getElementById('themeSetting').value;
+      saveSettings(); renderNavigation(); renderPage(); showToast('Paramètres enregistrés.');
+    }
+    if (action === 'logout') {
+      try { await flushCloudSave(); } catch {}
+      try { await window.AnimoaAuth?.signOut?.(); }
+      catch (error) { showToast(error.message || 'Déconnexion impossible.'); }
+    }
+    if (action === 'open-attachment') {
+      const ref = target.dataset.imageRef;
+      const fileType = target.dataset.fileType || '';
+      const fileName = target.dataset.fileName || 'Fichier joint';
+      resolveImageRef(ref).then((src) => {
+        if (fileType.startsWith('image/') || !fileType) {
+          openModal(fileName, `<img src="${escapeHtml(src)}" alt="${escapeHtml(fileName)}" class="attachment-full" />`, 'Santé');
+        } else {
+          const opened = window.open(src, '_blank', 'noopener,noreferrer');
+          if (!opened) showToast('Autorise l’ouverture du fichier dans ton navigateur.');
+        }
+      });
     }
     if (action === 'reset-data') requestResetAnimoa();
     if (action === 'confirm-reset-data') resetAnimoa();
@@ -1776,6 +2140,11 @@
   document.addEventListener('change', (event) => {
     if (event.target.id === 'healthStatus') syncHealthDateRules(true);
     if (event.target.id === 'petSpecies') syncPetWeightGuide();
+    if (event.target.matches('.file-picker-input')) {
+      const name = event.target.files?.[0]?.name || 'Aucun fichier sélectionné';
+      const label = event.target.closest('.file-picker')?.querySelector('.file-picker-name');
+      if (label) label.textContent = translateText(name);
+    }
   });
 
 
@@ -1805,10 +2174,38 @@
     if (event.key === 'Escape') { closeDrawer(); closeModal(); }
   });
   window.addEventListener('resize', () => { if (currentPage === 'weight') drawWeightChart(); if (currentPage === 'health') restoreHealthTabsPosition(); });
+  async function retryCloudConnection() {
+    if (cloudRetrying || !window.AnimoaCloud?.available?.()) return;
+    cloudRetrying = true;
+    cloudLoadFailed = false;
+    try {
+      await hydrateUserState();
+      if (!cloudLoadFailed) {
+        await migrateLocalMediaToCloud();
+        applyPreferences();
+        renderNavigation();
+        renderPage();
+      }
+    } finally {
+      cloudRetrying = false;
+    }
+  }
+
+  window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (settings.theme === 'system') applyPreferences(); });
+  window.addEventListener('online', () => { retryCloudConnection().catch(() => {}); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushCloudSave().catch(() => {});
+  });
+  window.addEventListener('pagehide', () => { flushCloudSave().catch(() => {}); });
 
   async function init() {
+    await window.AnimoaAuth?.ready?.();
+    await hydrateUserState();
+    settings = normalizeSettings(settings);
+    applyPreferences();
     try {
       await migrateLegacyImages();
+      await migrateLocalMediaToCloud();
     } catch (error) {
       console.warn('Migration des anciennes photos incomplète', error);
     }
@@ -1817,6 +2214,9 @@
     await cleanupUnusedMedia();
     renderNavigation();
     renderPage();
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      navigator.serviceWorker.register('./sw.js').catch((error) => console.warn('Mode installable Animoa indisponible', error));
+    }
   }
 
   init();

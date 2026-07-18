@@ -1,0 +1,15 @@
+{
+  "name": "Animoa — Toute sa vie, près de vous.",
+  "short_name": "Animoa",
+  "description": "Le carnet de vie numérique de votre animal.",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f8f7",
+  "theme_color": "#20b8ae",
+  "icons": [
+    { "src": "assets/animoa-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "assets/animoa-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

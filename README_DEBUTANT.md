@@ -1,54 +1,85 @@
-# Animoa V1.5.3 — prototype local et partageable
+# Animoa V2.0
 
-**Animoa** est le carnet de vie numérique de l'animal.
+**Animoa** est le carnet de vie numérique de l’animal.
 
 > Toute sa vie, près de vous.
 
-## Lancement local
+## Ce qui a été ajouté
 
-Il n'y a rien à installer.
+- logo officiel Animoa dans toute l’application, le favicon et les e-mails ;
+- choix Français / English lors de la première ouverture ;
+- langue modifiable ensuite dans les paramètres ;
+- thèmes Clair / Sombre / Système ;
+- création de compte, connexion, confirmation d’e-mail, mot de passe oublié et déconnexion ;
+- données séparées pour chaque utilisateur avec les règles de sécurité Supabase ;
+- synchronisation des animaux, de la santé, des dépenses, des poids, des souvenirs et des réglages ;
+- stockage privé des photos et pièces jointes ;
+- migration automatique des anciennes données locales vers le premier compte utilisé ;
+- nouveau bouton moderne « Ajouter un fichier ou une image » ;
+- fenêtres et confirmations toujours centrées ;
+- amélioration mobile, mode installable et cache des fichiers de l’application.
 
-1. Le dossier doit être placé dans `C:\Dev\Animoa`.
+## 1. Ouvrir Animoa sur l’ordinateur
+
+1. Place le dossier dans `C:\Dev\Animoa`.
 2. Double-clique sur `OUVRIR_ANIMOA.bat`.
-3. Si Windows bloque le fichier `.bat`, ouvre directement `index.html`.
+3. Le navigateur ouvre `http://127.0.0.1:3001`.
 
-Le même dossier peut aussi être publié avec GitHub Pages.
+Ne double-clique plus directement sur `index.html` : la connexion et la réinitialisation du mot de passe ont besoin d’une adresse `http://` ou `https://`.
 
-## Mise à jour
+## 2. Activer Supabase
 
-1. Ferme l'onglet Animoa.
-2. Décompresse le nouveau ZIP dans `C:\Dev`.
-3. Accepte de remplacer les fichiers du dossier `C:\Dev\Animoa`.
-4. Rouvre `OUVRIR_ANIMOA.bat`.
+### A — Créer les tables et le stockage
 
-Les données enregistrées dans le navigateur sont normalement conservées lors du remplacement des fichiers.
+Dans Supabase :
 
-## Fonctions présentes
+1. ouvre **SQL Editor** ;
+2. ouvre le fichier `SUPABASE_INSTALLATION.sql` ;
+3. copie tout son contenu ;
+4. colle-le dans SQL Editor puis clique sur **Run**.
 
-- gestion de plusieurs animaux ;
-- profil et photo de chaque animal ;
-- carnet de santé avec catégories et rappels ;
-- dépenses ;
-- historique et courbe de poids ;
-- souvenirs avec photos ;
-- ajout, modification et suppression des principales informations ;
-- navigation mobile et affichage ordinateur ;
-- fenêtres centrées verticalement.
+### B — Ajouter les deux informations publiques
 
-## Changements de la V1.5.3
+Ouvre `supabase-config.js` puis remplace :
 
-- retrait de l'importation et de l'exportation visibles dans le menu ;
-- date de naissance saisissable directement au format `JJ/MM/AAAA`, sans calendrier ;
-- correction du clignotement de la barre Santé : la catégorie change désormais sans reconstruire toute la page ;
-- texte adapté à une utilisation locale ou depuis GitHub Pages ;
-- suppression de l’animal exemple Nala et démarrage sur un écran « Ajouter un nouveau compagnon ».
+- `REMPLACER_PAR_URL_SUPABASE` par l’URL du projet ;
+- `REMPLACER_PAR_CLE_ANON_PUBLIQUE` par la clé **anon** ou **publishable**.
 
-## Principe du projet
+Ces deux valeurs servent au navigateur. **Ne mets jamais la clé `service_role`, un mot de passe SMTP ou une autre information privée dans ce fichier.**
 
-- une fonction = un emplacement principal ;
-- pas de doublon inutile ;
-- mobile d'abord ;
-- affichage propre sur ordinateur ;
-- aucune API payante ;
-- aucune fonction sans besoin réel.
+Le fichier `.env.local` reste privé : ne l’ajoute jamais au ZIP ni à GitHub.
 
+## 3. Mettre le logo dans les e-mails Supabase
+
+Le dossier `email-templates` contient les modèles prêts :
+
+- confirmation d’inscription ;
+- réinitialisation du mot de passe ;
+- lien magique.
+
+Dans Supabase, ouvre **Authentication > Email Templates**, puis copie le modèle correspondant. Le logo est chargé depuis :
+
+`https://animoa.fr/assets/animoa-logo-email.png`
+
+## 4. Réglages conseillés dans Supabase
+
+Dans **Authentication > URL Configuration** :
+
+- Site URL : `https://animoa.fr`
+- Redirect URLs : ajoute `https://animoa.fr/**` et, pour les tests locaux, `http://127.0.0.1:3001/**`.
+
+## 5. Test rapide
+
+1. Choisis Français ou English.
+2. Crée un compte.
+3. Clique sur le lien reçu par e-mail.
+4. Ajoute un animal et une photo.
+5. Déconnecte-toi puis reconnecte-toi.
+6. Vérifie que les données réapparaissent.
+7. Teste Clair, Sombre et Système dans Paramètres.
+
+## Sécurité
+
+- chaque utilisateur ne peut lire et modifier que ses propres données ;
+- les fichiers sont placés dans un dossier privé portant l’identifiant du compte ;
+- le ZIP ne contient aucun `.env`, `.env.local`, mot de passe SMTP ou clé privée.
