@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v2-20260718-invitation-1';
+const CACHE_NAME = 'animoa-v2-20260719-clean-currencies-224';
 
 const CORE = [
   '/',
@@ -14,6 +14,8 @@ const CORE = [
   '/assets/animoa-icon-official.png',
   '/assets/animoa-icon-192.png',
   '/assets/animoa-icon-512.png',
+  '/assets/animoa-background-light.webp',
+  '/assets/animoa-background-dark.webp',
   '/assets/pet-placeholder.svg'
 ];
 

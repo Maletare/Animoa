@@ -1090,3 +1090,568 @@ html[data-theme="dark"] .modal-backdrop:has(+ .modal.modal-centered.open) { back
   .file-picker-name { padding-inline: 4px; }
   .settings-note { align-items: flex-start; flex-direction: column; }
 }
+
+
+/* Animoa V2.2 — fond doux adaptatif, Google, heures et notifications lues */
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+
+body {
+  position: relative;
+  background: var(--bg);
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(180deg, rgba(249, 255, 253, .06), rgba(241, 250, 247, .12)),
+    url("assets/animoa-background-light.webp");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+html[data-theme="dark"] body::before {
+  background-image:
+    linear-gradient(180deg, rgba(5, 17, 15, .08), rgba(5, 17, 15, .20)),
+    url("assets/animoa-background-dark.webp");
+}
+body > * { position: relative; z-index: 1; }
+
+.card, .quick-action, .health-filter-panel {
+  background: color-mix(in srgb, var(--surface) 91%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .quick-action,
+html[data-theme="dark"] .health-filter-panel {
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+}
+.modal, .drawer, .auth-card {
+  background: color-mix(in srgb, var(--surface) 97%, transparent);
+}
+
+.google-auth-button {
+  width: 100%;
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 11px 16px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: 0 5px 16px rgba(26, 93, 86, .08);
+}
+.google-auth-button:hover { border-color: var(--primary); transform: translateY(-1px); }
+.google-auth-button:disabled { opacity: .64; cursor: wait; transform: none; }
+.google-auth-icon {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 25px;
+  border-radius: 50%;
+  background: conic-gradient(from -45deg, #4285f4 0 25%, #34a853 25% 50%, #fbbc05 50% 75%, #ea4335 75% 100%);
+  color: #fff;
+  font: 900 .9rem/1 Arial, sans-serif;
+  box-shadow: inset 0 0 0 4px rgba(255,255,255,.88);
+}
+.google-auth-help { margin: -10px 8px 0; text-align: center; color: var(--muted); font-size: .68rem; line-height: 1.4; }
+.auth-divider { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; color: var(--muted); font-size: .7rem; font-weight: 750; }
+.auth-divider::before, .auth-divider::after { content: ""; height: 1px; background: var(--border); }
+
+/* Icône calendrier toujours visible, y compris si Windows est en thème sombre. */
+.form-row input[type="date"] {
+  min-width: 0;
+  padding-right: 44px;
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 20px 20px;
+}
+html[data-theme="light"] .form-row input[type="date"] {
+  color-scheme: light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23087d78' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 11h18'/%3E%3C/svg%3E");
+}
+html[data-theme="dark"] .form-row input[type="date"] {
+  color-scheme: dark;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237ce0d8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 11h18'/%3E%3C/svg%3E");
+}
+.form-row input[type="date"]::-webkit-calendar-picker-indicator {
+  width: 34px;
+  height: 34px;
+  margin-right: -8px;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.reminder-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 15px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .75rem;
+  font-weight: 800;
+}
+.reminder-read-all { min-height: 36px; padding: 8px 11px; font-size: .72rem; }
+.reminder-list-item.is-read { opacity: .72; }
+.reminder-list-item.is-read .status-dot { background: var(--muted); }
+.reminder-trailing { min-width: min(47%, 220px); }
+.reminder-actions { display: flex; justify-content: flex-end; align-items: center; gap: 7px; }
+.reminder-read-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: .68rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.reminder-read-button:hover { filter: brightness(.97); }
+.reminder-read-state { color: var(--muted); font-size: .7rem; font-weight: 850; }
+
+@media (max-width: 480px) {
+  .quick-grid .quick-action[data-add="appointment"] { grid-column: 1 / -1; min-height: 66px; }
+  .reminder-list-item {
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+  }
+  .reminder-trailing {
+    grid-column: 2;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .reminder-trailing .list-value { text-align: left; }
+  .reminder-actions { flex: 0 0 auto; flex-wrap: nowrap; }
+  .reminder-toolbar { align-items: stretch; flex-direction: column; }
+  .reminder-read-all { width: 100%; }
+}
+
+/* Animoa V2.2.1 — correctifs formulaire rendez-vous et sélection de photo */
+body.modal-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.form-columns {
+  align-items: start;
+}
+.form-row {
+  min-width: 0;
+  align-content: start;
+}
+.health-schedule-fields {
+  align-items: start;
+}
+.health-schedule-fields .form-row {
+  align-self: start;
+  align-content: start;
+}
+.health-schedule-fields input,
+.health-schedule-fields select {
+  height: 54px;
+  min-height: 54px;
+}
+.health-status-placeholder {
+  visibility: hidden;
+  min-height: 1em;
+}
+
+.modal.modal-centered {
+  top: 50%;
+  top: 50dvh;
+  isolation: isolate;
+}
+.modal.modal-centered .modal-header {
+  position: relative;
+  z-index: 4;
+  flex-shrink: 0;
+  background: var(--surface);
+}
+.modal.modal-centered .modal-header .icon-button {
+  position: relative;
+  z-index: 5;
+  flex: 0 0 42px;
+}
+.modal.modal-centered .modal-body {
+  position: relative;
+  z-index: 1;
+}
+
+.file-picker {
+  position: relative;
+  isolation: isolate;
+}
+.file-picker-input {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  appearance: none !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+.file-picker-button,
+.file-picker-name {
+  position: relative;
+  z-index: 2;
+}
+
+
+
+/* Animoa V2.2.2 — photos de profil, recadrage et âge humain */
+.pet-photo-button {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: max-content;
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  background: transparent;
+  color: inherit;
+  cursor: zoom-in;
+  line-height: 0;
+}
+.pet-photo-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 48%, transparent);
+  outline-offset: 3px;
+}
+.pet-photo-zoom {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 5px 13px rgba(20, 70, 65, .23);
+}
+.pet-list-photo-button { border-radius: 18px; }
+.pet-list-photo-button .pet-photo-zoom { width: 22px; height: 22px; font-size: .72rem; }
+
+.pet-photo-viewer { display: grid; gap: 14px; }
+.pet-photo-viewer-stage {
+  width: 100%;
+  min-height: min(62vh, 520px);
+  min-height: min(62dvh, 520px);
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  border-radius: 20px;
+  background: #172522;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+}
+.pet-photo-viewer-stage img {
+  display: block;
+  max-width: 100%;
+  max-height: min(62vh, 520px);
+  max-height: min(62dvh, 520px);
+  object-fit: contain;
+  transform-origin: center;
+  transition: transform .16s ease;
+}
+.pet-photo-viewer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.pet-photo-viewer-controls .secondary-button { min-width: 44px; }
+.pet-photo-viewer-controls span { min-width: 58px; text-align: center; color: var(--muted); font-weight: 800; }
+
+body.cropper-open { overflow: hidden !important; }
+.cropper-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: grid;
+  place-items: center;
+  padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+  background: rgba(15, 29, 26, .76);
+  backdrop-filter: blur(8px);
+}
+.cropper-dialog {
+  width: min(94vw, 540px);
+  max-height: min(94vh, 820px);
+  max-height: min(94dvh, 820px);
+  overflow-y: auto;
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+  border-radius: 26px;
+  background: var(--surface);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .34);
+}
+.cropper-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cropper-header h2 { margin: 1px 0 0; font-size: 1.2rem; }
+.cropper-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #172522;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.cropper-stage:active { cursor: grabbing; }
+.cropper-canvas { display: block; width: 100%; height: 100%; object-fit: contain; }
+.cropper-guide {
+  position: absolute;
+  inset: 12px;
+  border: 2px solid rgba(255,255,255,.92);
+  border-radius: 19px;
+  box-shadow: 0 0 0 999px rgba(0,0,0,.18), inset 0 0 0 1px rgba(0,0,0,.18);
+  pointer-events: none;
+}
+.cropper-stage-circle .cropper-guide { border-radius: 50%; }
+.cropper-help { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.45; text-align: center; }
+.cropper-zoom-row { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; color: var(--muted); font-size: .8rem; font-weight: 800; }
+.cropper-zoom-input { width: 100%; accent-color: var(--primary); }
+.cropper-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dog-size-row { padding: 12px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-soft); }
+
+html[data-theme="dark"] .pet-photo-zoom { border-color: var(--surface); }
+html[data-theme="dark"] .cropper-dialog { background: var(--surface-elevated); }
+
+@media (max-width: 430px) {
+  .cropper-dialog { width: calc(100vw - 20px); padding: 14px; border-radius: 22px; }
+  .cropper-actions { grid-template-columns: 1fr; }
+  .pet-photo-viewer-stage { min-height: 50vh; min-height: 50dvh; }
+}
+
+
+/* Animoa V2.2.3 — aide, contact, mentions et mode sombre homogène */
+.drawer-footer { gap: 12px; }
+.drawer-footer-main { display: grid; gap: 5px; }
+.drawer-legal-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 2px 4px 0;
+  color: var(--muted);
+  font-size: .65rem;
+  line-height: 1.35;
+}
+.drawer-legal-links button {
+  min-height: 28px;
+  padding: 2px 3px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.drawer-legal-links button:hover { color: var(--primary-dark); }
+
+.support-page, .legal-page { padding-bottom: 12px; }
+.support-intro-card, .support-contact-card, .settings-support-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.support-intro-card h2, .support-contact-card h2, .settings-support-card h2 { margin: 0; }
+.support-intro-card p, .support-contact-card p, .settings-support-card p { margin: 7px 0 0; color: var(--muted); line-height: 1.5; }
+.support-icon {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: var(--primary-light);
+  font-size: 1.55rem;
+}
+.faq-list { display: grid; gap: 10px; }
+.faq-item {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 95%, transparent);
+  box-shadow: 0 7px 24px rgba(40, 70, 63, .04);
+}
+.faq-item summary {
+  position: relative;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 13px 48px 13px 16px;
+  color: var(--text);
+  font-weight: 830;
+  cursor: pointer;
+  list-style: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; position: absolute; right: 17px; color: var(--primary-dark); font-size: 1.25rem; }
+.faq-item[open] summary::after { content: "−"; }
+.faq-item[open] summary { border-bottom: 1px solid var(--border); }
+.faq-item > div { padding: 14px 16px 16px; }
+.faq-item p { margin: 0; color: var(--muted); line-height: 1.58; }
+
+.contact-card { overflow: hidden; }
+.support-file-row input[type="file"] {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  background: var(--input-bg);
+  color: var(--text);
+}
+.support-file-row input[type="file"]::file-selector-button {
+  min-height: 34px;
+  margin-right: 10px;
+  padding: 7px 11px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 800;
+  cursor: pointer;
+}
+.contact-destination {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: var(--surface-soft);
+}
+.contact-destination > span { font-size: 1.35rem; }
+.contact-destination div { display: grid; gap: 2px; }
+.contact-destination strong { font-size: .74rem; color: var(--muted); }
+.contact-destination a, .legal-card a { color: var(--primary-dark); font-weight: 800; }
+.support-fallback-note { margin: 0; padding: 0 6px; color: var(--muted); font-size: .72rem; line-height: 1.45; text-align: center; }
+
+.settings-support-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+.settings-legal-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--muted);
+  font-size: .7rem;
+}
+.settings-legal-row button { border: 0; padding: 4px 2px; background: transparent; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.legal-card { line-height: 1.62; }
+.legal-card h2 { margin: 22px 0 6px; font-size: 1rem; }
+.legal-card h2:first-of-type { margin-top: 14px; }
+.legal-card p { margin: 0; color: var(--muted); }
+.legal-updated { padding-bottom: 13px; border-bottom: 1px solid var(--border); font-size: .75rem; }
+.legal-contact-box { margin-top: 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 15px; background: var(--surface-soft); }
+
+/* Aucun grand fond blanc ne doit subsister en mode sombre. */
+html[data-theme="dark"] .pet-context-bar,
+html[data-theme="dark"] .pet-context-button,
+html[data-theme="dark"] .desktop-pet-context,
+html[data-theme="dark"] .desktop-pet-context button,
+html[data-theme="dark"] .drawer-pet-context,
+html[data-theme="dark"] .drawer-pet-context button,
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .mobile-nav,
+html[data-theme="dark"] .desktop-sidebar,
+html[data-theme="dark"] .drawer,
+html[data-theme="dark"] .modal,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .faq-item,
+html[data-theme="dark"] .contact-card,
+html[data-theme="dark"] .legal-card {
+  background-color: color-mix(in srgb, var(--surface) 96%, transparent);
+  color: var(--text);
+  border-color: var(--border);
+}
+html[data-theme="dark"] .pet-context-bar { background: color-mix(in srgb, var(--surface) 96%, transparent); }
+html[data-theme="dark"] .pet-context-button { background: transparent; }
+html[data-theme="dark"] .modal.modal-centered .modal-header { background: var(--surface); }
+html[data-theme="dark"] .form-row input,
+html[data-theme="dark"] .form-row select,
+html[data-theme="dark"] .form-row textarea,
+html[data-theme="dark"] .support-file-row input[type="file"] { background-color: var(--input-bg); color: var(--text); }
+html[data-theme="dark"] option { background: var(--surface); color: var(--text); }
+html[data-theme="dark"] .settings-note,
+html[data-theme="dark"] .contact-destination,
+html[data-theme="dark"] .legal-contact-box,
+html[data-theme="dark"] .support-icon { background: var(--surface-soft); }
+
+@media (max-width: 560px) {
+  .support-intro-card, .support-contact-card, .settings-support-card { align-items: stretch; flex-direction: column; }
+  .support-contact-card .primary-button, .settings-support-actions > button { width: 100%; }
+  .settings-support-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
+  .legal-contact-box { align-items: flex-start; flex-direction: column; }
+}
+
+/* Ajustements V2.2.4 — devises et homogénéité du mode sombre */
+.nav-icon-currency,
+.desktop-nav-icon.nav-icon-currency,
+.currency-choice-icon {
+  font-size: clamp(.72rem, 2.5vw, 1rem) !important;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  white-space: nowrap;
+}
+.desktop-nav-icon {
+  display: inline-flex;
+  min-width: 24px;
+  justify-content: center;
+  align-items: center;
+}
+html[data-theme="dark"] .danger-zone {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--surface) 94%, #522833), color-mix(in srgb, var(--surface) 92%, #2b1d22));
+  border-color: color-mix(in srgb, var(--danger) 34%, var(--border));
+}
+html[data-theme="dark"] .file-picker,
+html[data-theme="dark"] .file-picker-button,
+html[data-theme="dark"] .weight-profile-box,
+html[data-theme="dark"] .detail-grid,
+html[data-theme="dark"] .reminder-toolbar {
+  background-color: var(--surface-soft);
+  color: var(--text);
+  border-color: var(--border);
+}
+

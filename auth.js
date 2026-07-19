@@ -52,6 +52,11 @@
       passwordLength: 'Le mot de passe doit contenir au moins 8 caractères.',
       emailRequired: 'Indiquez une adresse e-mail valide.',
       accountCreated: 'Compte créé. Vérifiez maintenant votre boîte e-mail.',
+      googleContinue: 'Continuer avec Google',
+      googleExistingOnly: 'Google est disponible pour les comptes Animoa déjà créés. Pour une première inscription, utilise le code d’invitation.',
+      googleUnavailable: 'La connexion Google n’est pas encore activée. Utilise ton adresse e-mail pour le moment.',
+      googleNewAccountBlocked: 'Ce compte Google n’est pas encore inscrit. Crée d’abord ton compte Animoa avec le code d’invitation, puis utilise Google avec la même adresse e-mail.',
+      or: 'ou',
       terms: 'En continuant, vous accédez à votre carnet Animoa personnel et sécurisé.'
     },
     en: {
@@ -92,6 +97,11 @@
       passwordLength: 'The password must contain at least 8 characters.',
       emailRequired: 'Enter a valid email address.',
       accountCreated: 'Account created. Now check your email.',
+      googleContinue: 'Continue with Google',
+      googleExistingOnly: 'Google is available for existing Animoa accounts. For a first sign-up, use the invitation code.',
+      googleUnavailable: 'Google sign-in is not enabled yet. Use your email address for now.',
+      googleNewAccountBlocked: 'This Google account is not registered yet. First create your Animoa account with the invitation code, then use Google with the same email address.',
+      or: 'or',
       terms: 'By continuing, you access your personal and secure Animoa journal.'
     }
   };
@@ -166,6 +176,7 @@
         <button class="${signup ? 'active' : ''}" data-auth-action="show-signup">${c('signup')}</button>
       </div>
       ${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}
+      ${!signup ? `<button class="google-auth-button" type="button" data-auth-action="google"><span class="google-auth-icon" aria-hidden="true">G</span><span>${c('googleContinue')}</span></button><p class="google-auth-help">${c('googleExistingOnly')}</p><div class="auth-divider" aria-hidden="true"><span>${c('or')}</span></div>` : ''}
       <form id="authForm" class="auth-form" data-mode="${signup ? 'signup' : 'login'}">
         <label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required placeholder="nom@exemple.fr" /></label>
         <label><span>${c('password')}</span><input name="password" type="password" autocomplete="${signup ? 'new-password' : 'current-password'}" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label>
@@ -214,7 +225,43 @@
     if (message.includes('invalid login') || message.includes('invalid credentials')) return c('invalid');
     if (message.includes('password') && message.includes('characters')) return c('passwordLength');
     if (message.includes('code d’invitation') || message.includes("code d'invitation") || message.includes('invitation code')) return c('invitationInvalid');
+    if (message.includes('provider') && (message.includes('enabled') || message.includes('unsupported'))) return c('googleUnavailable');
     return error?.message || c('genericError');
+  }
+
+  async function signInWithGoogle(button) {
+    if (!client) return renderLogin('login', c('genericError'));
+    const original = button?.innerHTML || '';
+    if (button) {
+      button.disabled = true;
+      button.innerHTML = `<span class="google-auth-icon" aria-hidden="true">G</span><span>${c('loading')}</span>`;
+    }
+    try {
+      const { error } = await client.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${redirectBaseUrl()}/` }
+      });
+      if (error) throw error;
+    } catch (error) {
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = original;
+      }
+      const message = normaliseError(error);
+      renderLogin('login', message === c('invitationInvalid') ? c('googleNewAccountBlocked') : message);
+    }
+  }
+
+  function authRedirectError() {
+    const searchParams = new URLSearchParams(location.search);
+    const hashParams = new URLSearchParams(String(location.hash || '').replace(/^#/, ''));
+    const raw = searchParams.get('error_description') || hashParams.get('error_description') || searchParams.get('error') || hashParams.get('error');
+    if (!raw) return '';
+    ['error', 'error_code', 'error_description'].forEach((key) => searchParams.delete(key));
+    const nextSearch = searchParams.toString();
+    history.replaceState({}, document.title, `${location.pathname}${nextSearch ? `?${nextSearch}` : ''}`);
+    const message = normaliseError({ message: String(raw).replace(/\+/g, ' ') });
+    return message === c('invitationInvalid') ? c('googleNewAccountBlocked') : message;
   }
 
   function resolveAppReady() {
@@ -250,11 +297,12 @@
       else if (event === 'SIGNED_OUT') location.reload();
     });
 
+    const redirectError = authRedirectError();
     const { data, error } = await client.auth.getSession();
     if (error) console.warn('Session Animoa indisponible', error);
     currentUser = data?.session?.user || null;
     if (currentUser) resolveAppReady();
-    else renderLogin('login');
+    else renderLogin('login', redirectError);
   }
 
   document.addEventListener('click', async (event) => {
@@ -289,6 +337,10 @@
     if (action === 'show-login') renderLogin('login');
     if (action === 'show-signup') renderLogin('signup');
     if (action === 'forgot') renderForgot();
+    if (action === 'google') {
+      await signInWithGoogle(target);
+      return;
+    }
   });
 
   document.addEventListener('submit', async (event) => {

@@ -8,10 +8,21 @@
   const MEDIA_STORE_NAME = 'images';
   const MEDIA_PREFIX = 'media:';
   const CLOUD_PREFIX = 'cloud:';
+  const APP_VERSION = '2.2.4';
+  const SUPPORT_EMAIL = 'contact@animoa.fr';
 
   const HEALTH_TYPES = ['Tous', 'Vaccin', 'Rendez-vous', 'Traitement', 'Médicament', 'Analyse', 'Document'];
   const KG_PER_LB = 0.45359237;
-  const SUPPORTED_CURRENCIES = new Set(['EUR', 'CHF', 'CAD']);
+  const CURRENCY_OPTIONS = [
+    { code: 'EUR', label: 'Euro (€)', symbol: '€' },
+    { code: 'USD', label: 'Dollar américain ($)', symbol: '$' },
+    { code: 'GBP', label: 'Livre sterling (£)', symbol: '£' },
+    { code: 'CHF', label: 'Franc suisse (CHF)', symbol: 'CHF' },
+    { code: 'CAD', label: 'Dollar canadien (CA$)', symbol: 'CA$' },
+    { code: 'MAD', label: 'Dirham marocain (MAD)', symbol: 'DH' },
+    { code: 'KMF', label: 'Franc comorien (KMF)', symbol: 'KMF' }
+  ];
+  const SUPPORTED_CURRENCIES = new Set(CURRENCY_OPTIONS.map((currency) => currency.code));
   const SUPPORTED_WEIGHT_UNITS = new Set(['kg', 'lb']);
   const SUPPORTED_LANGUAGES = new Set(['fr', 'en']);
   const SUPPORTED_THEMES = new Set(['light', 'dark', 'system']);
@@ -47,7 +58,7 @@
   const navItems = [
     { page: 'home', label: 'Accueil', icon: '⌂' },
     { page: 'health', label: 'Santé', icon: '♡' },
-    { page: 'expenses', label: 'Dépenses', icon: '€' },
+    { page: 'expenses', label: 'Dépenses', icon: 'currency' },
     { page: 'memories', label: 'Souvenirs', icon: '▧' }
   ];
 
@@ -60,6 +71,8 @@
   let toastTimer = null;
   let drawerCloseTimer = null;
   let modalCloseTimer = null;
+  let filePickerScrollTop = 0;
+  let filePickerWindowScrollY = 0;
   let mediaDbPromise = null;
   let cloudSaveTimer = null;
   let cloudHydrating = false;
@@ -67,6 +80,9 @@
   let cloudRetrying = false;
   let syncState = 'local';
   const mediaUrlCache = new Map();
+  const preparedPhotoFiles = new WeakMap();
+  let cropperSession = null;
+  let photoViewerScale = 1;
 
   const mainContent = document.getElementById('mainContent');
   const mobileNav = document.getElementById('mobileNav');
@@ -128,8 +144,18 @@
     if (taglineNode) taglineNode.textContent = tagline;
     const animalsButton = document.querySelector('.drawer-footer [data-page="animals"]');
     const settingsButton = document.querySelector('.drawer-footer [data-page="settings"]');
+    const helpButton = document.querySelector('.drawer-footer [data-page="help"]');
+    const contactButton = document.querySelector('.drawer-footer [data-page="contact"]');
+    const privacyButton = document.querySelector('.drawer-footer [data-page="privacy"]');
+    const legalButton = document.querySelector('.drawer-footer [data-page="legal"]');
+    const versionNode = document.getElementById('drawerAppVersion');
     if (animalsButton) animalsButton.innerHTML = english ? '🐾 My pets' : '🐾 Mes animaux';
     if (settingsButton) settingsButton.innerHTML = english ? '⚙️ Settings' : '⚙️ Paramètres';
+    if (helpButton) helpButton.innerHTML = english ? '❔ Help & support' : '❔ Aide & support';
+    if (contactButton) contactButton.innerHTML = english ? '✉️ Contact us' : '✉️ Nous contacter';
+    if (privacyButton) privacyButton.textContent = english ? 'Privacy' : 'Confidentialité';
+    if (legalButton) legalButton.textContent = english ? 'Legal notice' : 'Mentions légales';
+    if (versionNode) versionNode.textContent = `${english ? 'Version' : 'Version'} ${APP_VERSION}`;
     document.querySelectorAll('[aria-label="Navigation principale"], [aria-label="Main navigation"]').forEach((node) => node.setAttribute('aria-label', english ? 'Main navigation' : 'Navigation principale'));
     document.querySelectorAll('[aria-label="Navigation mobile"], [aria-label="Mobile navigation"]').forEach((node) => node.setAttribute('aria-label', english ? 'Mobile navigation' : 'Navigation mobile'));
   }
@@ -351,10 +377,54 @@
     if (dateValue && dateValue > todayIso()) throw new Error(`${label} ne peut pas être dans le futur.`);
   }
 
+  function validTime(value) {
+    return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(value || ''));
+  }
+
+  function formatDirectTimeEntry(value) {
+    const digits = String(value || '').replace(/\D/g, '').slice(0, 4);
+    if (digits.length <= 2) return digits;
+    return `${digits.slice(0, 2)}:${digits.slice(2)}`;
+  }
+
+  function parseHealthTime(value) {
+    const raw = String(value || '').trim();
+    if (!raw) throw new Error('Indique l’heure prévue.');
+    const digits = raw.replace(/\D/g, '');
+    if (digits.length !== 4) throw new Error('L’heure doit contenir 4 chiffres, par exemple 1245 pour 12:45.');
+    const time = `${digits.slice(0, 2)}:${digits.slice(2)}`;
+    if (!validTime(time)) throw new Error('Cette heure n’est pas valide. Utilise une heure entre 00:00 et 23:59.');
+    return time;
+  }
+
+  function healthDateTimeKey(item) {
+    const time = validTime(item?.time) ? item.time : '00:00';
+    return `${item?.date || ''}T${time}`;
+  }
+
+  function isPlannedHealthOverdue(item) {
+    if (item?.status !== 'planned') return false;
+    if (item.date < todayIso()) return true;
+    if (item.date > todayIso() || !validTime(item.time)) return false;
+    return new Date(`${item.date}T${item.time}:00`).getTime() < Date.now();
+  }
+
   function validateHealthDate(status, dateValue) {
     const today = todayIso();
     if (status === 'done' && dateValue > today) throw new Error('Une information effectuée ne peut pas avoir une date future.');
     if (status === 'planned' && dateValue < today) throw new Error('Une information à venir ne peut pas avoir une date passée. Modifie la date ou indique « Effectué ».');
+  }
+
+  function validateHealthDateTime(status, dateValue, timeValue) {
+    if (!validTime(timeValue)) return;
+    const plannedTime = new Date(`${dateValue}T${timeValue}:00`).getTime();
+    if (!Number.isFinite(plannedTime)) return;
+    if (status === 'planned' && plannedTime < Date.now()) {
+      throw new Error('Une information à venir ne peut pas avoir une heure déjà passée.');
+    }
+    if (status === 'done' && plannedTime > Date.now()) {
+      throw new Error('Une information effectuée ne peut pas avoir une heure future.');
+    }
   }
 
   function migrateLegacyData(value) {
@@ -387,8 +457,16 @@
     const normalized = {
       ...migrated,
       version: 4,
-      pets: Array.isArray(migrated.pets) ? migrated.pets : [],
-      health: Array.isArray(migrated.health) ? migrated.health.map((item) => ({ ...item, type: normalizeHealthType(item.type) })) : [],
+      pets: Array.isArray(migrated.pets) ? migrated.pets.map((pet) => ({
+        ...pet,
+        dogSize: ['auto', 'small', 'medium', 'large', 'giant'].includes(pet?.dogSize) ? pet.dogSize : 'auto'
+      })) : [],
+      health: Array.isArray(migrated.health) ? migrated.health.map((item) => ({
+        ...item,
+        type: normalizeHealthType(item.type),
+        time: validTime(item.time) ? item.time : '',
+        reminderRead: Boolean(item.reminderRead)
+      })) : [],
       expenses: Array.isArray(migrated.expenses) ? migrated.expenses : [],
       weights: Array.isArray(migrated.weights) ? migrated.weights.map(normalizeWeightItem) : [],
       memories: Array.isArray(migrated.memories) ? migrated.memories : []
@@ -690,6 +768,176 @@
     return `<img class="${className || ''} media-loading" src="${placeholderImage}" data-image-ref="${safeRef}" alt="${escapeHtml(alt || '')}" ${extra}>`;
   }
 
+
+  function petPhotoButton(pet, imageClass = '', buttonClass = '') {
+    if (!pet) return imageTag(placeholderImage, imageClass, 'Photo de l’animal');
+    return `<button type="button" class="pet-photo-button ${buttonClass}" data-action="open-pet-photo" data-pet-id="${escapeHtml(pet.id)}" aria-label="Agrandir la photo de ${escapeHtml(pet.name)}">${imageTag(pet.image, imageClass, `Photo de ${pet.name}`)}<span class="pet-photo-zoom" aria-hidden="true">⌕</span></button>`;
+  }
+
+  function selectedPhotoFile(input) {
+    return input ? (preparedPhotoFiles.get(input) || input.files?.[0] || null) : null;
+  }
+
+  function createCropperShell(title, circularGuide = false) {
+    const overlay = document.createElement('div');
+    overlay.className = 'cropper-overlay';
+    overlay.innerHTML = `
+      <section class="cropper-dialog" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
+        <div class="cropper-header"><div><p class="eyebrow">Photo</p><h2>${escapeHtml(title)}</h2></div><button type="button" class="icon-button cropper-close" aria-label="Annuler">✕</button></div>
+        <div class="cropper-stage ${circularGuide ? 'cropper-stage-circle' : ''}"><canvas class="cropper-canvas" width="900" height="900"></canvas><div class="cropper-guide" aria-hidden="true"></div></div>
+        <p class="cropper-help">Déplace la photo avec le doigt ou la souris, puis ajuste le zoom.</p>
+        <label class="cropper-zoom-row"><span>Zoom</span><input class="cropper-zoom-input" type="range" min="1" max="3" step="0.01" value="1" /></label>
+        <div class="cropper-actions"><button type="button" class="secondary-button cropper-cancel">Annuler</button><button type="button" class="primary-button cropper-confirm">Valider le recadrage</button></div>
+      </section>`;
+    document.body.appendChild(overlay);
+    document.body.classList.add('cropper-open');
+    translateTree(overlay);
+    return overlay;
+  }
+
+  async function cropImageFile(file, { aspect = 1, title = 'Recadrer la photo', circularGuide = false } = {}) {
+    const prepared = fileWithDetectedType(file);
+    if (!prepared?.type?.startsWith('image/')) throw new Error('Le fichier choisi n’est pas une image.');
+    if (prepared.size > 20 * 1024 * 1024) throw new Error('Cette image est trop volumineuse. Choisis une photo de moins de 20 Mo.');
+
+    let bitmap;
+    try { bitmap = await createImageBitmap(prepared); }
+    catch { throw new Error('Impossible d’ouvrir cette photo pour la recadrer.'); }
+
+    const overlay = createCropperShell(title, circularGuide);
+    const canvas = overlay.querySelector('.cropper-canvas');
+    const context = canvas.getContext('2d', { alpha: false });
+    const zoomInput = overlay.querySelector('.cropper-zoom-input');
+    const stage = overlay.querySelector('.cropper-stage');
+    const state = { bitmap, zoom: 1, offsetX: 0, offsetY: 0, dragging: false, pointerId: null, startX: 0, startY: 0, startOffsetX: 0, startOffsetY: 0, aspect };
+    cropperSession = state;
+    stage.style.aspectRatio = String(aspect);
+
+    function viewportSize() {
+      const width = 900;
+      return { width, height: Math.max(1, Math.round(width / aspect)) };
+    }
+
+    function geometry() {
+      const viewport = viewportSize();
+      if (canvas.width !== viewport.width || canvas.height !== viewport.height) {
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+      }
+      const baseScale = Math.max(viewport.width / bitmap.width, viewport.height / bitmap.height);
+      const scale = baseScale * state.zoom;
+      const drawnWidth = bitmap.width * scale;
+      const drawnHeight = bitmap.height * scale;
+      const maxX = Math.max(0, (drawnWidth - viewport.width) / 2);
+      const maxY = Math.max(0, (drawnHeight - viewport.height) / 2);
+      state.offsetX = Math.max(-maxX, Math.min(maxX, state.offsetX));
+      state.offsetY = Math.max(-maxY, Math.min(maxY, state.offsetY));
+      return { ...viewport, scale, drawnWidth, drawnHeight, maxX, maxY };
+    }
+
+    function renderCropper() {
+      const g = geometry();
+      context.fillStyle = '#172522';
+      context.fillRect(0, 0, g.width, g.height);
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'high';
+      context.drawImage(bitmap, (g.width - g.drawnWidth) / 2 + state.offsetX, (g.height - g.drawnHeight) / 2 + state.offsetY, g.drawnWidth, g.drawnHeight);
+    }
+
+    function cleanup() {
+      cropperSession = null;
+      bitmap.close?.();
+      overlay.remove();
+      document.body.classList.remove('cropper-open');
+    }
+
+    function outputBlob() {
+      renderCropper();
+      const output = document.createElement('canvas');
+      const outputWidth = aspect === 1 ? 1000 : 1200;
+      const outputHeight = Math.max(1, Math.round(outputWidth / aspect));
+      output.width = outputWidth;
+      output.height = outputHeight;
+      const outputContext = output.getContext('2d', { alpha: false });
+      outputContext.fillStyle = '#ffffff';
+      outputContext.fillRect(0, 0, outputWidth, outputHeight);
+      outputContext.drawImage(canvas, 0, 0, outputWidth, outputHeight);
+      return new Promise((resolve) => output.toBlob(resolve, 'image/webp', .9));
+    }
+
+    renderCropper();
+
+    return new Promise((resolve, reject) => {
+      const cancel = () => { cleanup(); resolve(null); };
+      overlay.querySelector('.cropper-close').addEventListener('click', cancel);
+      overlay.querySelector('.cropper-cancel').addEventListener('click', cancel);
+      overlay.addEventListener('click', (event) => { if (event.target === overlay) cancel(); });
+      zoomInput.addEventListener('input', () => { state.zoom = Number(zoomInput.value) || 1; renderCropper(); });
+
+      stage.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        state.dragging = true;
+        state.pointerId = event.pointerId;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.startOffsetX = state.offsetX;
+        state.startOffsetY = state.offsetY;
+        stage.setPointerCapture?.(event.pointerId);
+      });
+      stage.addEventListener('pointermove', (event) => {
+        if (!state.dragging || event.pointerId !== state.pointerId) return;
+        const rect = stage.getBoundingClientRect();
+        const factorX = canvas.width / Math.max(1, rect.width);
+        const factorY = canvas.height / Math.max(1, rect.height);
+        state.offsetX = state.startOffsetX + (event.clientX - state.startX) * factorX;
+        state.offsetY = state.startOffsetY + (event.clientY - state.startY) * factorY;
+        renderCropper();
+      });
+      const stopDrag = (event) => {
+        if (event.pointerId !== state.pointerId) return;
+        state.dragging = false;
+        state.pointerId = null;
+      };
+      stage.addEventListener('pointerup', stopDrag);
+      stage.addEventListener('pointercancel', stopDrag);
+
+      overlay.querySelector('.cropper-confirm').addEventListener('click', async () => {
+        const confirm = overlay.querySelector('.cropper-confirm');
+        confirm.disabled = true;
+        confirm.textContent = translateText('Préparation…');
+        try {
+          const blob = await outputBlob();
+          if (!blob) throw new Error('Impossible de préparer la photo recadrée.');
+          const cropped = new File([blob], 'animoa-photo-recadree.webp', { type: 'image/webp', lastModified: Date.now() });
+          cleanup();
+          resolve(cropped);
+        } catch (error) {
+          cleanup();
+          reject(error);
+        }
+      });
+    });
+  }
+
+  function updatePhotoViewer() {
+    const image = document.getElementById('petPhotoViewerImage');
+    const label = document.getElementById('petPhotoViewerZoom');
+    if (image) image.style.transform = `scale(${photoViewerScale})`;
+    if (label) label.textContent = `${Math.round(photoViewerScale * 100)} %`;
+  }
+
+  async function openPetPhoto(petId) {
+    const pet = data.pets.find((item) => item.id === petId);
+    if (!pet) return showToast('Cet animal n’existe plus.');
+    const source = await resolveImageRef(pet.image || placeholderImage);
+    photoViewerScale = 1;
+    openModal(`Photo de ${pet.name}`, `
+      <div class="pet-photo-viewer">
+        <div class="pet-photo-viewer-stage"><img id="petPhotoViewerImage" src="${escapeHtml(source)}" alt="Photo de ${escapeHtml(pet.name)}" /></div>
+        <div class="pet-photo-viewer-controls"><button type="button" class="secondary-button" data-action="photo-zoom-out" aria-label="Dézoomer">−</button><span id="petPhotoViewerZoom">100 %</span><button type="button" class="secondary-button" data-action="photo-zoom-in" aria-label="Zoomer">+</button><button type="button" class="secondary-button" data-action="photo-zoom-reset">Réinitialiser</button></div>
+      </div>`, 'Photo');
+  }
+
   async function hydrateImages(root = document) {
     const images = [...root.querySelectorAll('img[data-image-ref]')];
     await Promise.all(images.map(async (image) => {
@@ -856,6 +1104,104 @@
     return `${years} an${years > 1 ? 's' : ''}`;
   }
 
+
+  function ageInMonths(dateValue) {
+    if (!dateValue) return null;
+    const birth = new Date(`${dateValue}T12:00:00`);
+    if (Number.isNaN(birth.getTime())) return null;
+    const now = new Date();
+    let months = (now.getFullYear() - birth.getFullYear()) * 12 + now.getMonth() - birth.getMonth();
+    if (now.getDate() < birth.getDate()) months -= 1;
+    return Math.max(0, months);
+  }
+
+  function interpolateAge(months, anchors) {
+    if (months <= anchors[0][0]) return anchors[0][1];
+    for (let index = 1; index < anchors.length; index += 1) {
+      const [rightMonth, rightValue] = anchors[index];
+      const [leftMonth, leftValue] = anchors[index - 1];
+      if (months <= rightMonth) {
+        const progress = (months - leftMonth) / Math.max(1, rightMonth - leftMonth);
+        return leftValue + (rightValue - leftValue) * progress;
+      }
+    }
+    return anchors.at(-1)[1];
+  }
+
+  function dogSizeFromWeight(weightKg) {
+    const weight = Number(weightKg);
+    if (!Number.isFinite(weight) || weight <= 0) return 'medium';
+    if (weight < 10) return 'small';
+    if (weight < 25) return 'medium';
+    if (weight < 40) return 'large';
+    return 'giant';
+  }
+
+  function resolvedDogSize(pet, weightKg = null) {
+    const chosen = String(pet?.dogSize || 'auto');
+    if (['small', 'medium', 'large', 'giant'].includes(chosen)) return chosen;
+    return dogSizeFromWeight(weightKg);
+  }
+
+  function dogSizeLabel(size) {
+    return ({ small: 'petit', medium: 'moyen', large: 'grand', giant: 'géant' })[size] || 'moyen';
+  }
+
+  function catHumanAge(months) {
+    if (!Number.isFinite(months)) return null;
+    if (months <= 24) {
+      return interpolateAge(months, [[0, 0], [2, 2], [4, 6], [6, 10], [12, 15], [18, 21], [24, 24]]);
+    }
+    return 24 + ((months - 24) / 12) * 4;
+  }
+
+  function dogHumanAge(months, size) {
+    if (!Number.isFinite(months)) return null;
+    if (months <= 24) {
+      return interpolateAge(months, [[0, 0], [2, 2], [4, 6], [6, 10], [12, 15], [18, 20], [24, 24]]);
+    }
+    const years = months / 12;
+    if (years <= 5) return 24 + (years - 2) * 4;
+    const yearlyRate = ({ small: 4, medium: 5, large: 6, giant: 7 })[size] || 5;
+    return 36 + (years - 5) * yearlyRate;
+  }
+
+  function humanAgeEstimate(pet) {
+    const months = ageInMonths(pet?.birthDate);
+    if (months === null) return null;
+    if (pet?.species === 'Chat') {
+      const value = catHumanAge(months);
+      return { years: Math.max(0, Math.round(value)), detail: 'estimation pour un chat' };
+    }
+    if (pet?.species === 'Chien') {
+      const latestWeight = latestByDate(data.weights.filter((item) => item.petId === pet.id));
+      const size = resolvedDogSize(pet, weightValueKg(latestWeight));
+      const value = dogHumanAge(months, size);
+      return { years: Math.max(0, Math.round(value)), detail: `estimation pour un chien de gabarit ${dogSizeLabel(size)}` };
+    }
+    return null;
+  }
+
+  function humanAgeText(pet) {
+    const estimate = humanAgeEstimate(pet);
+    if (!estimate) return 'Disponible pour les chiens et les chats';
+    return `Environ ${estimate.years} an${estimate.years > 1 ? 's' : ''} humains · ${estimate.detail}`;
+  }
+
+
+  function humanAgeCompactText(pet) {
+    const estimate = humanAgeEstimate(pet);
+    return estimate ? `≈ ${estimate.years} an${estimate.years > 1 ? 's' : ''} humains` : '';
+  }
+
+  function currencySymbol(code = settings.currency) {
+    return CURRENCY_OPTIONS.find((currency) => currency.code === code)?.symbol || '€';
+  }
+
+  function currencyOptionsHtml() {
+    return CURRENCY_OPTIONS.map((currency) => `<option value="${currency.code}" ${settings.currency === currency.code ? 'selected' : ''}>${currency.label}</option>`).join('');
+  }
+
   function formatCurrency(value) {
     return new Intl.NumberFormat(appLocale(), { style: 'currency', currency: settings.currency }).format(Number(value || 0));
   }
@@ -866,14 +1212,18 @@
 
   function nextReminder() {
     return petItems('health')
-      .filter((item) => item.status === 'planned' && item.date >= todayIso())
-      .sort((a, b) => a.date.localeCompare(b.date))[0] || null;
+      .filter((item) => item.status === 'planned' && item.date >= todayIso() && !isPlannedHealthOverdue(item))
+      .sort((a, b) => healthDateTimeKey(a).localeCompare(healthDateTimeKey(b)))[0] || null;
   }
 
   function upcomingReminders() {
     return petItems('health')
-      .filter((item) => item.status === 'planned' && item.reminder && item.date >= todayIso())
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .filter((item) => item.status === 'planned' && item.reminder && item.date >= todayIso() && !isPlannedHealthOverdue(item))
+      .sort((a, b) => healthDateTimeKey(a).localeCompare(healthDateTimeKey(b)));
+  }
+
+  function unreadReminders() {
+    return upcomingReminders().filter((item) => !item.reminderRead);
   }
 
   function currentMonthExpenses() {
@@ -922,9 +1272,10 @@
   }
 
   function updateReminderBadge() {
-    const count = upcomingReminders().length;
+    const count = unreadReminders().length;
     reminderBadge.textContent = String(count);
     reminderBadge.hidden = count === 0;
+    reminderBadge.setAttribute('aria-label', `${count} rappel${count > 1 ? 's' : ''} non lu${count > 1 ? 's' : ''}`);
   }
 
   function renderPetContexts() {
@@ -974,10 +1325,12 @@
 
   function navButton(item, mode) {
     const active = currentPage === item.page ? 'active' : '';
+    const icon = item.icon === 'currency' ? currencySymbol() : item.icon;
+    const iconClass = item.icon === 'currency' ? ' nav-icon-currency' : '';
     if (mode === 'mobile') {
-      return `<button class="nav-button ${active}" data-page="${item.page}"><span class="nav-icon">${item.icon}</span><span>${item.label}</span></button>`;
+      return `<button class="nav-button ${active}" data-page="${item.page}"><span class="nav-icon${iconClass}">${icon}</span><span>${item.label}</span></button>`;
     }
-    return `<button class="${active}" data-page="${item.page}">${item.icon}&nbsp;&nbsp;${item.label}</button>`;
+    return `<button class="${active}" data-page="${item.page}"><span class="desktop-nav-icon${iconClass}">${icon}</span>&nbsp;&nbsp;${item.label}</button>`;
   }
 
   function setPage(page) {
@@ -992,7 +1345,7 @@
 
   function renderPage() {
     const pet = activePet();
-    if (!pet && !['animals', 'settings'].includes(currentPage)) currentPage = 'animals';
+    if (!pet && !['animals', 'settings', 'help', 'contact', 'privacy', 'legal'].includes(currentPage)) currentPage = 'animals';
 
     const pages = {
       home: renderHome,
@@ -1002,7 +1355,11 @@
       memories: renderMemories,
       animals: renderAnimals,
       pet: renderPetProfile,
-      settings: renderSettings
+      settings: renderSettings,
+      help: renderHelp,
+      contact: renderContact,
+      privacy: renderPrivacy,
+      legal: renderLegal
     };
     const render = pages[currentPage] || renderHome;
     mainContent.innerHTML = render();
@@ -1045,8 +1402,8 @@
         <div class="home-layout">
           <div class="home-main">
             <article class="card pet-card" data-page="pet">
-              ${imageTag(pet.image, 'pet-avatar', `Photo de ${pet.name}`)}
-              <div><h2 class="pet-name">${escapeHtml(pet.name)}</h2><p class="pet-meta">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}</p></div>
+              ${petPhotoButton(pet, 'pet-avatar')}
+              <div><h2 class="pet-name">${escapeHtml(pet.name)}</h2><p class="pet-meta">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}${humanAgeCompactText(pet) ? ` · ${humanAgeCompactText(pet)}` : ''}</p></div>
               <button class="pet-switch" data-action="switch-pet" aria-label="Changer d’animal" title="Changer d’animal">↕</button>
             </article>
 
@@ -1055,8 +1412,9 @@
             <section>
               <div class="card-title-row"><h2>Ajouter rapidement</h2></div>
               <div class="quick-grid" style="margin-top:10px">
+                ${quickAction('appointment', '📅', 'Rendez-vous')}
                 ${quickAction('health', '🩺', 'Santé')}
-                ${quickAction('expense', '€', 'Dépense')}
+                ${quickAction('expense', currencySymbol(), 'Dépense')}
                 ${quickAction('weight', '⚖️', 'Poids')}
                 ${quickAction('memory', '📷', 'Souvenir')}
               </div>
@@ -1076,7 +1434,7 @@
               <div class="card-title-row"><h2>Dossier de ${escapeHtml(pet.name)}</h2><button class="link-button" data-page="pet">Ouvrir</button></div>
               <div class="profile-grid" style="margin-top:8px">
                 <div class="profile-row"><span class="profile-label">Allergies</span><span class="profile-value">${escapeHtml(pet.allergies || 'Non renseignées')}</span></div>
-                <div class="profile-row"><span class="profile-label">Prochain rappel</span><span class="profile-value">${reminder ? formatDate(reminder.date, { short: true }) : 'Aucun'}</span></div>
+                <div class="profile-row"><span class="profile-label">Prochain rappel</span><span class="profile-value">${reminder ? `${formatDate(reminder.date, { short: true })}${validTime(reminder.time) ? ` · ${reminder.time}` : ''}` : 'Aucun'}</span></div>
               </div>
             </article>
           </div>
@@ -1102,7 +1460,7 @@
         <div class="priority-content">
           <div class="priority-row">
             <div class="priority-icon">${typeIcon(reminder.type)}</div>
-            <div><p class="eyebrow">À ne pas manquer</p><h2>${escapeHtml(reminder.title)}</h2><p>${escapeHtml(reminder.type)} prévu ${timing}, le ${formatDate(reminder.date)}.</p></div>
+            <div><p class="eyebrow">À ne pas manquer</p><h2>${escapeHtml(reminder.title)}</h2><p>${escapeHtml(reminder.type)} prévu ${timing}, le ${formatDate(reminder.date)}${validTime(reminder.time) ? ` à ${reminder.time}` : ''}.</p></div>
           </div>
           <div class="priority-footer"><button class="link-button" data-page="health">Voir le rappel →</button></div>
         </div>
@@ -1134,7 +1492,7 @@
     const selectedType = HEALTH_TYPES.includes(filter) ? filter : 'Tous';
     const items = allItems
       .filter((item) => selectedType === 'Tous' || item.type === selectedType)
-      .sort((a, b) => b.date.localeCompare(a.date));
+      .sort((a, b) => healthDateTimeKey(b).localeCompare(healthDateTimeKey(a)));
     const counts = allItems.reduce((result, item) => {
       result[item.type] = (result[item.type] || 0) + 1;
       return result;
@@ -1226,16 +1584,34 @@
   function renderHealthItem(item) {
     const isPlanned = item.status === 'planned';
     const days = isPlanned ? daysUntil(item.date) : null;
-    const overdue = isPlanned && days < 0;
-    const soon = isPlanned && days >= 0 && days <= 30;
+    const overdue = isPlannedHealthOverdue(item);
+    const soon = isPlanned && !overdue && days >= 0 && days <= 30;
     const statusLabel = overdue ? 'En retard' : isPlanned ? 'À venir' : 'Effectué';
+    const timeLabel = validTime(item.time) ? ` à ${item.time}` : '';
     return `
       <div class="list-item record-list-item">
         <div class="list-icon">${typeIcon(item.type)}</div>
         <div><p class="list-title">${escapeHtml(item.title)}</p><p class="list-subtitle">${escapeHtml(normalizeHealthType(item.type))} · ${escapeHtml(item.professional || item.note || 'Aucun détail')}</p></div>
         <div class="record-trailing">
-          <div class="list-value"><span class="status-dot ${overdue ? 'overdue' : soon ? 'soon' : ''}"></span>${formatDate(item.date, { short: true })}<small>${statusLabel}</small></div>
+          <div class="list-value"><span class="status-dot ${overdue ? 'overdue' : soon ? 'soon' : ''}"></span>${formatDate(item.date, { short: true })}${timeLabel}<small>${statusLabel}</small></div>
           <button class="record-menu-button" data-action="show-health-record" data-record-id="${item.id}" aria-label="Modifier ou supprimer ${escapeHtml(item.title)}">•••</button>
+        </div>
+      </div>`;
+  }
+
+  function renderReminderItem(item) {
+    const isRead = Boolean(item.reminderRead);
+    const timeLabel = validTime(item.time) ? ` à ${item.time}` : '';
+    return `
+      <div class="list-item record-list-item reminder-list-item ${isRead ? 'is-read' : ''}">
+        <div class="list-icon">${typeIcon(item.type)}</div>
+        <div><p class="list-title">${escapeHtml(item.title)}</p><p class="list-subtitle">${escapeHtml(normalizeHealthType(item.type))} · ${escapeHtml(item.professional || item.note || 'Aucun détail')}</p></div>
+        <div class="record-trailing reminder-trailing">
+          <div class="list-value"><span class="status-dot ${daysUntil(item.date) <= 30 ? 'soon' : ''}"></span>${formatDate(item.date, { short: true })}${timeLabel}<small>À venir</small></div>
+          <div class="reminder-actions">
+            ${isRead ? '<span class="reminder-read-state">✓ Lu</span>' : `<button class="reminder-read-button" data-action="mark-reminder-read" data-record-id="${item.id}">Marquer comme lu</button>`}
+            <button class="record-menu-button" data-action="show-health-record" data-record-id="${item.id}" aria-label="Voir ${escapeHtml(item.title)}">•••</button>
+          </div>
         </div>
       </div>`;
   }
@@ -1434,8 +1810,8 @@
         ${data.pets.length ? `<div class="list">
           ${data.pets.map((pet) => `
             <article class="card pet-list-card ${pet.id === data.activePetId ? 'active' : ''}">
-              ${imageTag(pet.image, '', `Photo de ${pet.name}`)}
-              <div><p class="list-title">${escapeHtml(pet.name)}</p><p class="list-subtitle">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}</p></div>
+              ${petPhotoButton(pet, '', 'pet-list-photo-button')}
+              <div><p class="list-title">${escapeHtml(pet.name)}</p><p class="list-subtitle">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}${humanAgeCompactText(pet) ? ` · ${humanAgeCompactText(pet)}` : ''}</p></div>
               <button class="secondary-button" data-select-pet="${pet.id}">${pet.id === data.activePetId ? 'Actif' : 'Choisir'}</button>
             </article>`).join('')}
         </div>` : `<article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Ajoute ton premier compagnon pour créer son carnet de vie.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article>`}
@@ -1449,11 +1825,12 @@
     return `
       <div class="page-stack">
         <div class="page-header"><div><p class="eyebrow">Profil</p><h1>${escapeHtml(pet.name)}</h1><p>Les informations essentielles de son dossier.</p></div><button class="floating-page-button" data-action="edit-pet">Modifier</button></div>
-        <article class="card pet-card">${imageTag(pet.image, 'pet-avatar', `Photo de ${pet.name}`)}<div><h2 class="pet-name">${escapeHtml(pet.name)}</h2><p class="pet-meta">${escapeHtml(petTypeLabel(pet))}</p></div></article>
+        <article class="card pet-card">${petPhotoButton(pet, 'pet-avatar')}<div><h2 class="pet-name">${escapeHtml(pet.name)}</h2><p class="pet-meta">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}${humanAgeCompactText(pet) ? ` · ${humanAgeCompactText(pet)}` : ''}</p></div></article>
         <article class="card card-pad">
           <div class="profile-grid">
             ${profileRow('Date de naissance', formatDate(pet.birthDate))}
             ${profileRow('Âge', ageText(pet.birthDate))}
+            ${profileRow('Équivalent humain', humanAgeText(pet))}
             ${profileRow('Sexe', pet.sex || 'Non renseigné')}
             ${profileRow('Poids actuel', lastWeight ? formatWeight(weightValueKg(lastWeight), 2) : 'Non renseigné')}
             ${profileRow('Couleur', pet.color || 'Non renseignée')}
@@ -1485,7 +1862,7 @@
           <div class="form-grid settings-grid">
             <div class="form-row"><label for="languageSetting">Langue</label><select id="languageSetting"><option value="fr" ${settings.language === 'fr' ? 'selected' : ''}>Français</option><option value="en" ${settings.language === 'en' ? 'selected' : ''}>English</option></select></div>
             <div class="form-row"><label for="themeSetting">Apparence</label><select id="themeSetting"><option value="system" ${settings.theme === 'system' ? 'selected' : ''}>Système</option><option value="light" ${settings.theme === 'light' ? 'selected' : ''}>Clair</option><option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>Sombre</option></select></div>
-            <div class="form-row"><label for="currencySetting">Devise</label><select id="currencySetting"><option value="EUR" ${settings.currency === 'EUR' ? 'selected' : ''}>Euro (€)</option><option value="CHF" ${settings.currency === 'CHF' ? 'selected' : ''}>Franc suisse (CHF)</option><option value="CAD" ${settings.currency === 'CAD' ? 'selected' : ''}>Dollar canadien (CAD)</option></select></div>
+            <div class="form-row"><label for="currencySetting">Devise</label><select id="currencySetting">${currencyOptionsHtml()}</select><span class="form-help">La devise change l’affichage des montants, sans convertir les anciennes dépenses.</span></div>
             <div class="form-row"><label for="weightSetting">Unité de poids</label><select id="weightSetting"><option value="kg" ${settings.weightUnit === 'kg' ? 'selected' : ''}>Kilogrammes (kg)</option><option value="lb" ${settings.weightUnit === 'lb' ? 'selected' : ''}>Livres (lb)</option></select></div>
             <div class="button-row"><button class="primary-button" data-action="save-settings">Enregistrer</button></div>
           </div>
@@ -1499,8 +1876,150 @@
           <div><p class="eyebrow danger-eyebrow">Données enregistrées</p><h2>Effacer toutes les données</h2><p>Cette action supprime le carnet et les photos de ce compte.</p></div>
           <button class="danger-button" data-action="reset-data">Effacer toutes les données</button>
         </article>
+        <article class="card card-pad settings-support-card">
+          <div><p class="eyebrow">Aide & support</p><h2>Besoin d’aide avec Animoa ?</h2><p>Consulte le guide ou écris directement à l’équipe Animoa.</p></div>
+          <div class="settings-support-actions"><button class="secondary-button" data-page="help">Guide de l’application</button><button class="primary-button" data-page="contact">Nous contacter</button></div>
+        </article>
+        <div class="settings-legal-row"><button data-page="privacy">Confidentialité</button><span>·</span><button data-page="legal">Mentions légales</button><span>·</span><span>Version ${APP_VERSION}</span></div>
         <div class="settings-note"><img src="assets/animoa-wordmark-official.png" alt="Animoa" /><p><strong>Animoa</strong><br />Toute sa vie, près de vous.</p></div>
       </div>`;
+  }
+
+
+  function renderHelp() {
+    return `
+      <div class="page-stack support-page">
+        <div class="page-header"><div><p class="eyebrow">Aide & support</p><h1>Guide de l’application</h1><p>Les réponses simples pour utiliser Animoa au quotidien.</p></div></div>
+        <article class="card card-pad support-intro-card">
+          <div class="support-icon">🐾</div>
+          <div><h2>Besoin d’un coup de patte ?</h2><p>Ouvre une rubrique ci-dessous. Ton carnet et tes données ne seront pas modifiés.</p></div>
+        </article>
+        <section class="faq-list" aria-label="Guide Animoa">
+          <details class="faq-item"><summary>Ajouter ou modifier un animal</summary><div><p>Ouvre le menu, puis <strong>Mes animaux</strong>. Tu peux créer un compagnon, modifier sa fiche, changer sa photo ou sélectionner l’animal consulté.</p></div></details>
+          <details class="faq-item"><summary>Ajouter un rendez-vous</summary><div><p>Appuie sur le bouton central avec la patte, puis sur <strong>Rendez-vous</strong>. Indique la date et écris l’heure avec quatre chiffres : <strong>1245</strong> devient <strong>12:45</strong>.</p></div></details>
+          <details class="faq-item"><summary>Ajouter un vaccin, un traitement ou une analyse</summary><div><p>Depuis l’ajout rapide, choisis <strong>Santé</strong>, puis le type voulu. Les onglets du carnet servent ensuite à filtrer les informations déjà enregistrées.</p></div></details>
+          <details class="faq-item"><summary>Ajouter une photo ou un document</summary><div><p>Choisis le fichier dans le formulaire. Pour une photo de profil ou un souvenir, Animoa ouvre le recadrage avant l’enregistrement.</p></div></details>
+          <details class="faq-item"><summary>Gérer les rappels</summary><div><p>La cloche affiche les rappels non lus. <strong>Marquer comme lu</strong> retire le point rouge sans supprimer le rappel et sans désactiver l’e-mail automatique.</p></div></details>
+          <details class="faq-item"><summary>Changer le thème ou les unités</summary><div><p>Ouvre <strong>Paramètres</strong> pour choisir le mode clair, sombre ou automatique, la devise et l’unité de poids.</p></div></details>
+        </section>
+        <article class="card card-pad support-contact-card">
+          <div><p class="eyebrow">Une autre question ?</p><h2>Écris-nous directement</h2><p>Le formulaire transmettra ton message à ${SUPPORT_EMAIL}.</p></div>
+          <button class="primary-button" data-page="contact">Nous contacter</button>
+        </article>
+      </div>`;
+  }
+
+  function renderContact() {
+    const user = window.AnimoaAuth?.getUser?.();
+    const email = user?.email || '';
+    return `
+      <div class="page-stack support-page">
+        <div class="page-header"><div><p class="eyebrow">Aide & support</p><h1>Nous contacter</h1><p>Une question, un problème ou une suggestion concernant Animoa.</p></div></div>
+        <article class="card card-pad contact-card">
+          <form id="supportForm" class="form-grid" novalidate>
+            <div class="form-row"><label for="supportCategory">Sujet</label><select id="supportCategory" name="category" required><option value="Question">Question</option><option value="Problème technique">Problème technique</option><option value="Suggestion">Suggestion</option><option value="Compte et données">Compte et données</option><option value="Autre">Autre</option></select></div>
+            <div class="form-row"><label for="supportEmail">Adresse e-mail pour la réponse</label><input id="supportEmail" name="email" type="email" value="${escapeHtml(email)}" placeholder="nom@exemple.fr" required /></div>
+            <div class="form-row"><label for="supportMessage">Message</label><textarea id="supportMessage" name="message" minlength="10" maxlength="4000" required placeholder="Explique-nous ce dont tu as besoin…"></textarea><span class="form-help">Ne communique jamais ton mot de passe ni ton code d’invitation.</span></div>
+            <div class="form-row support-file-row"><label for="supportScreenshot">Capture d’écran — facultatif</label><input id="supportScreenshot" class="support-attachment-input" name="screenshot" type="file" accept="image/jpeg,image/png,image/webp" /><span id="supportScreenshotName" class="form-help">Image JPG, PNG ou WebP, 2 Mo maximum.</span></div>
+            <div class="contact-destination"><span>✉️</span><div><strong>Destinataire</strong><a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a></div></div>
+            <button id="supportSubmitButton" class="primary-button" type="submit">Envoyer le message</button>
+          </form>
+        </article>
+        <p class="support-fallback-note">Si l’envoi intégré n’est pas encore activé, Animoa ouvrira automatiquement ton application de messagerie avec le message prérempli.</p>
+      </div>`;
+  }
+
+  function renderPrivacy() {
+    return `
+      <div class="page-stack legal-page">
+        <div class="page-header"><div><p class="eyebrow">Informations</p><h1>Politique de confidentialité</h1><p>Comment Animoa utilise et protège les données du compte.</p></div></div>
+        <article class="card card-pad legal-card">
+          <p class="legal-updated">Mise à jour : 19 juillet 2026 · Version bêta</p>
+          <h2>Données utilisées</h2><p>Animoa enregistre les informations nécessaires au compte et au carnet : adresse e-mail, profils des animaux, rendez-vous, informations de santé, poids, dépenses, souvenirs, photos, documents et préférences.</p>
+          <h2>Pourquoi ces données sont utilisées</h2><p>Elles servent uniquement à fournir le carnet Animoa, synchroniser les informations, envoyer les rappels demandés, sécuriser le compte et répondre aux messages adressés au support.</p>
+          <h2>Services techniques</h2><p>Le fonctionnement peut s’appuyer sur Supabase pour le compte et les données, Vercel pour l’hébergement de l’application, Brevo pour les e-mails automatiques et Infomaniak pour la boîte de contact.</p>
+          <h2>Conservation et suppression</h2><p>Les données sont conservées tant que le compte est utilisé. Elles peuvent être effacées depuis les paramètres ou sur demande. La suppression d’un compte et de ses données peut être demandée à <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>.</p>
+          <h2>Vos droits</h2><p>Tu peux demander l’accès, la correction, l’export ou la suppression des données associées à ton compte en écrivant à l’adresse de contact. Animoa ne vend pas les données personnelles à des annonceurs.</p>
+          <div class="legal-contact-box"><strong>Contact confidentialité</strong><a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a></div>
+        </article>
+      </div>`;
+  }
+
+  function renderLegal() {
+    return `
+      <div class="page-stack legal-page">
+        <div class="page-header"><div><p class="eyebrow">Informations</p><h1>Mentions légales</h1><p>Informations relatives à l’application Animoa.</p></div></div>
+        <article class="card card-pad legal-card">
+          <p class="legal-updated">Version bêta privée · Application ${APP_VERSION}</p>
+          <h2>Service</h2><p><strong>Animoa</strong> est un carnet de vie numérique destiné au suivi quotidien des animaux. Baseline : « Toute sa vie, près de vous. »</p>
+          <h2>Éditeur et contact</h2><p>Le service est actuellement proposé en bêta privée. Contact général : <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>. Les informations complètes d’identification de l’éditeur seront publiées avant l’ouverture commerciale au public.</p>
+          <h2>Hébergement technique</h2><p>L’interface de l’application est hébergée via Vercel. Les comptes, données et fichiers peuvent être hébergés via Supabase.</p>
+          <h2>Responsabilité</h2><p>Animoa aide à organiser les informations d’un animal, mais ne remplace jamais l’avis, le diagnostic ou les soins d’un vétérinaire. En cas d’urgence, contacte directement un professionnel.</p>
+          <h2>Propriété</h2><p>Le nom, le logo, l’interface et les contenus propres à Animoa ne doivent pas être reproduits sans autorisation.</p>
+          <div class="legal-contact-box"><strong>Version de l’application</strong><span>${APP_VERSION}</span></div>
+        </article>
+      </div>`;
+  }
+
+  async function supportScreenshotPayload(file) {
+    if (!file) return null;
+    const type = detectedFileType(file);
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(type)) throw new Error('La capture doit être une image JPG, PNG ou WebP.');
+    if (file.size > 2 * 1024 * 1024) throw new Error('La capture est trop volumineuse. Choisis une image de moins de 2 Mo.');
+    const dataUrl = await blobToDataUrl(fileWithDetectedType(file));
+    return {
+      name: String(file.name || 'capture-animoa.png').replace(/[^a-zA-Z0-9._-]/g, '-').slice(0, 90),
+      type,
+      content: String(dataUrl).split(',')[1] || ''
+    };
+  }
+
+  function openSupportEmailFallback({ category, email, message }) {
+    const subject = `[Animoa] ${category}`;
+    const body = `Adresse de réponse : ${email}\nVersion Animoa : ${APP_VERSION}\n\n${message}`;
+    window.location.href = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  async function handleSupportSubmit(form) {
+    const button = form.querySelector('#supportSubmitButton');
+    const category = requiredText(form.elements.category.value, 'le sujet');
+    const email = requiredText(form.elements.email.value, 'ton adresse e-mail');
+    const message = requiredText(form.elements.message.value, 'ton message');
+    if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('L’adresse e-mail n’est pas valide.');
+    if (message.length < 10) throw new Error('Ton message doit contenir au moins 10 caractères.');
+    if (message.length > 4000) throw new Error('Ton message est trop long.');
+
+    const previousText = button?.textContent || 'Envoyer le message';
+    if (button) { button.disabled = true; button.textContent = 'Envoi…'; }
+    try {
+      const screenshot = await supportScreenshotPayload(form.elements.screenshot.files?.[0] || null);
+      const client = window.AnimoaAuth?.getClient?.();
+      const canInvoke = Boolean(client && window.AnimoaAuth?.getUser?.() && !window.AnimoaAuth?.isLocalPreview?.());
+      if (!canInvoke) {
+        openSupportEmailFallback({ category, email, message });
+        showToast('Ton application de messagerie va s’ouvrir.');
+        return;
+      }
+
+      const { data: response, error } = await client.functions.invoke('contact-animoa', {
+        body: { category, replyEmail: email, message, screenshot, appVersion: APP_VERSION }
+      });
+      if (error || response?.ok !== true) {
+        console.warn('Formulaire de contact intégré indisponible', error || response);
+        openSupportEmailFallback({ category, email, message });
+        showToast('L’envoi intégré est indisponible : ton application de messagerie va s’ouvrir.');
+        return;
+      }
+
+      form.reset();
+      const currentEmail = window.AnimoaAuth?.getUser?.()?.email || '';
+      if (form.elements.email) form.elements.email.value = currentEmail;
+      const fileName = document.getElementById('supportScreenshotName');
+      if (fileName) fileName.textContent = 'Image JPG, PNG ou WebP, 2 Mo maximum.';
+      showToast('Votre message a bien été envoyé. Nous vous répondrons dès que possible.');
+    } finally {
+      if (button) { button.disabled = false; button.textContent = previousText; }
+    }
   }
 
   function pageHeader(title, subtitle, addType) {
@@ -1543,6 +2062,8 @@
     modalTitle.textContent = title;
     modalEyebrow.textContent = eyebrow;
     modalBody.innerHTML = body;
+    modalBody.scrollTop = 0;
+    document.body.classList.add('modal-open');
     translateTree(modal);
     hydrateImages(modalBody);
     modalBackdrop.hidden = false;
@@ -1550,6 +2071,7 @@
     requestAnimationFrame(() => {
       modal.classList.add('open');
       syncHealthDateRules(false);
+      syncHealthTimeField();
       syncPetWeightGuide();
     });
   }
@@ -1558,6 +2080,7 @@
     clearTimeout(modalCloseTimer);
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
     modalCloseTimer = setTimeout(() => {
       modalBackdrop.hidden = true;
       modalBody.innerHTML = '';
@@ -1569,8 +2092,9 @@
   function openAddMenu() {
     openModal('Que veux-tu ajouter ?', `
       <div class="add-choice-grid">
+        <button class="add-choice" data-add="appointment"><span>📅</span>Rendez-vous</button>
         <button class="add-choice" data-add="health"><span>🩺</span>Santé</button>
-        <button class="add-choice" data-add="expense"><span>€</span>Dépense</button>
+        <button class="add-choice" data-add="expense"><span class="currency-choice-icon">${currencySymbol()}</span>Dépense</button>
         <button class="add-choice" data-add="weight"><span>⚖️</span>Poids</button>
         <button class="add-choice" data-add="memory"><span>📷</span>Souvenir</button>
         <button class="add-choice" data-add="pet"><span>🐾</span>Compagnon</button>
@@ -1584,13 +2108,14 @@
       type = 'pet';
     }
     const forms = {
+      appointment: () => healthForm(null, 'Rendez-vous'),
       health: healthForm,
       expense: expenseForm,
       weight: weightForm,
       memory: memoryForm,
       pet: petForm
     };
-    const titles = { health: 'Information de santé', expense: 'Nouvelle dépense', weight: 'Nouveau poids', memory: 'Nouveau souvenir', pet: 'Nouvel animal' };
+    const titles = { appointment: 'Nouveau rendez-vous', health: 'Information de santé', expense: 'Nouvelle dépense', weight: 'Nouveau poids', memory: 'Nouveau souvenir', pet: 'Nouvel animal' };
     openModal(titles[type], forms[type](), 'Ajouter');
   }
 
@@ -1598,17 +2123,20 @@
     return value === expected ? 'selected' : '';
   }
 
-  function healthForm(item = null) {
+  function healthForm(item = null, initialType = 'Vaccin') {
     const editing = Boolean(item);
     const status = item?.status || 'planned';
-    const selectedType = item ? normalizeHealthType(item.type) : 'Vaccin';
+    const selectedType = item ? normalizeHealthType(item.type) : normalizeHealthType(initialType);
     const date = item?.date || todayIso();
     const min = status === 'planned' ? todayIso() : '';
     const max = status === 'done' ? todayIso() : '';
+    const showTime = status === 'planned' || selectedType === 'Rendez-vous';
+    const timeLabel = selectedType === 'Rendez-vous' ? 'Heure du rendez-vous' : 'Heure prévue';
     return `<form id="healthForm" class="form-grid" data-editing="${item?.id || ''}">
       <div class="form-row"><label for="healthType">Type</label><select id="healthType" name="type" required>${['Vaccin','Rendez-vous','Traitement','Médicament','Analyse','Document','Autre'].map((type) => `<option value="${type}" ${optionSelected(selectedType, type)}>${type}</option>`).join('')}</select></div>
       <div class="form-row"><label for="healthTitle">Titre</label><input id="healthTitle" name="title" required value="${escapeHtml(item?.title || '')}" placeholder="Ex. Rappel annuel" /></div>
-      <div class="form-columns"><div class="form-row"><label for="healthDate">Date</label><input id="healthDate" name="date" type="date" value="${date}" ${min ? `min="${min}"` : ''} ${max ? `max="${max}"` : ''} required /><span id="healthDateHelp" class="form-help"></span></div><div class="form-row"><label for="healthStatus">État</label><select id="healthStatus" name="status"><option value="planned" ${optionSelected(status, 'planned')}>À venir</option><option value="done" ${optionSelected(status, 'done')}>Effectué</option></select></div></div>
+      <div class="form-columns health-schedule-fields"><div class="form-row health-date-field"><label for="healthDate">Date</label><input id="healthDate" name="date" type="date" value="${date}" ${min ? `min="${min}"` : ''} ${max ? `max="${max}"` : ''} required /><span id="healthDateHelp" class="form-help"></span></div><div class="form-row health-status-field"><label for="healthStatus">État</label><select id="healthStatus" name="status"><option value="planned" ${optionSelected(status, 'planned')}>À venir</option><option value="done" ${optionSelected(status, 'done')}>Effectué</option></select><span class="form-help health-status-placeholder" aria-hidden="true">&nbsp;</span></div></div>
+      <div class="form-row" id="healthTimeRow" ${showTime ? '' : 'hidden'}><label id="healthTimeLabel" for="healthTime">${timeLabel}</label><input id="healthTime" name="time" type="text" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="HH:MM" value="${escapeHtml(validTime(item?.time) ? item.time : '')}" ${showTime ? 'required' : 'disabled'} aria-describedby="healthTimeHelp" /><span id="healthTimeHelp" class="form-help">Écris directement 4 chiffres, par exemple 1245 pour 12:45.</span></div>
       <div class="form-row"><label for="healthProfessional">Vétérinaire ou professionnel</label><input id="healthProfessional" name="professional" value="${escapeHtml(item?.professional || '')}" placeholder="Facultatif" /></div>
       <div class="form-row"><label for="healthNote">Note</label><textarea id="healthNote" name="note" placeholder="Informations utiles">${escapeHtml(item?.note || '')}</textarea></div>
       ${filePicker('healthAttachment', 'attachment', Boolean(item?.attachment), item?.attachment ? 'Laisse vide pour conserver le fichier actuel.' : 'Ajoute une image ou un document utile.', 'image/*,.pdf,.doc,.docx')}
@@ -1644,7 +2172,7 @@
     const actionLabel = isAttachment
       ? (hasExisting ? 'Remplacer le fichier ou l’image' : 'Ajouter un fichier ou une image')
       : (hasExisting ? 'Remplacer la photo' : 'Ajouter une photo');
-    return `<div class="form-row file-picker-row"><label>${name === 'attachment' ? 'Fichier ou image' : 'Photo'}</label><div class="file-picker"><input class="file-picker-input" id="${fieldId}" name="${name}" type="file" accept="${accept}" /><label class="file-picker-button" for="${fieldId}"><img src="assets/animoa-icon-official.png" alt="" /><span>${actionLabel}</span></label><span class="file-picker-name">Aucun fichier sélectionné</span></div><span class="form-help">${helpText}</span></div>`;
+    return `<div class="form-row file-picker-row"><label>${name === 'attachment' ? 'Fichier ou image' : 'Photo'}</label><div class="file-picker"><input class="file-picker-input" id="${fieldId}" name="${name}" type="file" accept="${accept}" tabindex="-1" /><label class="file-picker-button" for="${fieldId}"><img src="assets/animoa-icon-official.png" alt="" /><span>${actionLabel}</span></label><span class="file-picker-name">Aucun fichier sélectionné</span></div><span class="form-help">${helpText}</span></div>`;
   }
 
   function memoryForm(item = null) {
@@ -1669,6 +2197,7 @@
     return `<form id="petForm" class="form-grid" data-editing="${editing ? pet.id : ''}" data-weight-id="${latestWeight?.id || ''}" data-original-weight="${currentWeight ?? ''}" data-original-weight-date="${latestWeight?.date || ''}">
       <div class="form-row"><label for="petName">Nom</label><input id="petName" name="name" required value="${escapeHtml(pet?.name || '')}" placeholder="Ex. Milo" /></div>
       <div class="form-columns desktop-three"><div class="form-row"><label for="petSpecies">Espèce</label><select id="petSpecies" name="species"><option value="Chien" ${optionSelected(species, 'Chien')}>Chien</option><option value="Chat" ${optionSelected(species, 'Chat')}>Chat</option><option value="Lapin" ${optionSelected(species, 'Lapin')}>Lapin</option><option value="Oiseau" ${optionSelected(species, 'Oiseau')}>Oiseau</option><option value="Autre" ${optionSelected(species, 'Autre')}>Autre</option></select></div><div class="form-row"><label for="petBreed">Race, variété ou type</label><input id="petBreed" name="breed" value="${escapeHtml(pet?.breed || '')}" /></div><div class="form-row"><label for="petSex">Sexe</label><select id="petSex" name="sex"><option value="Non renseigné" ${optionSelected(pet?.sex || 'Non renseigné', 'Non renseigné')}>Non renseigné</option><option value="Femelle" ${optionSelected(pet?.sex, 'Femelle')}>Femelle</option><option value="Mâle" ${optionSelected(pet?.sex, 'Mâle')}>Mâle</option></select></div></div>
+      <div class="form-row dog-size-row" id="dogSizeRow" ${species === 'Chien' ? '' : 'hidden'}><label for="petDogSize">Gabarit adulte du chien</label><select id="petDogSize" name="dogSize"><option value="auto" ${optionSelected(pet?.dogSize || 'auto', 'auto')}>Automatique selon le poids</option><option value="small" ${optionSelected(pet?.dogSize, 'small')}>Petit — moins de 10 kg</option><option value="medium" ${optionSelected(pet?.dogSize, 'medium')}>Moyen — 10 à 25 kg</option><option value="large" ${optionSelected(pet?.dogSize, 'large')}>Grand — 25 à 40 kg</option><option value="giant" ${optionSelected(pet?.dogSize, 'giant')}>Géant — plus de 40 kg</option></select><span class="form-help">Ce choix améliore l’estimation de l’équivalent en âge humain. « Automatique » utilise le dernier poids enregistré.</span></div>
       <div class="form-columns"><div class="form-row"><label for="petBirth">Date de naissance</label><input id="petBirth" name="birthDate" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="JJ/MM/AAAA" value="${escapeHtml(isoDateToFrench(pet?.birthDate || ''))}" aria-describedby="petBirthHelp" /><span id="petBirthHelp" class="form-help">Écris directement les 8 chiffres, par exemple 15062009.</span></div><div class="form-row"><label for="petColor">Couleur</label><input id="petColor" name="color" value="${escapeHtml(pet?.color || '')}" /></div></div>
       <div class="weight-profile-box"><div><strong>Poids actuel</strong><span>Cette valeur reste liée à l’historique de poids.</span></div><div class="form-columns"><div class="form-row"><label for="petCurrentWeight">Poids (${settings.weightUnit})</label><input id="petCurrentWeight" name="currentWeight" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" value="${currentWeight ?? ''}" placeholder="Facultatif" /></div><div class="form-row"><label for="petCurrentWeightDate">Date de pesée</label><input id="petCurrentWeightDate" name="currentWeightDate" type="date" max="${todayIso()}" value="${latestWeight?.date || todayIso()}" /></div></div><span id="petWeightGuide" class="form-help">Pour un ${limits.label} : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div>
       ${filePicker('petPhoto', 'photo', editing, 'Laisse vide pour conserver la photo actuelle. La nouvelle photo sera automatiquement allégée.')}
@@ -1690,7 +2219,11 @@
       if (form.id === 'healthForm') {
         const status = String(formData.get('status'));
         const date = String(formData.get('date'));
+        const type = normalizeHealthType(formData.get('type'));
+        const needsTime = status === 'planned' || type === 'Rendez-vous';
+        const time = needsTime ? parseHealthTime(formData.get('time')) : '';
         validateHealthDate(status, date);
+        if (needsTime) validateHealthDateTime(status, date, time);
         const existing = data.health.find((item) => item.id === form.dataset.editing);
         const attachmentFile = form.querySelector('[name="attachment"]')?.files?.[0];
         const oldAttachment = existing?.attachment;
@@ -1701,16 +2234,18 @@
         }
         const record = {
           petId: activePet().id,
-          type: normalizeHealthType(formData.get('type')),
+          type,
           title: requiredText(formData.get('title'), 'un titre'),
           date,
+          time,
           status,
           professional: String(formData.get('professional') || '').trim(),
           note: String(formData.get('note') || '').trim(),
           attachment,
           attachmentName: attachmentFile?.name || existing?.attachmentName || '',
           attachmentType: attachmentFile ? detectedFileType(attachmentFile) : (existing?.attachmentType || ''),
-          reminder: formData.get('reminder') === 'on'
+          reminder: formData.get('reminder') === 'on',
+          reminderRead: false
         };
         if (existing) Object.assign(existing, record); else data.health.push({ id: uid('health'), ...record });
         currentHealthFilter = record.type;
@@ -1745,7 +2280,8 @@
         const date = String(formData.get('date'));
         validatePastOrToday(date, 'La date du souvenir');
         const existing = data.memories.find((item) => item.id === form.dataset.editing);
-        const file = form.querySelector('[name="photo"]').files[0];
+        const photoInput = form.querySelector('[name="photo"]');
+        const file = selectedPhotoFile(photoInput);
         const oldImage = existing?.image;
         const image = await fileToMediaRef(file) || oldImage || placeholderImage;
         if (file && image !== oldImage) createdMediaRefs.push(image);
@@ -1759,7 +2295,8 @@
       if (form.id === 'petForm') {
         const editingId = form.dataset.editing;
         const existing = editingId ? data.pets.find((pet) => pet.id === editingId) : null;
-        const file = form.querySelector('[name="photo"]').files[0];
+        const photoInput = form.querySelector('[name="photo"]');
+        const file = selectedPhotoFile(photoInput);
         const oldImage = existing?.image;
         const image = await fileToMediaRef(file) || oldImage || placeholderImage;
         if (file && image !== oldImage) createdMediaRefs.push(image);
@@ -1769,6 +2306,7 @@
         const petData = {
           id: existing?.id || uid('pet'),
           name: requiredText(formData.get('name'), 'le nom de l’animal'), species, breed: String(formData.get('breed') || '').trim(),
+          dogSize: species === 'Chien' && ['auto', 'small', 'medium', 'large', 'giant'].includes(String(formData.get('dogSize'))) ? String(formData.get('dogSize')) : 'auto',
           birthDate, sex: formData.get('sex'), color: String(formData.get('color') || '').trim(),
           identification: String(formData.get('identification') || '').trim(), allergies: String(formData.get('allergies') || '').trim(),
           importantInfo: String(formData.get('importantInfo') || '').trim(), image, createdAt: existing?.createdAt || todayIso()
@@ -1865,11 +2403,12 @@
   function showHealthRecord(recordId) {
     const item = data.health.find((record) => record.id === recordId && record.petId === activePet()?.id);
     if (!item) return showToast('Cette information n’existe plus.');
-    const status = item.status === 'planned' ? (item.date < todayIso() ? 'En retard' : 'À venir') : 'Effectué';
+    const status = item.status === 'planned' ? (isPlannedHealthOverdue(item) ? 'En retard' : 'À venir') : 'Effectué';
+    const timeDetail = validTime(item.time) ? `<span>Heure</span><strong>${item.time}</strong>` : '';
     openModal(item.title, `
       <div class="record-detail">
         <p class="eyebrow">${escapeHtml(normalizeHealthType(item.type))}</p>
-        <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong><span>État</span><strong>${status}</strong><span>Professionnel</span><strong>${escapeHtml(item.professional || 'Non renseigné')}</strong></div>
+        <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong>${timeDetail}<span>État</span><strong>${status}</strong><span>Professionnel</span><strong>${escapeHtml(item.professional || 'Non renseigné')}</strong></div>
         <p>${escapeHtml(item.note || 'Aucune note.')}</p>
         ${item.attachment ? `<button class="attachment-preview" data-action="open-attachment" data-image-ref="${escapeHtml(item.attachment)}" data-file-type="${escapeHtml(item.attachmentType || '')}" data-file-name="${escapeHtml(item.attachmentName || 'Fichier joint')}"><span>${item.attachmentType?.startsWith('image/') ? '🖼️' : '📎'}</span><span>${escapeHtml(item.attachmentName || 'Voir le fichier ou l’image')}</span></button>` : ''}
         <div class="record-detail-actions"><button class="secondary-button" data-action="edit-health-record" data-record-id="${item.id}">Modifier</button><button class="danger-button" data-action="request-delete-record" data-collection="health" data-record-id="${item.id}" data-label="cette information de santé" data-return-page="health">Supprimer</button></div>
@@ -1922,6 +2461,21 @@
     }
   }
 
+  function syncHealthTimeField() {
+    const type = document.getElementById('healthType');
+    const status = document.getElementById('healthStatus');
+    const row = document.getElementById('healthTimeRow');
+    const input = document.getElementById('healthTime');
+    const label = document.getElementById('healthTimeLabel');
+    if (!type || !status || !row || !input) return;
+    const isAppointment = normalizeHealthType(type.value) === 'Rendez-vous';
+    const showTime = status.value === 'planned' || isAppointment;
+    row.hidden = !showTime;
+    input.disabled = !showTime;
+    input.required = showTime;
+    if (label) label.textContent = translateText(isAppointment ? 'Heure du rendez-vous' : 'Heure prévue');
+  }
+
   function syncHealthDateRules(adjustValue = false) {
     const status = document.getElementById('healthStatus');
     const date = document.getElementById('healthDate');
@@ -1945,11 +2499,15 @@
     const speciesField = document.getElementById('petSpecies');
     const weightField = document.getElementById('petCurrentWeight');
     const guideField = document.getElementById('petWeightGuide');
+    const dogSizeRow = document.getElementById('dogSizeRow');
+    const dogSizeField = document.getElementById('petDogSize');
     if (!speciesField || !weightField) return;
     const limits = displayWeightLimits(speciesField.value);
     weightField.min = String(limits.min);
     weightField.max = String(limits.max);
     weightField.step = String(limits.step);
+    if (dogSizeRow) dogSizeRow.hidden = speciesField.value !== 'Chien';
+    if (dogSizeField) dogSizeField.disabled = speciesField.value !== 'Chien';
     if (guideField) guideField.textContent = translateText(`Pour un ${limits.label} : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.`);
   }
 
@@ -1994,9 +2552,29 @@
     `, 'Mes animaux');
   }
 
+  function markReminderRead(recordId) {
+    const item = data.health.find((record) => record.id === recordId && record.petId === activePet()?.id);
+    if (!item || item.reminderRead) return;
+    item.reminderRead = true;
+    saveData();
+    showReminders();
+    showToast('Rappel marqué comme lu.');
+  }
+
+  function markAllRemindersRead() {
+    const unread = unreadReminders();
+    if (!unread.length) return;
+    unread.forEach((item) => { item.reminderRead = true; });
+    saveData();
+    showReminders();
+    showToast('Tous les rappels ont été marqués comme lus.');
+  }
+
   function showReminders() {
     const reminders = upcomingReminders();
-    openModal('Rappels à venir', reminders.length ? `<div class="list">${reminders.map(renderHealthItem).join('')}</div>` : emptyList('Aucun rappel à venir.'), 'Notifications');
+    const unreadCount = reminders.filter((item) => !item.reminderRead).length;
+    const toolbar = reminders.length ? `<div class="reminder-toolbar"><span>${unreadCount ? `${unreadCount} non lu${unreadCount > 1 ? 's' : ''}` : 'Tout est lu'}</span>${unreadCount ? '<button class="secondary-button reminder-read-all" data-action="mark-all-reminders-read">Tout marquer comme lu</button>' : ''}</div>` : '';
+    openModal('Rappels à venir', reminders.length ? `${toolbar}<div class="list reminder-list">${reminders.map(renderReminderItem).join('')}</div>` : emptyList('Aucun rappel à venir.'), 'Notifications');
   }
 
   function showMemory(memoryId) {
@@ -2068,7 +2646,13 @@
     if (action === 'open-add') openAddMenu();
     if (action === 'close-modal') closeModal();
     if (action === 'switch-pet') showPetSwitcher();
+    if (action === 'open-pet-photo') openPetPhoto(target.dataset.petId);
+    if (action === 'photo-zoom-in') { photoViewerScale = Math.min(3, photoViewerScale + .25); updatePhotoViewer(); }
+    if (action === 'photo-zoom-out') { photoViewerScale = Math.max(1, photoViewerScale - .25); updatePhotoViewer(); }
+    if (action === 'photo-zoom-reset') { photoViewerScale = 1; updatePhotoViewer(); }
     if (action === 'show-reminders') showReminders();
+    if (action === 'mark-reminder-read') markReminderRead(target.dataset.recordId);
+    if (action === 'mark-all-reminders-read') markAllRemindersRead();
     if (action === 'health-scroll-left') scrollHealthTabs(-1);
     if (action === 'health-scroll-right') scrollHealthTabs(1);
     if (action === 'show-health-record') showHealthRecord(target.dataset.recordId);
@@ -2084,11 +2668,16 @@
     if (action === 'request-delete-pet') requestDeletePet();
     if (action === 'confirm-delete-pet') deletePet(target.dataset.petId);
     if (action === 'save-settings') {
-      settings.currency = document.getElementById('currencySetting').value;
-      settings.weightUnit = document.getElementById('weightSetting').value;
-      settings.language = document.getElementById('languageSetting').value;
-      settings.theme = document.getElementById('themeSetting').value;
-      saveSettings(); renderNavigation(); renderPage(); showToast('Paramètres enregistrés.');
+      settings = normalizeSettings({
+        currency: document.getElementById('currencySetting')?.value,
+        weightUnit: document.getElementById('weightSetting')?.value,
+        language: document.getElementById('languageSetting')?.value,
+        theme: document.getElementById('themeSetting')?.value
+      });
+      saveSettings();
+      renderNavigation();
+      renderPage();
+      showToast('Paramètres enregistrés.');
     }
     if (action === 'logout') {
       try { await flushCloudSave(); } catch {}
@@ -2137,18 +2726,78 @@
   });
 
 
+  document.addEventListener('pointerdown', (event) => {
+    if (!event.target.closest('.file-picker-button')) return;
+    filePickerScrollTop = modalBody?.scrollTop || 0;
+    filePickerWindowScrollY = window.scrollY || 0;
+  });
+
   document.addEventListener('change', (event) => {
-    if (event.target.id === 'healthStatus') syncHealthDateRules(true);
+    if (event.target.id === 'healthStatus') { syncHealthDateRules(true); syncHealthTimeField(); }
+    if (event.target.id === 'healthType') syncHealthTimeField();
     if (event.target.id === 'petSpecies') syncPetWeightGuide();
+    if (event.target.id === 'supportScreenshot') {
+      const file = event.target.files?.[0] || null;
+      const label = document.getElementById('supportScreenshotName');
+      if (label) label.textContent = file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2).replace('.', ',')} Mo` : 'Image JPG, PNG ou WebP, 2 Mo maximum.';
+    }
     if (event.target.matches('.file-picker-input')) {
-      const name = event.target.files?.[0]?.name || 'Aucun fichier sélectionné';
-      const label = event.target.closest('.file-picker')?.querySelector('.file-picker-name');
-      if (label) label.textContent = translateText(name);
+      const input = event.target;
+      const originalFile = input.files?.[0] || null;
+      const label = input.closest('.file-picker')?.querySelector('.file-picker-name');
+      input.blur();
+
+      const restorePickerPosition = () => requestAnimationFrame(() => {
+        if (modalBody) modalBody.scrollTop = filePickerScrollTop;
+        window.scrollTo(0, filePickerWindowScrollY);
+      });
+
+      if (!originalFile) {
+        preparedPhotoFiles.delete(input);
+        if (label) label.textContent = translateText('Aucun fichier sélectionné');
+        restorePickerPosition();
+        return;
+      }
+
+      const shouldCrop = ['petPhoto', 'memoryPhoto'].includes(input.id) && detectedFileType(originalFile).startsWith('image/');
+      if (!shouldCrop) {
+        preparedPhotoFiles.delete(input);
+        if (label) label.textContent = translateText(originalFile.name);
+        restorePickerPosition();
+        return;
+      }
+
+      if (label) label.textContent = translateText('Recadrage en cours…');
+      const cropOptions = input.id === 'petPhoto'
+        ? { aspect: 1, title: 'Recadrer la photo de profil', circularGuide: false }
+        : { aspect: 4 / 3, title: 'Recadrer la photo du souvenir', circularGuide: false };
+      cropImageFile(originalFile, cropOptions)
+        .then((croppedFile) => {
+          if (!croppedFile) {
+            preparedPhotoFiles.delete(input);
+            input.value = '';
+            if (label) label.textContent = translateText('Aucun fichier sélectionné');
+            return;
+          }
+          preparedPhotoFiles.set(input, croppedFile);
+          if (label) label.textContent = translateText(`${originalFile.name} · recadrée`);
+        })
+        .catch((error) => {
+          preparedPhotoFiles.delete(input);
+          input.value = '';
+          if (label) label.textContent = translateText('Aucun fichier sélectionné');
+          showToast(error.message || 'Impossible de recadrer cette photo.');
+        })
+        .finally(restorePickerPosition);
     }
   });
 
 
   document.addEventListener('input', (event) => {
+    if (event.target.id === 'healthTime') {
+      const formatted = formatDirectTimeEntry(event.target.value);
+      if (event.target.value !== formatted) event.target.value = formatted;
+    }
     if (event.target.id === 'petBirth') {
       const formatted = formatDirectDateEntry(event.target.value);
       if (event.target.value !== formatted) event.target.value = formatted;
@@ -2162,7 +2811,13 @@
     }
   }, true);
 
-  document.addEventListener('submit', (event) => {
+  document.addEventListener('submit', async (event) => {
+    if (event.target.matches('#supportForm')) {
+      event.preventDefault();
+      try { await handleSupportSubmit(event.target); }
+      catch (error) { showToast(error.message || 'Impossible d’envoyer le message.'); }
+      return;
+    }
     if (!event.target.matches('#healthForm, #expenseForm, #weightForm, #memoryForm, #petForm')) return;
     event.preventDefault();
     handleFormSubmit(event.target);
@@ -2171,7 +2826,12 @@
   drawerBackdrop.addEventListener('click', closeDrawer);
   modalBackdrop.addEventListener('click', closeModal);
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') { closeDrawer(); closeModal(); }
+    if (event.key !== 'Escape') return;
+    if (document.querySelector('.cropper-overlay')) {
+      document.querySelector('.cropper-cancel')?.click();
+      return;
+    }
+    closeDrawer(); closeModal();
   });
   window.addEventListener('resize', () => { if (currentPage === 'weight') drawWeightChart(); if (currentPage === 'health') restoreHealthTabsPosition(); });
   async function retryCloudConnection() {
