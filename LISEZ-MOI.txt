@@ -1,10 +1,11 @@
-CORRECTIF QUESTIONNAIRE ANIMOA 2.4.1
+CORRECTIF QUESTIONNAIRE ANIMOA 2.4.2
 
 Ce petit correctif contient uniquement les fichiers nécessaires pour :
 - rendre la page publique plus compacte ;
 - laisser un nombre de choix libre à la question 3 ;
 - afficher la question 5 : « Qu’aimeriez-vous pouvoir faire avec Animoa ? » ;
-- renouveler le cache afin que la nouvelle présentation apparaisse immédiatement.
+- écrire « Nouveaux animaux de compagnie » en toutes lettres dans la question 1 ;
+- renouveler le cache afin que la correction apparaisse immédiatement.
 
 FICHIERS À REMPLACER DANS C:\Dev\Animoa :
 - index.html
