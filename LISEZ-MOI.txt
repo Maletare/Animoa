@@ -1,19 +1,18 @@
-CORRECTIF QUESTIONNAIRE ANIMOA 2.4.2
+CORRECTIF QUESTIONNAIRE ANIMOA 2.4.3
 
-Ce petit correctif contient uniquement les fichiers nécessaires pour :
-- rendre la page publique plus compacte ;
-- laisser un nombre de choix libre à la question 3 ;
-- afficher la question 5 : « Qu’aimeriez-vous pouvoir faire avec Animoa ? » ;
-- écrire « Nouveaux animaux de compagnie » en toutes lettres dans la question 1 ;
-- renouveler le cache afin que la correction apparaisse immédiatement.
-
-FICHIERS À REMPLACER DANS C:\Dev\Animoa :
+Ce correctif contient uniquement les fichiers à remplacer dans le dossier principal Animoa :
 - index.html
 - styles.css
 - questionnaire.js
 - sw.js
 
-Copiez ces quatre fichiers dans C:\Dev\Animoa et choisissez « Remplacer les fichiers dans la destination ».
-Ensuite, retournez dans GitHub Desktop, créez le commit puis cliquez sur Push origin.
+Modifications :
+- page publique encore plus compacte sur téléphone et ordinateur ;
+- confirmation très visible après l’envoi : « Merci ! Vos réponses ont bien été enregistrées. » ;
+- bouton pour revenir à la présentation ;
+- protection renforcée contre les doubles clics pendant l’envoi ;
+- conservation de la question 3 sans limite de choix ;
+- conservation de « Nouveaux animaux de compagnie » en toutes lettres ;
+- numéro de version et cache mis à jour en 2.4.3.
 
-N’exécutez pas encore le fichier SQL Supabase avant d’avoir vérifié la page en ligne.
+Les réglages Supabase déjà installés ne sont pas à refaire.

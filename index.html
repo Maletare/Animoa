@@ -211,12 +211,16 @@
           <p class="survey-privacy-note">Les réponses sont utilisées uniquement pour améliorer Animoa. Votre adresse e-mail n’est demandée que si vous souhaitez être contacté au sujet des tests.</p>
         </form>
 
-        <section id="surveySuccess" class="survey-success" hidden aria-live="polite">
-          <img src="assets/animoa-icon-official.png" alt="" />
-          <p class="landing-kicker">Merci pour votre participation</p>
-          <h3>Votre avis aidera Animoa à grandir.</h3>
-          <p>Vos réponses ont bien été enregistrées. Elles contribueront directement aux prochaines améliorations de l’application.</p>
-          <div class="survey-success-actions"><button class="primary-button" type="button" data-public-action="signup">Découvrir Animoa</button><button class="secondary-button" type="button" data-survey-action="restart">Répondre de nouveau</button></div>
+        <section id="surveySuccess" class="survey-success" hidden aria-live="assertive" aria-atomic="true">
+          <div class="survey-success-icon" aria-hidden="true">✓</div>
+          <p class="survey-success-label">Questionnaire envoyé</p>
+          <h3>Merci ! Vos réponses ont bien été enregistrées.</h3>
+          <p>Votre avis nous aidera à améliorer Animoa et à mieux répondre aux besoins des propriétaires d’animaux.</p>
+          <div class="survey-success-actions">
+            <button class="primary-button" type="button" data-public-action="signup">Découvrir Animoa</button>
+            <a class="secondary-button survey-return-link" href="#accueil">Revenir à la présentation</a>
+          </div>
+          <button class="survey-restart-link" type="button" data-survey-action="restart">Envoyer une autre réponse</button>
         </section>
       </div>
     </section>
@@ -303,7 +307,7 @@
         <span aria-hidden="true">·</span>
         <button data-page="legal">Mentions légales</button>
         <span aria-hidden="true">·</span>
-        <span id="drawerAppVersion">Version 2.4.2</span>
+        <span id="drawerAppVersion">Version 2.4.3</span>
       </div>
     </div>
   </aside>

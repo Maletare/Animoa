@@ -139,6 +139,8 @@
   }
 
   function showSuccess() {
+    submitButton.removeAttribute('aria-busy');
+    form.removeAttribute('aria-busy');
     form.hidden = true;
     card.querySelector('.survey-progress-block').hidden = true;
     success.hidden = false;
@@ -153,6 +155,8 @@
     card.querySelector('.survey-progress-block').hidden = false;
     success.hidden = true;
     submitButton.disabled = false;
+    submitButton.removeAttribute('aria-busy');
+    form.removeAttribute('aria-busy');
     submitButton.textContent = 'Envoyer mes réponses';
     updateConditionalFields();
     updateCounter();
@@ -192,6 +196,8 @@
     }
     submitting = true;
     submitButton.disabled = true;
+    submitButton.setAttribute('aria-busy', 'true');
+    form.setAttribute('aria-busy', 'true');
     submitButton.textContent = 'Envoi en cours…';
     setError('', 5);
     try {
@@ -200,6 +206,8 @@
     } catch (error) {
       setError(error.message || 'Impossible d’envoyer vos réponses.', 5);
       submitButton.disabled = false;
+      submitButton.removeAttribute('aria-busy');
+      form.removeAttribute('aria-busy');
       submitButton.textContent = 'Envoyer mes réponses';
     } finally {
       submitting = false;
