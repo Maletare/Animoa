@@ -28,6 +28,31 @@ function safeString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+
+  if (error && typeof error === "object") {
+    const details = error as Record<string, unknown>;
+    const parts = [
+      safeString(details.message),
+      safeString(details.details),
+      safeString(details.hint),
+      safeString(details.code),
+    ].filter(Boolean);
+
+    if (parts.length) return parts.join(" · ");
+
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return "Erreur serveur inconnue.";
+    }
+  }
+
+  return "Erreur serveur inconnue.";
+}
+
 function jsonResponse(body: JsonObject, status = 200): Response {
   return Response.json(body, { status });
 }
@@ -569,7 +594,7 @@ export default {
               reportError({
                 userId: bundle.user_id,
                 eventId,
-                error: claimError.message,
+                error: errorMessage(claimError),
               });
 
               continue;
@@ -621,9 +646,7 @@ export default {
               if (updateError) throw updateError;
               stats.sent += 1;
             } catch (sendError) {
-              const message = sendError instanceof Error
-                ? sendError.message
-                : String(sendError);
+              const message = errorMessage(sendError);
 
               await supabase
                 .from("animoa_reminder_deliveries")
@@ -650,9 +673,7 @@ export default {
 
       return jsonResponse(stats);
     } catch (error) {
-      const message = error instanceof Error
-        ? error.message
-        : String(error);
+      const message = errorMessage(error);
 
       console.error("[animoa-reminders-24h]", error);
 

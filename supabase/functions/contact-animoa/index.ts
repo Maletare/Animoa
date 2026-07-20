@@ -189,7 +189,7 @@ const authenticatedHandler = withSupabase({ auth: "user" }, async (request, ctx)
           <tr><td style="padding:7px 0;color:#687976">Envoyé le</td><td style="padding:7px 0">${escapeHtml(sentAt)}</td></tr>
         </table>
         <div style="margin-top:22px;padding:20px;border:1px solid #d9efec;border-radius:16px;background:#f5fbfa;white-space:pre-wrap;line-height:1.6">${escapeHtml(message)}</div>
-        <p style="margin:22px 0 0;color:#81908d;font-size:12px">Réponds directement à cet e-mail : la réponse sera adressée à l’utilisateur.</p>
+        <p style="margin:22px 0 0;color:#81908d;font-size:12px">Répondez directement à cet e-mail : la réponse sera adressée à l’utilisateur.</p>
       </td></tr>
     </table>
   </td></tr></table>

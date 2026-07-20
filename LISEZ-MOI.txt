@@ -1,18 +1,22 @@
-CORRECTIF QUESTIONNAIRE ANIMOA 2.4.3
+ANIMOA 2.4.4 — VERSION NETTOYÉE
 
-Ce correctif contient uniquement les fichiers à remplacer dans le dossier principal Animoa :
-- index.html
-- styles.css
-- questionnaire.js
-- sw.js
+Cette archive contient le projet complet, sans le dossier interne .git.
+Vous pouvez donc copier son contenu dans C:\Dev\Animoa sans écraser la liaison GitHub.
 
-Modifications :
-- page publique encore plus compacte sur téléphone et ordinateur ;
-- confirmation très visible après l’envoi : « Merci ! Vos réponses ont bien été enregistrées. » ;
-- bouton pour revenir à la présentation ;
-- protection renforcée contre les doubles clics pendant l’envoi ;
-- conservation de la question 3 sans limite de choix ;
-- conservation de « Nouveaux animaux de compagnie » en toutes lettres ;
-- numéro de version et cache mis à jour en 2.4.3.
+MISE EN LIGNE
+1. Copiez tout le contenu de ce dossier dans C:\Dev\Animoa.
+2. Acceptez le remplacement des fichiers existants.
+3. Dans GitHub Desktop, vérifiez les changements.
+4. Créez le commit puis cliquez sur Push origin.
 
-Les réglages Supabase déjà installés ne sont pas à refaire.
+SUPABASE
+Les scripts d’installation et de maintenance sont rangés dans :
+  supabase/sql/
+
+Les modèles d’e-mails sont rangés dans :
+  supabase/email-templates/
+
+IMPORTANT
+- supabase-config.js contient uniquement la configuration publique du site.
+- Ne placez jamais une clé service_role, une clé Brevo ou un mot de passe dans les fichiers publics.
+- La correction d’autorisation nécessaire aux rappels e-mail est intégrée aux scripts SQL.

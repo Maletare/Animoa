@@ -8,7 +8,7 @@
   const MEDIA_STORE_NAME = 'images';
   const MEDIA_PREFIX = 'media:';
   const CLOUD_PREFIX = 'cloud:';
-  const APP_VERSION = '2.4.0';
+  const APP_VERSION = '2.4.4';
   const SUPPORT_EMAIL = 'contact@animoa.fr';
 
   const HEALTH_TYPES = ['Tous', 'Vaccin', 'Rendez-vous', 'Traitement', 'Médicament', 'Analyse', 'Document'];
@@ -103,7 +103,6 @@
   const mediaUrlCache = new Map();
   const preparedPhotoFiles = new WeakMap();
   const previewObjectUrls = new WeakMap();
-  let cropperSession = null;
   let photoViewerScale = 1;
   let settingsPreviewActive = false;
 
@@ -1073,7 +1072,6 @@
     const zoomInput = overlay.querySelector('.cropper-zoom-input');
     const stage = overlay.querySelector('.cropper-stage');
     const state = { bitmap, zoom: 1, offsetX: 0, offsetY: 0, dragging: false, pointerId: null, startX: 0, startY: 0, startOffsetX: 0, startOffsetY: 0, aspect };
-    cropperSession = state;
     stage.style.aspectRatio = String(aspect);
 
     function viewportSize() {
@@ -1108,7 +1106,6 @@
     }
 
     function cleanup() {
-      cropperSession = null;
       bitmap.close?.();
       overlay.remove();
       document.body.classList.remove('cropper-open');
@@ -1586,13 +1583,13 @@
 
     const contextContent = `${imageTag(pet.image, '', `Photo de ${pet.name}`)}<div class="pet-context-copy"><strong>${escapeHtml(pet.name)}</strong><span>Animal actuellement consulté</span></div><span class="pet-context-chevron">Changer</span>`;
     petContextBar.hidden = !contextualPages.has(currentPage);
-    petContextBar.innerHTML = `<button class="pet-context-button" data-action="switch-pet" aria-label="Changer d’animal">${contextContent}</button>`;
+    petContextBar.innerHTML = `<button type="button" class="pet-context-button" data-action="switch-pet" aria-label="Changer d’animal">${contextContent}</button>`;
 
     sidebarPetContext.hidden = false;
-    sidebarPetContext.innerHTML = `<button data-action="switch-pet" aria-label="Changer d’animal">${imageTag(pet.image, '', `Photo de ${pet.name}`)}<div><strong>${escapeHtml(pet.name)}</strong><span>Animal consulté</span></div><span>↕</span></button>`;
+    sidebarPetContext.innerHTML = `<button type="button" data-action="switch-pet" aria-label="Changer d’animal">${imageTag(pet.image, '', `Photo de ${pet.name}`)}<div><strong>${escapeHtml(pet.name)}</strong><span>Animal consulté</span></div><span>↕</span></button>`;
 
     drawerPetContext.hidden = false;
-    drawerPetContext.innerHTML = `<button data-action="switch-pet" aria-label="Changer d’animal">${imageTag(pet.image, '', `Photo de ${pet.name}`)}<div><strong>${escapeHtml(pet.name)}</strong><span>Animal actuellement consulté</span></div><span>Changer</span></button>`;
+    drawerPetContext.innerHTML = `<button type="button" data-action="switch-pet" aria-label="Changer d’animal">${imageTag(pet.image, '', `Photo de ${pet.name}`)}<div><strong>${escapeHtml(pet.name)}</strong><span>Animal actuellement consulté</span></div><span>Changer</span></button>`;
 
     hydrateImages(petContextBar);
     hydrateImages(sidebarPetContext);
@@ -1606,7 +1603,7 @@
     mobileNav.innerHTML = `
       ${navButton(navItems[0], 'mobile')}
       ${navButton(navItems[1], 'mobile')}
-      <button class="nav-button add" data-action="open-add" aria-label="Ajouter"><img src="assets/animoa-icon-official.png" alt="" /></button>
+      <button type="button" class="nav-button add" data-action="open-add" aria-label="Ajouter"><img src="assets/animoa-icon-official.png" alt="" width="331" height="378" decoding="async" /></button>
       ${navButton(navItems[2], 'mobile')}
       ${navButton(navItems[3], 'mobile')}
     `;
@@ -1620,9 +1617,9 @@
     const icon = item.icon === 'currency' ? currencySymbol() : item.icon;
     const iconClass = item.icon === 'currency' ? ' nav-icon-currency' : '';
     if (mode === 'mobile') {
-      return `<button class="nav-button ${active}" data-page="${item.page}"><span class="nav-icon${iconClass}">${icon}</span><span>${item.label}</span></button>`;
+      return `<button type="button" class="nav-button ${active}" data-page="${item.page}"><span class="nav-icon${iconClass}">${icon}</span><span>${item.label}</span></button>`;
     }
-    return `<button class="${active}" data-page="${item.page}"><span class="desktop-nav-icon${iconClass}">${icon}</span>&nbsp;&nbsp;${item.label}</button>`;
+    return `<button type="button" class="${active}" data-page="${item.page}"><span class="desktop-nav-icon${iconClass}">${icon}</span>&nbsp;&nbsp;${item.label}</button>`;
   }
 
   function setPage(page) {
@@ -1700,7 +1697,7 @@
             <article class="card pet-card" data-page="pet">
               ${petPhotoButton(pet, 'pet-avatar')}
               <div><h2 class="pet-name">${escapeHtml(pet.name)}</h2><p class="pet-meta">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}${humanAgeCompactText(pet) ? ` · ${humanAgeCompactText(pet)}` : ''}</p></div>
-              <button class="pet-switch" data-action="switch-pet" aria-label="Changer d’animal" title="Changer d’animal">↕</button>
+              <button type="button" class="pet-switch" data-action="switch-pet" aria-label="Changer d’animal" title="Changer d’animal">↕</button>
             </article>
 
             ${renderPriority(reminder, pet)}
@@ -1727,7 +1724,7 @@
           <div class="home-side">
             ${memory ? renderMemoryPreview(memory) : renderEmptyMemory()}
             <article class="card card-pad">
-              <div class="card-title-row"><h2>Dossier de ${escapeHtml(pet.name)}</h2><button class="link-button" data-page="pet">Ouvrir</button></div>
+              <div class="card-title-row"><h2>Dossier de ${escapeHtml(pet.name)}</h2><button type="button" class="link-button" data-page="pet">Ouvrir</button></div>
               <div class="profile-grid" style="margin-top:8px">
                 <div class="profile-row"><span class="profile-label">Allergies</span><span class="profile-value">${escapeHtml(pet.allergies || 'Non renseignées')}</span></div>
                 <div class="profile-row"><span class="profile-label">Prochain rappel</span><span class="profile-value">${reminder ? `${formatDate(reminder.date, { short: true })}${validTime(reminder.time) ? ` · ${reminder.time}` : ''}` : 'Aucun'}</span></div>
@@ -1758,17 +1755,17 @@
             <div class="priority-icon">${typeIcon(reminder.type)}</div>
             <div><p class="eyebrow">À ne pas manquer</p><h2>${escapeHtml(reminder.title)}</h2><p>${escapeHtml(reminder.type)} prévu ${timing}, le ${formatDate(reminder.date)}${validTime(reminder.time) ? ` à ${reminder.time}` : ''}.</p></div>
           </div>
-          <div class="priority-footer"><button class="link-button" data-page="health">Voir le rappel →</button></div>
+          <div class="priority-footer"><button type="button" class="link-button" data-page="health">Voir le rappel →</button></div>
         </div>
       </article>`;
   }
 
   function quickAction(type, icon, label) {
-    return `<button class="quick-action" data-add="${type}"><span class="quick-icon">${icon}</span><span class="quick-label">${label}</span></button>`;
+    return `<button type="button" class="quick-action" data-add="${type}"><span class="quick-icon">${icon}</span><span class="quick-label">${label}</span></button>`;
   }
 
   function summaryCard(label, value, note, page) {
-    return `<button class="card summary-card" data-page="${page}" style="text-align:left;cursor:pointer"><div class="summary-label">${label}</div><div class="summary-value">${value}</div><div class="summary-note">${note}</div></button>`;
+    return `<button type="button" class="card summary-card" data-page="${page}" style="text-align:left;cursor:pointer"><div class="summary-label">${label}</div><div class="summary-value">${value}</div><div class="summary-note">${note}</div></button>`;
   }
 
   function renderMemoryPreview(memory) {
@@ -1780,7 +1777,7 @@
   }
 
   function renderEmptyMemory() {
-    return `<article class="card empty-state"><div style="font-size:2rem">📷</div><strong>Aucun souvenir</strong><p>Ajoutez une photo ou une anecdote.</p><button class="primary-button" data-add="memory">Ajouter</button></article>`;
+    return `<article class="card empty-state"><div style="font-size:2rem">📷</div><strong>Aucun souvenir</strong><p>Ajoutez une photo ou une anecdote.</p><button type="button" class="primary-button" data-add="memory">Ajouter</button></article>`;
   }
 
   function healthViewData(filter = currentHealthFilter) {
@@ -1816,12 +1813,12 @@
             <span id="healthFilterCount">${view.items.length} élément${view.items.length > 1 ? 's' : ''}</span>
           </div>
           <div class="health-tabs-shell">
-            <button class="health-tab-arrow" data-action="health-scroll-left" aria-label="Voir les catégories précédentes">‹</button>
+            <button type="button" class="health-tab-arrow" data-action="health-scroll-left" aria-label="Voir les catégories précédentes">‹</button>
             <div class="section-tabs health-tabs" id="healthTabs" role="tablist">${HEALTH_TYPES.map((type) => {
               const count = type === 'Tous' ? view.allItems.length : (view.counts[type] || 0);
-              return `<button class="tab-chip ${view.selectedType === type ? 'active' : ''}" data-health-filter="${type}" aria-pressed="${view.selectedType === type}" role="tab"><span>${type}</span><small>${count}</small></button>`;
+              return `<button type="button" class="tab-chip ${view.selectedType === type ? 'active' : ''}" data-health-filter="${type}" aria-pressed="${view.selectedType === type}" role="tab"><span>${type}</span><small>${count}</small></button>`;
             }).join('')}</div>
-            <button class="health-tab-arrow" data-action="health-scroll-right" aria-label="Voir les catégories suivantes">›</button>
+            <button type="button" class="health-tab-arrow" data-action="health-scroll-right" aria-label="Voir les catégories suivantes">›</button>
           </div>
           <p class="health-swipe-hint">Faites glisser le bandeau sur le côté ou utilisez les flèches.</p>
         </section>
@@ -1890,7 +1887,7 @@
         <div><p class="list-title">${escapeHtml(item.title)}</p><p class="list-subtitle">${escapeHtml(normalizeHealthType(item.type))} · ${escapeHtml(item.professional || item.note || 'Aucun détail')}</p></div>
         <div class="record-trailing">
           <div class="list-value"><span class="status-dot ${overdue ? 'overdue' : soon ? 'soon' : ''}"></span>${formatDate(item.date, { short: true })}${timeLabel}<small>${statusLabel}</small></div>
-          <button class="record-menu-button" data-action="show-health-record" data-record-id="${item.id}" aria-label="Modifier ou supprimer ${escapeHtml(item.title)}">•••</button>
+          <button type="button" class="record-menu-button" data-action="show-health-record" data-record-id="${item.id}" aria-label="Modifier ou supprimer ${escapeHtml(item.title)}">•••</button>
         </div>
       </div>`;
   }
@@ -1905,8 +1902,8 @@
         <div class="record-trailing reminder-trailing">
           <div class="list-value"><span class="status-dot ${daysUntil(item.date) <= 30 ? 'soon' : ''}"></span>${formatDate(item.date, { short: true })}${timeLabel}<small>À venir</small></div>
           <div class="reminder-actions">
-            ${isRead ? '<span class="reminder-read-state">✓ Lu</span>' : `<button class="reminder-read-button" data-action="mark-reminder-read" data-record-id="${item.id}">Marquer comme lu</button>`}
-            <button class="record-menu-button" data-action="show-health-record" data-record-id="${item.id}" aria-label="Voir ${escapeHtml(item.title)}">•••</button>
+            ${isRead ? '<span class="reminder-read-state">✓ Lu</span>' : `<button type="button" class="reminder-read-button" data-action="mark-reminder-read" data-record-id="${item.id}">Marquer comme lu</button>`}
+            <button type="button" class="record-menu-button" data-action="show-health-record" data-record-id="${item.id}" aria-label="Voir ${escapeHtml(item.title)}">•••</button>
           </div>
         </div>
       </div>`;
@@ -1938,7 +1935,7 @@
           <div class="card-title-row"><h2>Historique</h2><span class="summary-note">${items.length} dépense${items.length > 1 ? 's' : ''}</span></div>
           <div class="list" style="margin-top:14px">
             ${items.length ? items.map((item) => `
-              <div class="list-item record-list-item"><div class="list-icon">${typeIcon(item.category)}</div><div><p class="list-title">${escapeHtml(item.category)}</p><p class="list-subtitle">${escapeHtml(item.note || 'Sans description')} · ${formatDate(item.date)}</p></div><div class="record-trailing"><div class="list-value">${formatCurrency(item.amount)}</div><button class="record-menu-button" data-action="show-expense-record" data-record-id="${item.id}" aria-label="Modifier ou supprimer cette dépense">•••</button></div></div>`).join('') : emptyList('Aucune dépense enregistrée.')}
+              <div class="list-item record-list-item"><div class="list-icon">${typeIcon(item.category)}</div><div><p class="list-title">${escapeHtml(item.category)}</p><p class="list-subtitle">${escapeHtml(item.note || 'Sans description')} · ${formatDate(item.date)}</p></div><div class="record-trailing"><div class="list-value">${formatCurrency(item.amount)}</div><button type="button" class="record-menu-button" data-action="show-expense-record" data-record-id="${item.id}" aria-label="Modifier ou supprimer cette dépense">•••</button></div></div>`).join('') : emptyList('Aucune dépense enregistrée.')}
           </div>
         </article>
       </div>`;
@@ -1980,7 +1977,7 @@
         <article class="card card-pad">
           <div class="card-title-row"><h2>Historique</h2></div>
           <div class="list" style="margin-top:14px">
-            ${items.length ? [...items].reverse().map((item) => `<div class="list-item record-list-item"><div class="list-icon">⚖️</div><div><p class="list-title">${formatWeight(weightValueKg(item), 2)}</p><p class="list-subtitle">${escapeHtml(item.note || 'Mesure enregistrée')}</p></div><div class="record-trailing"><div class="list-value">${formatDate(item.date, { short: true })}</div><button class="record-menu-button" data-action="show-weight-record" data-record-id="${item.id}" aria-label="Modifier ou supprimer cette mesure">•••</button></div></div>`).join('') : emptyList('Aucune mesure de poids.')}
+            ${items.length ? [...items].reverse().map((item) => `<div class="list-item record-list-item"><div class="list-icon">⚖️</div><div><p class="list-title">${formatWeight(weightValueKg(item), 2)}</p><p class="list-subtitle">${escapeHtml(item.note || 'Mesure enregistrée')}</p></div><div class="record-trailing"><div class="list-value">${formatDate(item.date, { short: true })}</div><button type="button" class="record-menu-button" data-action="show-weight-record" data-record-id="${item.id}" aria-label="Modifier ou supprimer cette mesure">•••</button></div></div>`).join('') : emptyList('Aucune mesure de poids.')}
           </div>
         </article>
       </div>`;
@@ -2090,7 +2087,7 @@
           <div class="card-title-row"><h2>Journal de vie</h2><span class="summary-note">${items.length} souvenir${items.length > 1 ? 's' : ''}</span></div>
           <div class="memory-grid" style="margin-top:14px">
             ${items.length ? items.map((item) => `
-              <button class="memory-tile" data-memory-id="${item.id}">
+              <button type="button" class="memory-tile" data-memory-id="${item.id}">
                 ${imageTag(item.image, '', item.title)}
                 <div class="memory-tile-body"><h3>${item.favorite ? '♥ ' : ''}${escapeHtml(item.title)}</h3><p>${formatDate(item.date, { short: true })}</p></div>
               </button>`).join('') : `<div style="grid-column:1/-1">${emptyList('Aucun souvenir enregistré.')}</div>`}
@@ -2108,9 +2105,9 @@
             <article class="card pet-list-card ${pet.id === data.activePetId ? 'active' : ''}">
               ${petPhotoButton(pet, '', 'pet-list-photo-button')}
               <div><p class="list-title">${escapeHtml(pet.name)}</p><p class="list-subtitle">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}${humanAgeCompactText(pet) ? ` · ${humanAgeCompactText(pet)}` : ''}</p></div>
-              <button class="secondary-button" data-select-pet="${pet.id}">${pet.id === data.activePetId ? 'Actif' : 'Choisir'}</button>
+              <button type="button" class="secondary-button" data-select-pet="${pet.id}">${pet.id === data.activePetId ? 'Actif' : 'Choisir'}</button>
             </article>`).join('')}
-        </div>` : `<article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Ajoutez votre premier compagnon pour créer son carnet de vie.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article>`}
+        </div>` : `<article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Ajoutez votre premier compagnon pour créer son carnet de vie.</p><button type="button" class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article>`}
       </div>`;
   }
 
@@ -2120,7 +2117,7 @@
     const lastWeight = latestByDate(petItems('weights'));
     return `
       <div class="page-stack">
-        <div class="page-header"><div><p class="eyebrow">Profil</p><h1>${escapeHtml(pet.name)}</h1><p>Les informations essentielles de son dossier.</p></div><button class="floating-page-button" data-action="edit-pet">Modifier</button></div>
+        <div class="page-header"><div><p class="eyebrow">Profil</p><h1>${escapeHtml(pet.name)}</h1><p>Les informations essentielles de son dossier.</p></div><button type="button" class="floating-page-button" data-action="edit-pet">Modifier</button></div>
         <article class="card pet-card">${petPhotoButton(pet, 'pet-avatar')}<div><h2 class="pet-name">${escapeHtml(pet.name)}</h2><p class="pet-meta">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}${humanAgeCompactText(pet) ? ` · ${humanAgeCompactText(pet)}` : ''}</p></div></article>
         <article class="card card-pad">
           <div class="profile-grid">
@@ -2137,7 +2134,7 @@
         </article>
         <article class="card card-pad danger-zone">
           <div><p class="eyebrow danger-eyebrow">Gestion du profil</p><h2>Supprimer ${escapeHtml(pet.name)}</h2><p>Cette action retire aussi son carnet de santé, ses dépenses, ses poids et ses souvenirs.</p></div>
-          <button class="danger-button" data-action="request-delete-pet">Supprimer cet animal</button>
+          <button type="button" class="danger-button" data-action="request-delete-pet">Supprimer cet animal</button>
         </article>
       </div>`;
   }
@@ -2251,24 +2248,24 @@
             <div class="form-row"><label for="languageSetting">Langue</label><select id="languageSetting"><option value="fr" ${settings.language === 'fr' ? 'selected' : ''}>Français</option><option value="en" ${settings.language === 'en' ? 'selected' : ''}>English</option></select></div>
             <div class="form-row"><label for="currencySetting">Devise</label><select id="currencySetting">${currencyOptionsHtml()}</select><span class="form-help">Les montants déjà enregistrés ne sont pas convertis.</span></div>
             <div class="form-row"><label for="weightSetting">Unité de poids</label><select id="weightSetting"><option value="kg" ${settings.weightUnit === 'kg' ? 'selected' : ''}>Kilogrammes (kg)</option><option value="lb" ${settings.weightUnit === 'lb' ? 'selected' : ''}>Livres (lb)</option></select></div>
-            <div class="button-row"><button class="primary-button" data-action="save-settings">Enregistrer les préférences</button></div>
+            <div class="button-row"><button type="button" class="primary-button" data-action="save-settings">Enregistrer les préférences</button></div>
           </div>
         </article>
         <article class="card card-pad account-card">
-          <img src="assets/animoa-icon-official.png" alt="" class="account-logo" />
+          <img src="assets/animoa-icon-official.png" alt="" class="account-logo" width="331" height="378" decoding="async" />
           <div class="account-copy"><p class="eyebrow">Compte</p><h2>${escapeHtml(user?.email || (window.AnimoaAuth?.isLocalPreview?.() ? 'Mode local de prévisualisation' : 'Animoa'))}</h2><p>${cloudEnabled ? 'Les données de ce compte sont synchronisées avec Supabase.' : 'Les données restent uniquement dans ce navigateur.'}</p><span class="account-sync ${syncState}">${cloudEnabled ? 'Synchronisation sécurisée activée' : 'Mode local de prévisualisation'}</span></div>
-          <button class="secondary-button" data-action="logout">Se déconnecter</button>
+          <button type="button" class="secondary-button" data-action="logout">Se déconnecter</button>
         </article>
         <article class="card card-pad danger-zone settings-compact-row">
           <div><p class="eyebrow danger-eyebrow">Données enregistrées</p><h2>Effacer toutes les données</h2><p>Cette action supprime le carnet et les photos de ce compte.</p></div>
-          <button class="danger-button" data-action="reset-data">Effacer toutes les données</button>
+          <button type="button" class="danger-button" data-action="reset-data">Effacer toutes les données</button>
         </article>
         <article class="card card-pad settings-support-card settings-compact-row">
           <div><p class="eyebrow">Aide & support</p><h2>Besoin d’aide avec Animoa ?</h2><p>Consultez le guide ou contactez directement l’équipe Animoa.</p></div>
-          <div class="settings-support-actions"><button class="secondary-button" data-page="help">Guide de l’application</button><button class="primary-button" data-page="contact">Nous contacter</button></div>
+          <div class="settings-support-actions"><button type="button" class="secondary-button" data-page="help">Guide de l’application</button><button type="button" class="primary-button" data-page="contact">Nous contacter</button></div>
         </article>
-        <div class="settings-legal-row"><button data-page="privacy">Confidentialité</button><span>·</span><button data-page="legal">Mentions légales</button><span>·</span><span>Version ${APP_VERSION}</span></div>
-        <div class="settings-note"><img src="assets/animoa-wordmark-official.png" alt="Animoa" /><p><strong>Animoa</strong><br />Toute sa vie, près de vous.</p></div>
+        <div class="settings-legal-row"><button type="button" data-page="privacy">Confidentialité</button><span>·</span><button type="button" data-page="legal">Mentions légales</button><span>·</span><span>Version ${APP_VERSION}</span></div>
+        <div class="settings-note"><img src="assets/animoa-wordmark-official.png" alt="Animoa" width="800" height="182" decoding="async" /><p><strong>Animoa</strong><br />Toute sa vie, près de vous.</p></div>
       </div>`;
   }
 
@@ -2291,7 +2288,7 @@
         </section>
         <article class="card card-pad support-contact-card">
           <div><p class="eyebrow">Une autre question ?</p><h2>Contactez-nous directement</h2><p>Le formulaire transmettra votre message à ${SUPPORT_EMAIL}.</p></div>
-          <button class="primary-button" data-page="contact">Nous contacter</button>
+          <button type="button" class="primary-button" data-page="contact">Nous contacter</button>
         </article>
       </div>`;
   }
@@ -2410,11 +2407,11 @@
   }
 
   function pageHeader(title, subtitle, addType) {
-    return `<div class="page-header"><div><p class="eyebrow">${title === 'Dépenses' ? 'Budget' : title === 'Souvenirs' ? 'Journal de vie' : 'Carnet de vie'}</p><h1>${title}</h1><p>${subtitle}</p></div><button class="floating-page-button" data-add="${addType}">Ajouter</button></div>`;
+    return `<div class="page-header"><div><p class="eyebrow">${title === 'Dépenses' ? 'Budget' : title === 'Souvenirs' ? 'Journal de vie' : 'Carnet de vie'}</p><h1>${title}</h1><p>${subtitle}</p></div><button type="button" class="floating-page-button" data-add="${addType}">Ajouter</button></div>`;
   }
 
   function renderNoPet() {
-    return `<div class="page-stack"><div class="page-header"><div><p class="eyebrow">Bienvenue</p><h1>Ajoutez votre premier compagnon</h1><p>Animoa commencera par créer son carnet de vie.</p></div></div><article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Quelques informations suffisent pour commencer.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article></div>`;
+    return `<div class="page-stack"><div class="page-header"><div><p class="eyebrow">Bienvenue</p><h1>Ajoutez votre premier compagnon</h1><p>Animoa commencera par créer son carnet de vie.</p></div></div><article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Quelques informations suffisent pour commencer.</p><button type="button" class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article></div>`;
   }
 
   function emptyList(message) {
@@ -2480,12 +2477,12 @@
   function openAddMenu() {
     openModal('Que souhaitez-vous ajouter ?', `
       <div class="add-choice-grid">
-        <button class="add-choice" data-add="appointment"><span>📅</span>Rendez-vous</button>
-        <button class="add-choice" data-add="health"><span>🩺</span>Santé</button>
-        <button class="add-choice" data-add="expense"><span class="currency-choice-icon">${currencySymbol()}</span>Dépense</button>
-        <button class="add-choice" data-add="weight"><span>⚖️</span>Poids</button>
-        <button class="add-choice" data-add="memory"><span>📷</span>Souvenir</button>
-        <button class="add-choice" data-add="pet"><span>🐾</span>Compagnon</button>
+        <button type="button" class="add-choice" data-add="appointment"><span>📅</span>Rendez-vous</button>
+        <button type="button" class="add-choice" data-add="health"><span>🩺</span>Santé</button>
+        <button type="button" class="add-choice" data-add="expense"><span class="currency-choice-icon">${currencySymbol()}</span>Dépense</button>
+        <button type="button" class="add-choice" data-add="weight"><span>⚖️</span>Poids</button>
+        <button type="button" class="add-choice" data-add="memory"><span>📷</span>Souvenir</button>
+        <button type="button" class="add-choice" data-add="pet"><span>🐾</span>Compagnon</button>
       </div>
     `, 'Ajout rapide');
   }
@@ -2575,7 +2572,7 @@
     return `<div class="form-row file-picker-row"><label>${label}</label><div class="file-picker" data-has-existing="${hasExisting ? 'true' : 'false'}" data-existing-ref="${escapeHtml(existingRef)}" data-existing-name="${escapeHtml(displayName)}" data-existing-type="${escapeHtml(existingType)}" data-is-photo="${isPhoto ? 'true' : 'false'}">
       <input class="file-picker-input" id="${fieldId}" name="${name}" type="file" accept="${accept}" tabindex="-1" />
       <input type="hidden" name="${name}Remove" value="0" />
-      <div class="file-picker-toolbar"><label class="file-picker-button" for="${fieldId}"><img src="assets/animoa-icon-official.png" alt="" /><span class="file-picker-button-text">${hasExisting ? replaceLabel : addLabel}</span></label><span class="file-picker-name">${hasExisting ? escapeHtml(displayName) : 'Aucun fichier sélectionné'}</span></div>
+      <div class="file-picker-toolbar"><label class="file-picker-button" for="${fieldId}"><img src="assets/animoa-icon-official.png" alt="" width="331" height="378" decoding="async" /><span class="file-picker-button-text">${hasExisting ? replaceLabel : addLabel}</span></label><span class="file-picker-name">${hasExisting ? escapeHtml(displayName) : 'Aucun fichier sélectionné'}</span></div>
       ${existingPreview}
     </div></div>`;
   }
@@ -2792,8 +2789,8 @@
         <p><strong>Cette suppression est définitive sur cet appareil.</strong></p>
         <p>Seront supprimés : ${counts.santé} élément${counts.santé > 1 ? 's' : ''} de santé, ${counts.dépenses} dépense${counts.dépenses > 1 ? 's' : ''}, ${counts.poids} mesure${counts.poids > 1 ? 's' : ''} de poids et ${counts.souvenirs} souvenir${counts.souvenirs > 1 ? 's' : ''}.</p>
         <div class="delete-actions">
-          <button class="secondary-button" data-action="close-modal">Annuler</button>
-          <button class="danger-button" data-action="confirm-delete-pet" data-pet-id="${pet.id}">Oui, supprimer ${escapeHtml(pet.name)}</button>
+          <button type="button" class="secondary-button" data-action="close-modal">Annuler</button>
+          <button type="button" class="danger-button" data-action="confirm-delete-pet" data-pet-id="${pet.id}">Oui, supprimer ${escapeHtml(pet.name)}</button>
         </div>
       </div>
     `, 'Action sensible', { sensitive: true });
@@ -2846,7 +2843,7 @@
         <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong>${timeDetail}<span>État</span><strong>${status}</strong><span>Professionnel</span><strong>${escapeHtml(item.professional || 'Non renseigné')}</strong></div>
         <p>${escapeHtml(item.note || 'Aucune note.')}</p>
         ${item.attachment ? `<button class="attachment-preview" data-action="open-attachment" data-image-ref="${escapeHtml(item.attachment)}" data-file-type="${escapeHtml(item.attachmentType || '')}" data-file-name="${escapeHtml(item.attachmentName || 'Fichier joint')}"><span>${item.attachmentType?.startsWith('image/') ? '🖼️' : '📎'}</span><span>${escapeHtml(item.attachmentName || 'Voir le fichier ou l’image')}</span></button>` : ''}
-        <div class="record-detail-actions"><button class="secondary-button" data-action="edit-health-record" data-record-id="${item.id}">Modifier</button><button class="danger-button" data-action="request-delete-record" data-collection="health" data-record-id="${item.id}" data-label="cette information de santé" data-return-page="health">Supprimer</button></div>
+        <div class="record-detail-actions"><button type="button" class="secondary-button" data-action="edit-health-record" data-record-id="${item.id}">Modifier</button><button type="button" class="danger-button" data-action="request-delete-record" data-collection="health" data-record-id="${item.id}" data-label="cette information de santé" data-return-page="health">Supprimer</button></div>
       </div>`, 'Santé');
   }
 
@@ -2857,7 +2854,7 @@
       <div class="record-detail">
         <p class="record-big-value">${formatWeight(weightValueKg(item), 2)}</p>
         <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong><span>Note</span><strong>${escapeHtml(item.note || 'Aucune')}</strong></div>
-        <div class="record-detail-actions"><button class="secondary-button" data-action="edit-weight-record" data-record-id="${item.id}">Modifier</button><button class="danger-button" data-action="request-delete-record" data-collection="weights" data-record-id="${item.id}" data-label="cette mesure de poids" data-return-page="weight">Supprimer</button></div>
+        <div class="record-detail-actions"><button type="button" class="secondary-button" data-action="edit-weight-record" data-record-id="${item.id}">Modifier</button><button type="button" class="danger-button" data-action="request-delete-record" data-collection="weights" data-record-id="${item.id}" data-label="cette mesure de poids" data-return-page="weight">Supprimer</button></div>
       </div>`, 'Poids');
   }
 
@@ -2869,13 +2866,13 @@
         <p class="record-big-value">${formatCurrency(item.amount)}</p>
         <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong><span>Description</span><strong>${escapeHtml(item.note || 'Aucune')}</strong></div>
         ${item.attachment ? `<button class="attachment-preview" data-action="open-attachment" data-image-ref="${escapeHtml(item.attachment)}" data-file-type="${escapeHtml(item.attachmentType || '')}" data-file-name="${escapeHtml(item.attachmentName || 'Justificatif')}" data-attachment-context="Dépense"><span>${item.attachmentType?.startsWith('image/') ? '🖼️' : '📎'}</span><span>${escapeHtml(item.attachmentName || 'Voir le justificatif')}</span></button>` : ''}
-        <div class="record-detail-actions"><button class="secondary-button" data-action="edit-expense-record" data-record-id="${item.id}">Modifier</button><button class="danger-button" data-action="request-delete-record" data-collection="expenses" data-record-id="${item.id}" data-label="cette dépense" data-return-page="expenses">Supprimer</button></div>
+        <div class="record-detail-actions"><button type="button" class="secondary-button" data-action="edit-expense-record" data-record-id="${item.id}">Modifier</button><button type="button" class="danger-button" data-action="request-delete-record" data-collection="expenses" data-record-id="${item.id}" data-label="cette dépense" data-return-page="expenses">Supprimer</button></div>
       </div>`, 'Dépense');
   }
 
   function requestDeleteRecord(collection, recordId, label, returnPage) {
     openModal('Confirmer la suppression', `
-      <div class="delete-confirmation"><div class="delete-warning-icon">!</div><p>Supprimer définitivement ${escapeHtml(label || 'cet élément')} ?</p><div class="delete-actions"><button class="secondary-button" data-action="close-modal">Annuler</button><button class="danger-button" data-action="confirm-delete-record" data-collection="${collection}" data-record-id="${recordId}" data-return-page="${returnPage}">Oui, supprimer</button></div></div>`, 'Action sensible', { sensitive: true });
+      <div class="delete-confirmation"><div class="delete-warning-icon">!</div><p>Supprimer définitivement ${escapeHtml(label || 'cet élément')} ?</p><div class="delete-actions"><button type="button" class="secondary-button" data-action="close-modal">Annuler</button><button type="button" class="danger-button" data-action="confirm-delete-record" data-collection="${collection}" data-record-id="${recordId}" data-return-page="${returnPage}">Oui, supprimer</button></div></div>`, 'Action sensible', { sensitive: true });
   }
 
   async function deleteRecord(collection, recordId, returnPage) {
@@ -2996,8 +2993,8 @@
   function showPetSwitcher() {
     openModal('Choisir un animal', `
       <div class="list">
-        ${data.pets.map((pet) => `<button class="card pet-list-card ${pet.id === data.activePetId ? 'active' : ''}" data-select-pet="${pet.id}" style="text-align:left;cursor:pointer" ${pet.id === data.activePetId ? 'aria-current="true"' : ''}>${imageTag(pet.image, '', `Photo de ${pet.name}`)}<div><p class="list-title">${escapeHtml(pet.name)}</p><p class="list-subtitle">${escapeHtml(petTypeLabel(pet))}</p></div><span>${pet.id === data.activePetId ? '✓' : '›'}</span></button>`).join('')}
-        <button class="secondary-button paw-action" data-add="pet">Ajouter un animal</button>
+        ${data.pets.map((pet) => `<button type="button" class="card pet-list-card ${pet.id === data.activePetId ? 'active' : ''}" data-select-pet="${pet.id}" style="text-align:left;cursor:pointer" ${pet.id === data.activePetId ? 'aria-current="true"' : ''}>${imageTag(pet.image, '', `Photo de ${pet.name}`)}<div><p class="list-title">${escapeHtml(pet.name)}</p><p class="list-subtitle">${escapeHtml(petTypeLabel(pet))}</p></div><span>${pet.id === data.activePetId ? '✓' : '›'}</span></button>`).join('')}
+        <button type="button" class="secondary-button paw-action" data-add="pet">Ajouter un animal</button>
       </div>
     `, 'Mes animaux');
   }
@@ -3023,7 +3020,7 @@
   function showReminders() {
     const reminders = upcomingReminders();
     const unreadCount = reminders.filter((item) => !item.reminderRead).length;
-    const toolbar = reminders.length ? `<div class="reminder-toolbar"><span>${unreadCount ? `${unreadCount} non lu${unreadCount > 1 ? 's' : ''}` : 'Tout est lu'}</span>${unreadCount ? '<button class="secondary-button reminder-read-all" data-action="mark-all-reminders-read">Tout marquer comme lu</button>' : ''}</div>` : '';
+    const toolbar = reminders.length ? `<div class="reminder-toolbar"><span>${unreadCount ? `${unreadCount} non lu${unreadCount > 1 ? 's' : ''}` : 'Tout est lu'}</span>${unreadCount ? '<button type="button" class="secondary-button reminder-read-all" data-action="mark-all-reminders-read">Tout marquer comme lu</button>' : ''}</div>` : '';
     openModal('Rappels à venir', reminders.length ? `${toolbar}<div class="list reminder-list">${reminders.map(renderReminderItem).join('')}</div>` : emptyList('Aucun rappel à venir.'), 'Notifications');
   }
 
@@ -3032,7 +3029,7 @@
     if (!memory) return;
     openModal(memory.title, `
       ${imageTag(memory.image, '', memory.title, 'style="width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:18px;background:var(--primary-light)"')}
-      <div style="margin-top:15px"><p class="eyebrow">${escapeHtml(memory.type)}</p><p style="color:var(--muted);font-size:.82rem">${formatDate(memory.date)}</p><p style="line-height:1.55">${escapeHtml(memory.note || 'Aucune anecdote.')}</p><div class="record-detail-actions"><button class="secondary-button" data-action="edit-memory-record" data-record-id="${memory.id}">Modifier</button><button class="danger-button" data-action="request-delete-record" data-collection="memories" data-record-id="${memory.id}" data-label="ce souvenir" data-return-page="memories">Supprimer</button></div></div>
+      <div style="margin-top:15px"><p class="eyebrow">${escapeHtml(memory.type)}</p><p style="color:var(--muted);font-size:.82rem">${formatDate(memory.date)}</p><p style="line-height:1.55">${escapeHtml(memory.note || 'Aucune anecdote.')}</p><div class="record-detail-actions"><button type="button" class="secondary-button" data-action="edit-memory-record" data-record-id="${memory.id}">Modifier</button><button type="button" class="danger-button" data-action="request-delete-record" data-collection="memories" data-record-id="${memory.id}" data-label="ce souvenir" data-return-page="memories">Supprimer</button></div></div>
     `, memory.favorite ? 'Souvenir favori' : 'Souvenir');
   }
 
@@ -3044,8 +3041,8 @@
         <p><strong>Toutes les données locales seront effacées.</strong></p>
         <p>Compagnons, santé, dépenses, poids, souvenirs et photos seront définitivement supprimés de ce navigateur.</p>
         <div class="delete-actions">
-          <button class="secondary-button" data-action="close-modal">Annuler</button>
-          <button class="danger-button" data-action="confirm-reset-data">Oui, tout effacer</button>
+          <button type="button" class="secondary-button" data-action="close-modal">Annuler</button>
+          <button type="button" class="danger-button" data-action="confirm-reset-data">Oui, tout effacer</button>
         </div>
       </div>
     `, 'Action sensible', { sensitive: true });

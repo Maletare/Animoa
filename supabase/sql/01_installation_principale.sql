@@ -4,13 +4,14 @@
 create table if not exists public.animoa_user_data (
   user_id uuid primary key references auth.users(id) on delete cascade,
   data jsonb not null default '{"version":4,"activePetId":null,"pets":[],"health":[],"expenses":[],"weights":[],"memories":[]}'::jsonb,
-  settings jsonb not null default '{"currency":"EUR","weightUnit":"kg","language":"fr","theme":"system"}'::jsonb,
+  settings jsonb not null default '{"currency":"EUR","weightUnit":"kg","language":"fr","theme":"system","palette":"animoa"}'::jsonb,
   updated_at timestamptz not null default now()
 );
 
 alter table public.animoa_user_data enable row level security;
 revoke all on public.animoa_user_data from anon;
 grant select, insert, update, delete on public.animoa_user_data to authenticated;
+grant select on public.animoa_user_data to service_role;
 
 drop policy if exists "Animoa lire ses donnees" on public.animoa_user_data;
 drop policy if exists "Animoa creer ses donnees" on public.animoa_user_data;

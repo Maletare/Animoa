@@ -16,11 +16,18 @@
   <meta property="og:description" content="Centralisez les rendez-vous, vaccins, traitements, poids, dépenses, documents et souvenirs de votre animal." />
   <meta property="og:url" content="https://animoa.fr/" />
   <meta property="og:image" content="https://animoa.fr/assets/animoa-logo-official.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="361" />
+  <meta property="og:image:alt" content="Logo officiel Animoa" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Animoa — Carnet de santé et de vie pour animaux" />
+  <meta name="twitter:description" content="Centralisez les rendez-vous, vaccins, traitements, poids, dépenses, documents et souvenirs de votre animal." />
+  <meta name="twitter:image" content="https://animoa.fr/assets/animoa-logo-official.png" />
   <title>Animoa — Carnet de santé et de vie pour animaux</title>
   <link rel="icon" href="assets/animoa-icon-64.png" type="image/png" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <link rel="manifest" href="site.webmanifest" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="styles.css" />
   <script type="application/ld+json">
   {
@@ -70,7 +77,7 @@
   <main id="landingPage" class="landing-page">
     <header class="landing-header">
       <a class="landing-brand" href="#accueil" aria-label="Accueil Animoa">
-        <img src="assets/animoa-wordmark-official.png" alt="Animoa" />
+        <img src="assets/animoa-wordmark-official.png" alt="Animoa" width="800" height="182" fetchpriority="high" />
       </a>
       <nav class="landing-nav" aria-label="Navigation de présentation">
         <a href="#fonctionnalites">Fonctionnalités</a>
@@ -98,7 +105,7 @@
 
       <div class="landing-app-preview" aria-label="Aperçu des fonctionnalités Animoa">
         <div class="landing-preview-top">
-          <img src="assets/animoa-icon-official.png" alt="" />
+          <img src="assets/animoa-icon-official.png" alt="" width="331" height="378" decoding="async" />
           <div><strong>Le carnet de Milo</strong><span>Informations essentielles</span></div>
         </div>
         <div class="landing-preview-reminder">
@@ -149,7 +156,7 @@
           <input class="survey-honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
           <section class="survey-step active" data-survey-step="1" aria-labelledby="surveyQuestion1">
-            <div class="survey-question-heading"><h3 id="surveyQuestion1">Quels animaux avez-vous ?</h3><p>Sélectionnez toutes les réponses qui vous correspondent.</p></div>
+            <div class="survey-question-heading"><h3 id="surveyQuestion1" tabindex="-1">Quels animaux avez-vous ?</h3><p>Sélectionnez toutes les réponses qui vous correspondent.</p></div>
             <div class="survey-options survey-options-two">
               <label class="survey-choice"><input type="checkbox" name="animals" value="Chien" /><span><i aria-hidden="true">✓</i><strong>Chien</strong></span></label>
               <label class="survey-choice"><input type="checkbox" name="animals" value="Chat" /><span><i aria-hidden="true">✓</i><strong>Chat</strong></span></label>
@@ -162,7 +169,7 @@
           </section>
 
           <section class="survey-step" data-survey-step="2" aria-labelledby="surveyQuestion2" hidden>
-            <div class="survey-question-heading"><h3 id="surveyQuestion2">Comment conservez-vous actuellement les informations de vos animaux ?</h3><p>Choisissez la réponse la plus proche de votre situation.</p></div>
+            <div class="survey-question-heading"><h3 id="surveyQuestion2" tabindex="-1">Comment conservez-vous actuellement les informations de vos animaux ?</h3><p>Choisissez la réponse la plus proche de votre situation.</p></div>
             <div class="survey-options">
               <label class="survey-choice"><input type="radio" name="current_method" value="Carnet papier" /><span><i aria-hidden="true">✓</i><strong>Dans un carnet papier</strong></span></label>
               <label class="survey-choice"><input type="radio" name="current_method" value="Notes numériques" /><span><i aria-hidden="true">✓</i><strong>Dans les notes de mon téléphone ou ordinateur</strong></span></label>
@@ -174,7 +181,7 @@
           </section>
 
           <section class="survey-step" data-survey-step="3" aria-labelledby="surveyQuestion3" hidden>
-            <div class="survey-question-heading"><h3 id="surveyQuestion3">Quelles fonctionnalités vous seraient les plus utiles ?</h3><p>Sélectionnez toutes les réponses qui vous correspondent.</p></div>
+            <div class="survey-question-heading"><h3 id="surveyQuestion3" tabindex="-1">Quelles fonctionnalités vous seraient les plus utiles ?</h3><p>Sélectionnez toutes les réponses qui vous correspondent.</p></div>
             <div class="survey-options survey-options-two">
               <label class="survey-choice"><input type="checkbox" name="features" value="Rendez-vous et rappels vétérinaires" /><span><i aria-hidden="true">✓</i><strong>Rendez-vous et rappels vétérinaires</strong></span></label>
               <label class="survey-choice"><input type="checkbox" name="features" value="Vaccins et traitements" /><span><i aria-hidden="true">✓</i><strong>Vaccins et traitements</strong></span></label>
@@ -187,7 +194,7 @@
           </section>
 
           <section class="survey-step" data-survey-step="4" aria-labelledby="surveyQuestion4" hidden>
-            <div class="survey-question-heading"><h3 id="surveyQuestion4">Souhaiteriez-vous participer aux tests d’Animoa ?</h3><p>Votre réponse n’entraîne aucun engagement.</p></div>
+            <div class="survey-question-heading"><h3 id="surveyQuestion4" tabindex="-1">Souhaiteriez-vous participer aux tests d’Animoa ?</h3><p>Votre réponse n’entraîne aucun engagement.</p></div>
             <div class="survey-options">
               <label class="survey-choice"><input type="radio" name="testing_interest" value="Oui" data-survey-contact="true" /><span><i aria-hidden="true">✓</i><strong>Oui, je souhaite tester Animoa</strong></span></label>
               <label class="survey-choice"><input type="radio" name="testing_interest" value="Peut-être" data-survey-contact="true" /><span><i aria-hidden="true">✓</i><strong>Peut-être, je souhaite être informé</strong></span></label>
@@ -198,7 +205,7 @@
           </section>
 
           <section class="survey-step" data-survey-step="5" aria-labelledby="surveyQuestion5" hidden>
-            <div class="survey-question-heading"><h3 id="surveyQuestion5">Qu’aimeriez-vous pouvoir faire avec Animoa ?</h3><p>Partagez librement une idée, un besoin ou une fonctionnalité importante pour vous. Cette réponse est facultative.</p></div>
+            <div class="survey-question-heading"><h3 id="surveyQuestion5" tabindex="-1">Qu’aimeriez-vous pouvoir faire avec Animoa ?</h3><p>Partagez librement une idée, un besoin ou une fonctionnalité importante pour vous. Cette réponse est facultative.</p></div>
             <label class="survey-textarea-field"><span>Votre idée ou votre besoin</span><textarea name="desired_use" maxlength="300" rows="5" placeholder="Exemple : partager facilement les informations de mon animal avec un proche…"></textarea><small><span id="surveyCharacterCount">0</span>/300 caractères</small></label>
             <p class="survey-error" data-survey-error="5" role="alert"></p>
           </section>
@@ -248,7 +255,7 @@
     </section>
 
     <footer class="landing-footer">
-      <img src="assets/animoa-wordmark-official.png" alt="Animoa" />
+      <img src="assets/animoa-wordmark-official.png" alt="Animoa" width="800" height="182" loading="lazy" decoding="async" />
       <p>Toute sa vie, près de vous.</p>
       <button type="button" data-public-action="login">Se connecter</button>
     </footer>
@@ -259,22 +266,22 @@
   <div class="app-shell" hidden>
     <aside class="desktop-sidebar" aria-label="Navigation principale">
       <div class="brand-block official-brand">
-        <img src="assets/animoa-logo-official.png" alt="Animoa — Toute sa vie, près de vous." class="brand-logo" />
+        <img src="assets/animoa-logo-official.png" alt="Animoa — Toute sa vie, près de vous." class="brand-logo" width="1200" height="361" decoding="async" />
       </div>
       <div id="sidebarPetContext" class="desktop-pet-context" hidden></div>
       <nav id="desktopNav" class="desktop-nav"></nav>
-      <button class="sidebar-add" data-action="open-add">Ajouter</button>
+      <button class="sidebar-add" type="button" data-action="open-add">Ajouter</button>
       <div id="sidebarSyncStatus" class="sidebar-sync-status" aria-live="polite"></div>
     </aside>
 
     <div class="app-column">
       <header class="topbar">
-        <button class="icon-button" data-action="open-menu" aria-label="Ouvrir le menu">☰</button>
+        <button class="icon-button" type="button" data-action="open-menu" aria-label="Ouvrir le menu">☰</button>
         <div class="topbar-brand">
-          <img src="assets/animoa-wordmark-official.png" alt="Animoa" class="topbar-logo" />
+          <img src="assets/animoa-wordmark-official.png" alt="Animoa" class="topbar-logo" width="800" height="182" decoding="async" />
           <span>Toute sa vie, près de vous.</span>
         </div>
-        <button class="icon-button notification-button" data-action="show-reminders" aria-label="Voir les rappels">
+        <button class="icon-button notification-button" type="button" data-action="show-reminders" aria-label="Voir les rappels">
           🔔<span id="reminderBadge" class="badge" hidden>0</span>
         </button>
       </header>
@@ -289,25 +296,25 @@
   <aside id="drawer" class="drawer" aria-label="Menu" aria-hidden="true">
     <div class="drawer-header">
       <div class="brand-block compact official-brand">
-        <img src="assets/animoa-wordmark-official.png" alt="Animoa" class="drawer-logo" />
+        <img src="assets/animoa-wordmark-official.png" alt="Animoa" class="drawer-logo" width="800" height="182" decoding="async" />
       </div>
-      <button class="icon-button" data-action="close-menu" aria-label="Fermer">✕</button>
+      <button class="icon-button" type="button" data-action="close-menu" aria-label="Fermer">✕</button>
     </div>
     <div id="drawerPetContext" class="drawer-pet-context" hidden></div>
     <nav id="drawerNav" class="drawer-nav"></nav>
     <div class="drawer-footer">
       <div class="drawer-footer-main">
-        <button class="drawer-link" data-page="animals">🐾 Mes animaux</button>
-        <button class="drawer-link" data-page="settings">⚙️ Paramètres</button>
-        <button class="drawer-link" data-page="help">❔ Aide &amp; support</button>
-        <button class="drawer-link" data-page="contact">✉️ Nous contacter</button>
+        <button class="drawer-link" type="button" data-page="animals">🐾 Mes animaux</button>
+        <button class="drawer-link" type="button" data-page="settings">⚙️ Paramètres</button>
+        <button class="drawer-link" type="button" data-page="help">❔ Aide &amp; support</button>
+        <button class="drawer-link" type="button" data-page="contact">✉️ Nous contacter</button>
       </div>
       <div class="drawer-legal-links" aria-label="Informations légales">
-        <button data-page="privacy">Confidentialité</button>
+        <button type="button" data-page="privacy">Confidentialité</button>
         <span aria-hidden="true">·</span>
-        <button data-page="legal">Mentions légales</button>
+        <button type="button" data-page="legal">Mentions légales</button>
         <span aria-hidden="true">·</span>
-        <span id="drawerAppVersion">Version 2.4.3</span>
+        <span id="drawerAppVersion">Version 2.4.4</span>
       </div>
     </div>
   </aside>
@@ -320,7 +327,7 @@
         <p class="eyebrow" id="modalEyebrow">Ajouter</p>
         <h2 id="modalTitle">Nouvelle information</h2>
       </div>
-      <button class="icon-button" data-action="close-modal" aria-label="Fermer">✕</button>
+      <button class="icon-button" type="button" data-action="close-modal" aria-label="Fermer">✕</button>
     </div>
     <div id="modalBody" class="modal-body"></div>
   </section>

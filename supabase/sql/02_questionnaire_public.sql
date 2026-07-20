@@ -1,4 +1,4 @@
--- ANIMOA V2.4.0 — activation du questionnaire public
+-- ANIMOA — activation du questionnaire public
 -- À exécuter une seule fois dans Supabase > SQL Editor.
 
 create table if not exists public.animoa_survey_responses (

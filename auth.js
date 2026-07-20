@@ -154,7 +154,7 @@
   }
 
   function logo() {
-    return '<img class="auth-logo" src="assets/animoa-logo-official.png" alt="Animoa" />';
+    return '<img class="auth-logo" src="assets/animoa-logo-official.png" alt="Animoa" width="1200" height="361" decoding="async" />';
   }
 
   function renderLanguageChoice() {
@@ -163,10 +163,10 @@
       ${logo()}
       <div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('chooseLanguage')}</h1><p>${c('chooseLanguageHelp')}</p></div>
       <div class="language-choice-grid">
-        <button class="language-choice ${lang() === 'fr' ? 'active' : ''}" data-auth-language="fr"><strong>Français</strong><span>FR</span></button>
-        <button class="language-choice ${lang() === 'en' ? 'active' : ''}" data-auth-language="en"><strong>English</strong><span>EN</span></button>
+        <button type="button" class="language-choice ${lang() === 'fr' ? 'active' : ''}" data-auth-language="fr"><strong>Français</strong><span>FR</span></button>
+        <button type="button" class="language-choice ${lang() === 'en' ? 'active' : ''}" data-auth-language="en"><strong>English</strong><span>EN</span></button>
       </div>
-      <button class="primary-button auth-submit" data-auth-action="confirm-language">${c('continue')}</button>
+      <button type="button" class="primary-button auth-submit" data-auth-action="confirm-language">${c('continue')}</button>
     </section>`;
   }
 
@@ -176,7 +176,7 @@
       ${logo()}
       <div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('configuration')}</h1><p>${c('configurationText')}</p></div>
       <div class="auth-notice"><strong>supabase-config.js</strong><span>${c('configWarning')}</span></div>
-      <button class="primary-button auth-submit" data-auth-action="local-preview">${c('preview')}</button>
+      <button type="button" class="primary-button auth-submit" data-auth-action="local-preview">${c('preview')}</button>
     </section>`;
   }
 
@@ -188,8 +188,8 @@
       ${logo()}
       <div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('welcome')}</h1><p>${c('tagline')}</p></div>
       <div class="auth-tabs" role="tablist">
-        <button class="${!signup ? 'active' : ''}" data-auth-action="show-login">${c('login')}</button>
-        <button class="${signup ? 'active' : ''}" data-auth-action="show-signup">${c('signup')}</button>
+        <button type="button" class="${!signup ? 'active' : ''}" data-auth-action="show-login">${c('login')}</button>
+        <button type="button" class="${signup ? 'active' : ''}" data-auth-action="show-signup">${c('signup')}</button>
       </div>
       ${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}
       ${!signup ? `<button class="google-auth-button" type="button" data-auth-action="google"><span class="google-auth-icon" aria-hidden="true">G</span><span>${c('googleContinue')}</span></button><p class="google-auth-help">${c('googleExistingOnly')}</p><div class="auth-divider" aria-hidden="true"><span>${c('or')}</span></div>` : ''}
@@ -199,7 +199,7 @@
         ${signup ? `<label><span>${c('invitationCode')}</span><input name="invitationCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required placeholder="ANIMOA-••••" /><small>${c('invitationHelp')}</small></label>` : ''}
         <button class="primary-button auth-submit" type="submit">${signup ? c('signup') : c('login')}</button>
       </form>
-      ${!signup ? `<button class="auth-text-button" data-auth-action="forgot">${c('forgot')}</button>` : ''}
+      ${!signup ? `<button type="button" class="auth-text-button" data-auth-action="forgot">${c('forgot')}</button>` : ''}
       <p class="auth-legal">${c('terms')}</p>
       <button class="auth-text-button auth-back-public" type="button" data-auth-action="public-home">${c('backPublic')}</button>
     </section>`;
@@ -207,12 +207,12 @@
 
   function renderConfirmation() {
     showShell();
-    authShell.innerHTML = `<section class="auth-card auth-success-card">${logo()}<div class="auth-success-icon">✓</div><div class="auth-copy"><h1>${c('confirmTitle')}</h1><p>${c('confirmText')}</p></div><button class="secondary-button auth-submit" data-auth-action="show-login">${c('back')}</button></section>`;
+    authShell.innerHTML = `<section class="auth-card auth-success-card">${logo()}<div class="auth-success-icon">✓</div><div class="auth-copy"><h1>${c('confirmTitle')}</h1><p>${c('confirmText')}</p></div><button type="button" class="secondary-button auth-submit" data-auth-action="show-login">${c('back')}</button></section>`;
   }
 
   function renderForgot(message = '') {
     showShell();
-    authShell.innerHTML = `<section class="auth-card">${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('forgotTitle')}</h1><p>${c('forgotText')}</p></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="forgotForm" class="auth-form"><label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required /></label><button class="primary-button auth-submit" type="submit">${c('sendLink')}</button></form><button class="auth-text-button" data-auth-action="show-login">${c('back')}</button></section>`;
+    authShell.innerHTML = `<section class="auth-card">${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('forgotTitle')}</h1><p>${c('forgotText')}</p></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="forgotForm" class="auth-form"><label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required /></label><button class="primary-button auth-submit" type="submit">${c('sendLink')}</button></form><button type="button" class="auth-text-button" data-auth-action="show-login">${c('back')}</button></section>`;
   }
 
   function renderRecovery(message = '') {

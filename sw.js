@@ -1,20 +1,21 @@
-const CACHE_NAME = 'animoa-v2-20260720-public-survey-243-compact-success';
+const CACHE_NAME = 'animoa-v2.4.4-maintenance';
 
 const CORE = [
   '/',
   '/index.html',
   '/styles.css',
+  '/supabase-config.js',
   '/i18n.js',
   '/auth.js',
   '/questionnaire.js',
   '/cloud.js',
   '/app.js',
   '/site.webmanifest',
-  '/robots.txt',
-  '/sitemap.xml',
   '/assets/animoa-logo-official.png',
   '/assets/animoa-wordmark-official.png',
   '/assets/animoa-icon-official.png',
+  '/assets/animoa-icon-64.png',
+  '/assets/apple-touch-icon.png',
   '/assets/animoa-icon-192.png',
   '/assets/animoa-icon-512.png',
   '/assets/animoa-background-light.webp',
@@ -25,14 +26,20 @@ const CORE = [
 const ALWAYS_REFRESH = new Set([
   '/index.html',
   '/styles.css',
+  '/supabase-config.js',
   '/i18n.js',
   '/auth.js',
   '/questionnaire.js',
   '/cloud.js',
   '/app.js',
-  '/supabase-config.js',
   '/site.webmanifest'
 ]);
+
+async function storeResponse(request, response) {
+  if (!response?.ok || response.status === 206) return;
+  const cache = await caches.open(CACHE_NAME);
+  await cache.put(request, response.clone());
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -45,38 +52,34 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) =>
-        Promise.all(
-          keys
-            .filter((key) => key !== CACHE_NAME)
-            .map((key) => caches.delete(key))
-        )
-      )
+      .then((keys) => Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
+  const { request } = event;
+  if (request.method !== 'GET' || request.headers.has('range')) return;
 
-  const url = new URL(event.request.url);
+  const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  const isNavigation = event.request.mode === 'navigate';
+  const isNavigation = request.mode === 'navigate';
   const mustRefresh = isNavigation || ALWAYS_REFRESH.has(url.pathname);
 
   if (mustRefresh) {
     event.respondWith(
-      fetch(event.request, { cache: 'no-store' })
-        .then((response) => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          }
+      fetch(request, { cache: 'no-store' })
+        .then(async (response) => {
+          await storeResponse(request, response);
           return response;
         })
         .catch(async () => {
-          const cached = await caches.match(event.request);
+          const cached = await caches.match(request);
           if (cached) return cached;
           if (isNavigation) return caches.match('/index.html');
           return Response.error();
@@ -86,17 +89,12 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    caches.match(event.request)
-      .then((cached) => {
-        if (cached) return cached;
+    caches.match(request).then(async (cached) => {
+      if (cached) return cached;
 
-        return fetch(event.request).then((response) => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-          }
-          return response;
-        });
-      })
+      const response = await fetch(request);
+      await storeResponse(request, response);
+      return response;
+    })
   );
 });

@@ -1,9 +1,12 @@
 .env
 .env.*
 !.env.example
-.next/
 node_modules/
+dist/
+.next/
+.vscode/
 .DS_Store
 Thumbs.db
 *.log
+*.zip
 index-test.html

@@ -31,6 +31,7 @@ alter table public.animoa_reminder_deliveries enable row level security;
 
 revoke all on public.animoa_reminder_deliveries from anon, authenticated;
 grant all on public.animoa_reminder_deliveries to service_role;
+grant select on public.animoa_user_data to service_role;
 
 create or replace function public.claim_animoa_reminder(
   p_user_id uuid,
@@ -127,12 +128,12 @@ begin
 end;
 $$;
 
--- Exécution toutes les heures, à la minute 0.
+-- Exécution toutes les heures, à la minute 5.
 -- Les événements avec une heure seront détectés dans les 24 heures précédentes.
 -- Les événements sans heure partiront à midi la veille, heure de Paris.
 select cron.schedule(
   'animoa-reminders-24h-hourly',
-  '0 * * * *',
+  '5 * * * *',
   $$
   select net.http_post(
     url := (

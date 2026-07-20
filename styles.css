@@ -2259,7 +2259,7 @@ html[data-theme="dark"] .theme-preset-preview {
 }
 
 
-/* Animoa V2.4.0 — questionnaire public, FAQ et thèmes allégés */
+/* Questionnaire public, FAQ et thèmes allégés */
 .landing-link-button {
   display: inline-flex;
   align-items: center;
@@ -2424,7 +2424,7 @@ html[data-theme="dark"] .survey-choice > span { background-color: color-mix(in s
 .public-survey-card { scroll-margin-top: 88px; }
 
 
-/* Animoa V2.4.1 — page publique plus compacte */
+/* Page publique compacte */
 .landing-header {
   min-height: 68px;
   padding-block: 7px;
@@ -2566,7 +2566,7 @@ html[data-theme="dark"] .survey-choice > span { background-color: color-mix(in s
 }
 
 
-/* Animoa V2.4.3 — accueil compact et confirmation explicite */
+/* Accueil compact et confirmation explicite */
 .landing-header {
   min-height: 62px;
   padding-block: 4px;

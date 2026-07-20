@@ -89,7 +89,6 @@
     'Sobre et moderne': 'Understated and modern',
     'Nuit & or': 'Night & gold',
     'Bleu nuit et doré': 'Midnight blue and gold',
-    'Sur mesure': 'Custom',
     'Personnalisé': 'Custom',
     'Créer votre propre thème': 'Create your own theme',
     'Créer mon thème': 'Create my theme',
@@ -461,15 +460,7 @@
     'Laissez ce champ vide pour conserver le fichier actuel.': 'Leave this field empty to keep the current file.',
     'Ajoutez une image ou un document utile.': 'Add a useful image or document.',
     'Aucun rappel planifié ne nécessite votre attention.': 'No scheduled reminder needs your attention.',
-    'Votre application de messagerie va s’ouvrir.': 'Your email app will open.',
     'L’envoi intégré est indisponible : votre application de messagerie va s’ouvrir.': 'Integrated sending is unavailable: your email app will open.',
-    'Veuillez d’abord ajouter un animal.': 'Please add a pet first.',
-    'La date prévue ne peut pas être antérieure à aujourd’hui. Veuillez modifier la date ou sélectionner « Effectué ».': 'The scheduled date cannot be earlier than today. Please change the date or select “Completed”.',
-    'La date de réalisation ne peut pas être postérieure à aujourd’hui.': 'The completion date cannot be later than today.',
-    'L’heure prévue ne peut pas être antérieure à l’heure actuelle.': 'The scheduled time cannot be earlier than the current time.',
-    'L’heure de réalisation ne peut pas être postérieure à l’heure actuelle.': 'The completion time cannot be later than the current time.',
-    'Saisissez quatre chiffres, par exemple 1245 pour 12:45.': 'Enter four digits, for example 1245 for 12:45.',
-    'L’heure est facultative. Saisissez quatre chiffres, par exemple 1245 pour 12:45. Sans heure, l’e-mail de rappel sera envoyé à midi la veille.': 'The time is optional. Enter four digits, for example 1245 for 12:45. Without a time, the reminder email will be sent at noon the day before.'
   };
 
   function translateKnownWord(value) {
