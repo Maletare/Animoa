@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v2-20260720-public-survey-240';
+const CACHE_NAME = 'animoa-v2-20260720-public-survey-241-compact';
 
 const CORE = [
   '/',

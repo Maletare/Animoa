@@ -2422,3 +2422,145 @@ html[data-theme="dark"] .survey-choice > span { background-color: color-mix(in s
   .survey-actions:has(#surveyPreviousButton[hidden]) #surveyNextButton { grid-column: 1 / -1; }
 }
 .public-survey-card { scroll-margin-top: 88px; }
+
+
+/* Animoa V2.4.1 — page publique plus compacte */
+.landing-header {
+  min-height: 68px;
+  padding-block: 7px;
+}
+.landing-brand img {
+  width: 148px;
+  height: 44px;
+}
+.landing-hero {
+  min-height: 0;
+  gap: clamp(28px, 5vw, 58px);
+  padding: clamp(32px, 5vw, 58px) 0;
+}
+.landing-kicker { margin-bottom: 8px; }
+.landing-hero h1 {
+  font-size: clamp(2.25rem, 4.8vw, 4.25rem);
+  line-height: 1.04;
+}
+.landing-lead {
+  margin-top: 16px;
+  font-size: clamp(.96rem, 1.45vw, 1.13rem);
+  line-height: 1.55;
+}
+.landing-hero-actions { margin-top: 20px; }
+.landing-hero-actions > button,
+.landing-hero-actions > a {
+  min-height: 46px;
+}
+.landing-access-note { margin-top: 10px; }
+.landing-app-preview {
+  padding: 17px;
+  border-radius: 27px;
+}
+.landing-preview-top { padding-bottom: 13px; }
+.landing-preview-top img {
+  width: 50px;
+  height: 54px;
+}
+.landing-preview-reminder {
+  margin-top: 13px;
+  padding: 12px;
+  border-radius: 17px;
+}
+.landing-preview-grid {
+  gap: 8px;
+  margin-top: 9px;
+}
+.landing-preview-grid > div {
+  min-height: 96px;
+  padding: 12px;
+  border-radius: 16px;
+}
+.landing-section,
+.landing-survey-section,
+.landing-faq-section {
+  padding: clamp(42px, 6vw, 68px) 0;
+}
+.landing-section-heading { margin-bottom: 24px; }
+.landing-section-heading h2,
+.landing-test-section h2 {
+  font-size: clamp(1.75rem, 3.3vw, 2.7rem);
+}
+.landing-feature-grid article {
+  padding: 19px;
+  border-radius: 20px;
+}
+.landing-feature-grid h3 { margin-top: 14px; }
+.landing-test-section {
+  margin: 26px 0 52px;
+  padding: clamp(23px, 4vw, 36px);
+  border-radius: 25px;
+}
+.survey-intro { margin-bottom: 18px; }
+.survey-duration {
+  margin-top: 14px;
+  padding: 12px 15px;
+}
+
+@media (max-width: 620px) {
+  .landing-header {
+    min-height: 60px;
+    padding-block: 5px;
+  }
+  .landing-brand img {
+    width: 116px;
+    height: 38px;
+  }
+  .landing-hero {
+    gap: 25px;
+    padding: 24px 0 36px;
+  }
+  .landing-hero h1 {
+    font-size: clamp(2rem, 10.5vw, 2.9rem);
+  }
+  .landing-lead {
+    margin-top: 12px;
+    font-size: .94rem;
+    line-height: 1.48;
+  }
+  .landing-hero-actions {
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .landing-hero-actions > button,
+  .landing-hero-actions > a {
+    min-height: 44px;
+  }
+  .landing-app-preview {
+    padding: 12px;
+    border-radius: 22px;
+  }
+  .landing-preview-reminder {
+    grid-template-columns: 42px 1fr;
+    gap: 10px;
+  }
+  .landing-preview-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+  .landing-preview-grid > div {
+    min-height: 82px;
+    padding: 10px;
+  }
+  .landing-section,
+  .landing-survey-section,
+  .landing-faq-section {
+    padding: 36px 0;
+  }
+  .landing-section-heading { margin-bottom: 20px; }
+  .landing-test-section {
+    margin: 20px 0 38px;
+    padding: 22px 18px;
+  }
+  .survey-duration {
+    margin-top: 12px;
+    padding: 11px 14px;
+  }
+}
