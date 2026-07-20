@@ -1,7 +1,7 @@
 {
   "name": "Animoa — Toute sa vie, près de vous.",
   "short_name": "Animoa",
-  "description": "Le carnet de vie numérique de votre animal.",
+  "description": "Le carnet de santé et de vie numérique de votre animal.",
   "lang": "fr",
   "start_url": "/",
   "scope": "/",

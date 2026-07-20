@@ -127,12 +127,12 @@ begin
 end;
 $$;
 
--- Exécution toutes les heures à la 5e minute.
+-- Exécution toutes les heures, à la minute 0.
 -- Les événements avec une heure seront détectés dans les 24 heures précédentes.
--- Les événements sans heure partiront la veille à partir de 8 h, heure de Paris.
+-- Les événements sans heure partiront à midi la veille, heure de Paris.
 select cron.schedule(
   'animoa-reminders-24h-hourly',
-  '5 * * * *',
+  '0 * * * *',
   $$
   select net.http_post(
     url := (

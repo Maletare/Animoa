@@ -8,7 +8,7 @@
   const MEDIA_STORE_NAME = 'images';
   const MEDIA_PREFIX = 'media:';
   const CLOUD_PREFIX = 'cloud:';
-  const APP_VERSION = '2.2.4';
+  const APP_VERSION = '2.4.0';
   const SUPPORT_EMAIL = 'contact@animoa.fr';
 
   const HEALTH_TYPES = ['Tous', 'Vaccin', 'Rendez-vous', 'Traitement', 'Médicament', 'Analyse', 'Document'];
@@ -26,6 +26,27 @@
   const SUPPORTED_WEIGHT_UNITS = new Set(['kg', 'lb']);
   const SUPPORTED_LANGUAGES = new Set(['fr', 'en']);
   const SUPPORTED_THEMES = new Set(['light', 'dark', 'system']);
+  const PALETTE_OPTIONS = [
+    { id: 'animoa', label: 'Animoa', description: 'Turquoise et corail', colors: ['#20b8ae', '#ff6f73', '#f4c89a'], lightBg: '#f4fbfa', lightSurface: '#ffffff', darkBg: '#101b1a', darkSurface: '#182725' },
+    { id: 'rose', label: 'Rose poudré', description: 'Doux et chaleureux', colors: ['#d77fa1', '#f4a6b8', '#f7d7df'], lightBg: '#fbf7f9', lightSurface: '#fffefe', darkBg: '#1b1217', darkSurface: '#291b22' },
+    { id: 'blue', label: 'Bleu ciel', description: 'Clair et apaisant', colors: ['#5f9fd1', '#82c3e6', '#d9eef9'], lightBg: '#f5f9fc', lightSurface: '#ffffff', darkBg: '#101a22', darkSurface: '#192832' },
+    { id: 'coral', label: 'Corail', description: 'Corail et pêche', colors: ['#df766c', '#f29b7f', '#f9d6c7'], lightBg: '#fcf8f6', lightSurface: '#ffffff', darkBg: '#1c1412', darkSurface: '#2b201d' },
+    { id: 'yellow', label: 'Miel', description: 'Jaune doux et sable', colors: ['#c69b3c', '#efc968', '#faedbf'], lightBg: '#fbfaf4', lightSurface: '#ffffff', darkBg: '#1a1811', darkSurface: '#29251a' },
+    { id: 'green', label: 'Menthe', description: 'Frais et lumineux', colors: ['#67a786', '#8cc8a6', '#dcefe3'], lightBg: '#f5f9f6', lightSurface: '#ffffff', darkBg: '#101914', darkSurface: '#18271f' },
+    { id: 'violet', label: 'Violet', description: 'Prune et lilas', colors: ['#8d7ac4', '#b49bd9', '#e8def5'], lightBg: '#f8f6fb', lightSurface: '#ffffff', darkBg: '#15131c', darkSurface: '#211d2c' },
+    { id: 'midnight', label: 'Nuit & or', description: 'Bleu nuit et doré', colors: ['#2f526f', '#c39a48', '#e9ddbf'], lightBg: '#f5f7f9', lightSurface: '#ffffff', darkBg: '#0d131a', darkSurface: '#17212b' }
+  ];
+  const PALETTE_MAP = new Map(PALETTE_OPTIONS.map((palette) => [palette.id, palette]));
+  const SUPPORTED_PALETTES = new Set([...PALETTE_OPTIONS.map((palette) => palette.id), 'custom']);
+  const DEFAULT_CUSTOM_COLORS = Object.freeze({
+    primary: '#20b8ae', accent: '#ff6f73',
+    lightBg: '#f4fbfa', lightSurface: '#ffffff',
+    darkBg: '#101b1a', darkSurface: '#182725'
+  });
+  const THEME_OVERRIDE_VARIABLES = [
+    '--bg', '--surface', '--surface-soft', '--surface-elevated', '--primary', '--primary-dark', '--primary-light',
+    '--accent', '--accent-soft', '--text', '--muted', '--border', '--danger', '--warning', '--success', '--input-bg'
+  ];
   const WEIGHT_GUIDES_KG = {
     Chien: { min: 0.2, max: 120, step: 0.1, label: 'chien' },
     Chat: { min: 0.2, max: 20, step: 0.05, label: 'chat' },
@@ -81,8 +102,10 @@
   let syncState = 'local';
   const mediaUrlCache = new Map();
   const preparedPhotoFiles = new WeakMap();
+  const previewObjectUrls = new WeakMap();
   let cropperSession = null;
   let photoViewerScale = 1;
+  let settingsPreviewActive = false;
 
   const mainContent = document.getElementById('mainContent');
   const mobileNav = document.getElementById('mobileNav');
@@ -132,9 +155,122 @@
     window.AnimoaI18n?.translateTree?.(root);
   }
 
-  function resolvedTheme() {
-    if (settings?.theme === 'dark' || settings?.theme === 'light') return settings.theme;
+  function normalizeHexColor(value, fallback) {
+    const raw = String(value || '').trim();
+    if (/^#[0-9a-f]{6}$/i.test(raw)) return raw.toLowerCase();
+    if (/^#[0-9a-f]{3}$/i.test(raw)) return `#${raw.slice(1).split('').map((part) => part + part).join('')}`.toLowerCase();
+    return fallback;
+  }
+
+  function normalizeCustomColors(value = {}) {
+    return {
+      primary: normalizeHexColor(value.primary, DEFAULT_CUSTOM_COLORS.primary),
+      accent: normalizeHexColor(value.accent, DEFAULT_CUSTOM_COLORS.accent),
+      lightBg: normalizeHexColor(value.lightBg, DEFAULT_CUSTOM_COLORS.lightBg),
+      lightSurface: normalizeHexColor(value.lightSurface, DEFAULT_CUSTOM_COLORS.lightSurface),
+      darkBg: normalizeHexColor(value.darkBg, DEFAULT_CUSTOM_COLORS.darkBg),
+      darkSurface: normalizeHexColor(value.darkSurface, DEFAULT_CUSTOM_COLORS.darkSurface)
+    };
+  }
+
+  function hexToRgb(hex) {
+    const normalized = normalizeHexColor(hex, '#000000');
+    return {
+      r: parseInt(normalized.slice(1, 3), 16),
+      g: parseInt(normalized.slice(3, 5), 16),
+      b: parseInt(normalized.slice(5, 7), 16)
+    };
+  }
+
+  function rgbToHex({ r, g, b }) {
+    const part = (value) => Math.max(0, Math.min(255, Math.round(value))).toString(16).padStart(2, '0');
+    return `#${part(r)}${part(g)}${part(b)}`;
+  }
+
+  function mixHex(first, second, secondWeight = .5) {
+    const a = hexToRgb(first);
+    const b = hexToRgb(second);
+    const weight = Math.max(0, Math.min(1, Number(secondWeight) || 0));
+    return rgbToHex({ r: a.r + (b.r - a.r) * weight, g: a.g + (b.g - a.g) * weight, b: a.b + (b.b - a.b) * weight });
+  }
+
+  function relativeLuminance(hex) {
+    const { r, g, b } = hexToRgb(hex);
+    const channel = (value) => {
+      const normalized = value / 255;
+      return normalized <= .03928 ? normalized / 12.92 : ((normalized + .055) / 1.055) ** 2.4;
+    };
+    return .2126 * channel(r) + .7152 * channel(g) + .0722 * channel(b);
+  }
+
+  function readableText(background, light = '#f7faf9', dark = '#243033') {
+    return relativeLuminance(background) < .34 ? light : dark;
+  }
+
+  function paletteThemeSource(preferences, mode) {
+    if (preferences?.palette === 'custom') {
+      const custom = normalizeCustomColors(preferences.customColors);
+      return {
+        primary: custom.primary,
+        accent: custom.accent,
+        bg: mode === 'dark' ? custom.darkBg : custom.lightBg,
+        surface: mode === 'dark' ? custom.darkSurface : custom.lightSurface
+      };
+    }
+    const palette = PALETTE_MAP.get(preferences?.palette) || PALETTE_MAP.get('animoa');
+    return {
+      primary: palette.colors[0],
+      accent: palette.colors[1],
+      bg: mode === 'dark' ? palette.darkBg : palette.lightBg,
+      surface: mode === 'dark' ? palette.darkSurface : palette.lightSurface
+    };
+  }
+
+  function buildThemeVariables(preferences, mode) {
+    const source = paletteThemeSource(preferences, mode);
+    const dark = mode === 'dark';
+    const text = readableText(source.surface);
+    const muted = mixHex(text, source.surface, dark ? .36 : .48);
+    return {
+      '--bg': source.bg,
+      '--surface': source.surface,
+      '--surface-soft': mixHex(source.surface, source.primary, dark ? .14 : .075),
+      '--surface-elevated': mixHex(source.surface, dark ? '#ffffff' : source.bg, dark ? .06 : .18),
+      '--primary': source.primary,
+      '--primary-dark': mixHex(source.primary, dark ? '#ffffff' : '#000000', dark ? .28 : .27),
+      '--primary-light': mixHex(source.primary, source.bg, dark ? .68 : .80),
+      '--accent': source.accent,
+      '--accent-soft': mixHex(source.accent, source.bg, dark ? .72 : .84),
+      '--text': text,
+      '--muted': muted,
+      '--border': mixHex(source.surface, text, dark ? .20 : .12),
+      '--danger': dark ? '#ff91a4' : '#b94455',
+      '--warning': dark ? '#ffd084' : '#9a5d14',
+      '--success': dark ? mixHex(source.primary, '#ffffff', .25) : mixHex(source.primary, '#000000', .20),
+      '--input-bg': mixHex(source.surface, source.bg, dark ? .22 : .08)
+    };
+  }
+
+  function clearThemeOverrides() {
+    THEME_OVERRIDE_VARIABLES.forEach((name) => document.documentElement.style.removeProperty(name));
+  }
+
+  function resolvedTheme(preferences = settings) {
+    if (preferences?.theme === 'dark' || preferences?.theme === 'light') return preferences.theme;
     return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function applyVisualPreferences(preferences = settings) {
+    const mode = resolvedTheme(preferences);
+    const palette = SUPPORTED_PALETTES.has(preferences?.palette) ? preferences.palette : 'animoa';
+    document.documentElement.dataset.themePreference = preferences?.theme || 'system';
+    document.documentElement.dataset.theme = mode;
+    document.documentElement.dataset.palette = palette;
+    clearThemeOverrides();
+    const variables = buildThemeVariables({ ...preferences, palette }, mode);
+    Object.entries(variables).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
+    const paletteColor = paletteThemeSource({ ...preferences, palette }, mode).primary;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', mode === 'dark' ? variables['--bg'] : paletteColor);
   }
 
   function renderStaticChrome() {
@@ -163,10 +299,8 @@
   function applyPreferences() {
     const language = SUPPORTED_LANGUAGES.has(settings?.language) ? settings.language : 'fr';
     if (window.AnimoaI18n?.getLanguage?.() !== language) window.AnimoaI18n?.setLanguage?.(language);
-    document.documentElement.dataset.themePreference = settings?.theme || 'system';
-    document.documentElement.dataset.theme = resolvedTheme();
     document.documentElement.lang = language;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', resolvedTheme() === 'dark' ? '#13221f' : '#23b9ad');
+    applyVisualPreferences(settings);
     renderStaticChrome();
   }
 
@@ -252,7 +386,7 @@
           localStorage.setItem('animoa_legacy_migration_owner', userId);
           localStorage.removeItem(SETTINGS_KEY);
         } else {
-          settings = normalizeSettings({ language: window.AnimoaI18n?.getLanguage?.() || 'fr', theme: 'system' });
+          settings = normalizeSettings({ language: window.AnimoaI18n?.getLanguage?.() || 'fr', theme: 'system', palette: 'animoa' });
         }
         localStorage.setItem(userSettingsKey, JSON.stringify(settings));
       }
@@ -361,10 +495,10 @@
 
   function validateWeightForSpecies(valueKg, species) {
     const guide = weightGuide(species);
-    if (!Number.isFinite(valueKg) || valueKg <= 0) throw new Error('Indique un poids valide.');
+    if (!Number.isFinite(valueKg) || valueKg <= 0) throw new Error('Veuillez indiquer un poids valide.');
     if (valueKg < guide.min || valueKg > guide.max) {
       const limits = displayWeightLimits(species);
-      throw new Error(`Ce poids semble incohérent pour un ${guide.label}. Indique une valeur entre ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} et ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.`);
+      throw new Error(`Ce poids semble incohérent pour un ${guide.label}. Veuillez indiquer une valeur entre ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} et ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.`);
     }
   }
 
@@ -387,13 +521,16 @@
     return `${digits.slice(0, 2)}:${digits.slice(2)}`;
   }
 
-  function parseHealthTime(value) {
+  function parseHealthTime(value, required = true) {
     const raw = String(value || '').trim();
-    if (!raw) throw new Error('Indique l’heure prévue.');
+    if (!raw) {
+      if (required) throw new Error('Veuillez indiquer l’heure prévue.');
+      return '';
+    }
     const digits = raw.replace(/\D/g, '');
     if (digits.length !== 4) throw new Error('L’heure doit contenir 4 chiffres, par exemple 1245 pour 12:45.');
     const time = `${digits.slice(0, 2)}:${digits.slice(2)}`;
-    if (!validTime(time)) throw new Error('Cette heure n’est pas valide. Utilise une heure entre 00:00 et 23:59.');
+    if (!validTime(time)) throw new Error('Cette heure n’est pas valide. Veuillez saisir une heure comprise entre 00:00 et 23:59.');
     return time;
   }
 
@@ -411,8 +548,8 @@
 
   function validateHealthDate(status, dateValue) {
     const today = todayIso();
-    if (status === 'done' && dateValue > today) throw new Error('Une information effectuée ne peut pas avoir une date future.');
-    if (status === 'planned' && dateValue < today) throw new Error('Une information à venir ne peut pas avoir une date passée. Modifie la date ou indique « Effectué ».');
+    if (status === 'done' && dateValue > today) throw new Error('La date de réalisation ne peut pas être postérieure à aujourd’hui.');
+    if (status === 'planned' && dateValue < today) throw new Error('La date prévue ne peut pas être antérieure à aujourd’hui. Veuillez modifier la date ou sélectionner « Effectué ».');
   }
 
   function validateHealthDateTime(status, dateValue, timeValue) {
@@ -420,10 +557,10 @@
     const plannedTime = new Date(`${dateValue}T${timeValue}:00`).getTime();
     if (!Number.isFinite(plannedTime)) return;
     if (status === 'planned' && plannedTime < Date.now()) {
-      throw new Error('Une information à venir ne peut pas avoir une heure déjà passée.');
+      throw new Error('L’heure prévue ne peut pas être antérieure à l’heure actuelle.');
     }
     if (status === 'done' && plannedTime > Date.now()) {
-      throw new Error('Une information effectuée ne peut pas avoir une heure future.');
+      throw new Error('L’heure de réalisation ne peut pas être postérieure à l’heure actuelle.');
     }
   }
 
@@ -495,7 +632,9 @@
       currency: SUPPORTED_CURRENCIES.has(value.currency) ? value.currency : 'EUR',
       weightUnit: SUPPORTED_WEIGHT_UNITS.has(value.weightUnit) ? value.weightUnit : 'kg',
       language: SUPPORTED_LANGUAGES.has(value.language) ? value.language : (window.AnimoaI18n?.getLanguage?.() || 'fr'),
-      theme: SUPPORTED_THEMES.has(value.theme) ? value.theme : 'system'
+      theme: SUPPORTED_THEMES.has(value.theme) ? value.theme : 'system',
+      palette: SUPPORTED_PALETTES.has(value.palette) ? value.palette : 'animoa',
+      customColors: normalizeCustomColors(value.customColors)
     };
   }
 
@@ -515,7 +654,7 @@
       scheduleCloudSave();
     } catch (error) {
       if (error?.name === 'QuotaExceededError' || error?.code === 22) {
-        throw new Error('Le stockage local est plein. Les photos sont maintenant séparées des données ; recharge Animoa puis réessaie.');
+        throw new Error('Le stockage local est plein. Les photos sont maintenant séparées des données ; veuillez recharger Animoa puis réessayer.');
       }
       throw new Error('Impossible d’enregistrer les données sur cet appareil.');
     }
@@ -574,7 +713,7 @@
 
   function allImageRefsFrom(sourceData = data) {
     return new Set(
-      [...(sourceData.pets || []), ...(sourceData.memories || []), ...(sourceData.health || [])]
+      [...(sourceData.pets || []), ...(sourceData.memories || []), ...(sourceData.health || []), ...(sourceData.expenses || [])]
         .flatMap((item) => [item.image, item.attachment])
         .filter((ref) => typeof ref === 'string' && (ref.startsWith(MEDIA_PREFIX) || ref.startsWith(CLOUD_PREFIX)))
     );
@@ -684,7 +823,7 @@
     file = fileWithDetectedType(file);
     if (!file) return null;
     if (!file.type.startsWith('image/')) throw new Error('Le fichier choisi n’est pas une image.');
-    if (file.size > 20 * 1024 * 1024) throw new Error('Cette image est trop volumineuse. Choisis une photo de moins de 20 Mo.');
+    if (file.size > 20 * 1024 * 1024) throw new Error('Cette image est trop volumineuse. Veuillez choisir une photo de moins de 20 Mo.');
 
     const bitmap = await createImageBitmap(file);
     const maxSide = 1000;
@@ -732,7 +871,7 @@
   async function fileToAttachmentRef(file) {
     if (!file) return null;
     const preparedFile = fileWithDetectedType(file);
-    if (preparedFile.size > 15 * 1024 * 1024) throw new Error('Ce fichier est trop volumineux. Choisis un fichier de moins de 15 Mo.');
+    if (preparedFile.size > 15 * 1024 * 1024) throw new Error('Ce fichier est trop volumineux. Veuillez choisir un fichier de moins de 15 Mo.');
     if (preparedFile.type.startsWith('image/')) return fileToMediaRef(preparedFile);
     return storeBlob(preparedFile, file.name || 'document.bin');
   }
@@ -778,6 +917,130 @@
     return input ? (preparedPhotoFiles.get(input) || input.files?.[0] || null) : null;
   }
 
+  function releaseFilePreviewUrl(input) {
+    const currentUrl = previewObjectUrls.get(input);
+    if (currentUrl) URL.revokeObjectURL(currentUrl);
+    previewObjectUrls.delete(input);
+  }
+
+  function filePickerLabels(picker) {
+    const isPhoto = picker?.dataset.isPhoto === 'true';
+    return {
+      add: isPhoto ? 'Ajouter une photo' : 'Ajouter une photo ou un fichier',
+      replace: isPhoto ? 'Remplacer la photo' : 'Remplacer la pièce jointe'
+    };
+  }
+
+  function setFilePickerEmpty(input, { removeExisting = false } = {}) {
+    const picker = input?.closest('.file-picker');
+    if (!picker) return;
+    releaseFilePreviewUrl(input);
+    preparedPhotoFiles.delete(input);
+    input.value = '';
+    const preview = picker.querySelector('.file-picker-preview');
+    if (preview) {
+      preview.hidden = true;
+      preview.dataset.previewSource = 'none';
+      preview.innerHTML = '';
+    }
+    const removeField = picker.querySelector(`input[name="${input.name}Remove"]`);
+    if (removeField) removeField.value = removeExisting ? '1' : '0';
+    if (removeExisting) picker.dataset.existingSuppressed = 'true';
+    const labels = filePickerLabels(picker);
+    const buttonText = picker.querySelector('.file-picker-button-text');
+    if (buttonText) buttonText.textContent = translateText(labels.add);
+    const name = picker.querySelector('.file-picker-name');
+    if (name) name.textContent = translateText('Aucun fichier sélectionné');
+  }
+
+  async function restoreExistingFilePreview(input) {
+    const picker = input?.closest('.file-picker');
+    if (!picker) return;
+    const hasExisting = picker.dataset.hasExisting === 'true';
+    if (!hasExisting) {
+      setFilePickerEmpty(input);
+      return;
+    }
+    releaseFilePreviewUrl(input);
+    preparedPhotoFiles.delete(input);
+    input.value = '';
+    picker.dataset.existingSuppressed = 'false';
+    const removeField = picker.querySelector(`input[name="${input.name}Remove"]`);
+    if (removeField) removeField.value = '0';
+    const preview = picker.querySelector('.file-picker-preview');
+    const ref = picker.dataset.existingRef || '';
+    const fileName = picker.dataset.existingName || 'Fichier actuel';
+    const type = picker.dataset.existingType || '';
+    const isImage = picker.dataset.isPhoto === 'true' || type.startsWith('image/');
+    if (preview) {
+      preview.hidden = false;
+      preview.dataset.previewSource = 'existing';
+      preview.innerHTML = `
+        <div class="file-preview-media">${isImage ? '<img class="file-preview-image media-loading" alt="Aperçu du fichier" />' : '<span class="file-preview-icon" aria-hidden="true">📄</span>'}</div>
+        <div class="file-preview-copy"><strong>${escapeHtml(fileName)}</strong><span>${translateText(isImage ? 'Image jointe' : 'Document joint')}</span></div>
+        <button class="file-preview-remove" type="button" data-action="remove-file-selection" data-input-id="${escapeHtml(input.id)}" aria-label="${translateText('Retirer le fichier')}">✕</button>`;
+      if (isImage) {
+        const image = preview.querySelector('img');
+        const src = await resolveImageRef(ref);
+        if (image?.isConnected && preview.dataset.previewSource === 'existing') {
+          image.src = src;
+          image.classList.remove('media-loading');
+        }
+      }
+    }
+    const labels = filePickerLabels(picker);
+    const buttonText = picker.querySelector('.file-picker-button-text');
+    if (buttonText) buttonText.textContent = translateText(labels.replace);
+    const name = picker.querySelector('.file-picker-name');
+    if (name) name.textContent = translateText(fileName);
+  }
+
+  function showSelectedFilePreview(input, file, displayName = '') {
+    const picker = input?.closest('.file-picker');
+    if (!picker || !file) return;
+    releaseFilePreviewUrl(input);
+    const preview = picker.querySelector('.file-picker-preview');
+    const type = detectedFileType(file);
+    const isImage = type.startsWith('image/');
+    const fileName = displayName || file.name || 'Fichier sélectionné';
+    const sizeText = `${(file.size / 1024 / 1024).toFixed(file.size >= 1024 * 1024 ? 2 : 3).replace('.', ',')} Mo`;
+    if (preview) {
+      preview.hidden = false;
+      preview.dataset.previewSource = 'new';
+      preview.innerHTML = `
+        <div class="file-preview-media">${isImage ? '<img class="file-preview-image" alt="Aperçu du fichier sélectionné" />' : '<span class="file-preview-icon" aria-hidden="true">📄</span>'}</div>
+        <div class="file-preview-copy"><strong>${escapeHtml(fileName)}</strong><span>${escapeHtml(sizeText)}</span></div>
+        <button class="file-preview-remove" type="button" data-action="remove-file-selection" data-input-id="${escapeHtml(input.id)}" aria-label="${translateText('Retirer le fichier')}">✕</button>`;
+      if (isImage) {
+        const url = URL.createObjectURL(file);
+        previewObjectUrls.set(input, url);
+        const image = preview.querySelector('img');
+        if (image) image.src = url;
+      }
+    }
+    const removeField = picker.querySelector(`input[name="${input.name}Remove"]`);
+    if (removeField) removeField.value = '0';
+    const labels = filePickerLabels(picker);
+    const buttonText = picker.querySelector('.file-picker-button-text');
+    if (buttonText) buttonText.textContent = translateText(labels.replace);
+    const name = picker.querySelector('.file-picker-name');
+    if (name) name.textContent = translateText(fileName);
+  }
+
+  function removeFilePickerSelection(input) {
+    const picker = input?.closest('.file-picker');
+    if (!picker) return;
+    const preview = picker.querySelector('.file-picker-preview');
+    const source = preview?.dataset.previewSource || 'none';
+    const hasExisting = picker.dataset.hasExisting === 'true';
+    const existingSuppressed = picker.dataset.existingSuppressed === 'true';
+    if (source === 'new' && hasExisting && !existingSuppressed) {
+      restoreExistingFilePreview(input).catch(() => setFilePickerEmpty(input));
+      return;
+    }
+    setFilePickerEmpty(input, { removeExisting: hasExisting });
+  }
+
   function createCropperShell(title, circularGuide = false) {
     const overlay = document.createElement('div');
     overlay.className = 'cropper-overlay';
@@ -785,7 +1048,7 @@
       <section class="cropper-dialog" role="dialog" aria-modal="true" aria-label="${escapeHtml(title)}">
         <div class="cropper-header"><div><p class="eyebrow">Photo</p><h2>${escapeHtml(title)}</h2></div><button type="button" class="icon-button cropper-close" aria-label="Annuler">✕</button></div>
         <div class="cropper-stage ${circularGuide ? 'cropper-stage-circle' : ''}"><canvas class="cropper-canvas" width="900" height="900"></canvas><div class="cropper-guide" aria-hidden="true"></div></div>
-        <p class="cropper-help">Déplace la photo avec le doigt ou la souris, puis ajuste le zoom.</p>
+        <p class="cropper-help">Déplacez la photo avec le doigt ou la souris, puis ajustez le zoom.</p>
         <label class="cropper-zoom-row"><span>Zoom</span><input class="cropper-zoom-input" type="range" min="1" max="3" step="0.01" value="1" /></label>
         <div class="cropper-actions"><button type="button" class="secondary-button cropper-cancel">Annuler</button><button type="button" class="primary-button cropper-confirm">Valider le recadrage</button></div>
       </section>`;
@@ -798,7 +1061,7 @@
   async function cropImageFile(file, { aspect = 1, title = 'Recadrer la photo', circularGuide = false } = {}) {
     const prepared = fileWithDetectedType(file);
     if (!prepared?.type?.startsWith('image/')) throw new Error('Le fichier choisi n’est pas une image.');
-    if (prepared.size > 20 * 1024 * 1024) throw new Error('Cette image est trop volumineuse. Choisis une photo de moins de 20 Mo.');
+    if (prepared.size > 20 * 1024 * 1024) throw new Error('Cette image est trop volumineuse. Veuillez choisir une photo de moins de 20 Mo.');
 
     let bitmap;
     try { bitmap = await createImageBitmap(prepared); }
@@ -972,7 +1235,8 @@
     const targets = [
       ...data.pets.map((item) => ({ item, field: 'image', fileName: 'image.webp' })),
       ...data.memories.map((item) => ({ item, field: 'image', fileName: 'image.webp' })),
-      ...data.health.map((item) => ({ item, field: 'attachment', fileName: item.attachmentName || 'document.bin' }))
+      ...data.health.map((item) => ({ item, field: 'attachment', fileName: item.attachmentName || 'document.bin' })),
+      ...data.expenses.map((item) => ({ item, field: 'attachment', fileName: item.attachmentName || 'document.bin' }))
     ].filter(({ item, field }) => typeof item[field] === 'string' && item[field].startsWith(MEDIA_PREFIX));
     if (!targets.length) return;
 
@@ -1026,7 +1290,7 @@
 
   function requiredText(value, label) {
     const text = String(value || '').trim();
-    if (!text) throw new Error(`Indique ${label}.`);
+    if (!text) throw new Error(`Veuillez indiquer ${label}.`);
     return text;
   }
 
@@ -1069,19 +1333,47 @@
     return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
   }
 
-  function parseFrenchDate(value, label = 'La date') {
+  function isLeapYear(year) {
+    return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  }
+
+  function daysInMonth(year, month) {
+    if (month === 2) return isLeapYear(year) ? 29 : 28;
+    return [4, 6, 9, 11].includes(month) ? 30 : 31;
+  }
+
+  function parseFrenchDate(value, label = 'La date', { required = false } = {}) {
     const raw = String(value || '').trim();
-    if (!raw) return '';
+    if (!raw) {
+      if (required) throw new Error(`${label} est obligatoire.`);
+      return '';
+    }
     const match = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
-    if (!match) throw new Error(`${label} doit être écrite au format JJ/MM/AAAA.`);
+    if (!match) throw new Error(`${label} doit être saisie au format JJ/MM/AAAA.`);
     const day = Number(match[1]);
     const month = Number(match[2]);
     const year = Number(match[3]);
-    const date = new Date(year, month - 1, day, 12, 0, 0);
-    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
-      throw new Error(`${label} n’est pas valide.`);
+    if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1 || day > daysInMonth(year, month)) {
+      throw new Error(`${label} n’est pas valide. Veuillez vérifier le jour, le mois et l’année.`);
     }
     return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  }
+
+  function tryParseFrenchDate(value) {
+    try { return parseFrenchDate(value); }
+    catch { return ''; }
+  }
+
+  function dateInputControl({ id, name, value = '', min = '', max = '', required = false, help = '', describedBy = '' }) {
+    const frenchValue = isoDateToFrench(value);
+    const helpId = describedBy || `${id}Help`;
+    return `<div class="date-input-control" data-date-control>
+      <input id="${id}" class="date-text-input" name="${name}" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="JJ/MM/AAAA" value="${escapeHtml(frenchValue)}" ${required ? 'required' : ''} ${helpId ? `aria-describedby="${helpId}"` : ''} data-min-date="${escapeHtml(min)}" data-max-date="${escapeHtml(max)}" />
+      <label class="date-picker-button" title="Ouvrir le calendrier" aria-label="Ouvrir le calendrier pour ce champ">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 11h18"></path></svg>
+        <input id="${id}Picker" class="date-picker-native" type="date" value="${escapeHtml(value)}" ${min ? `min="${escapeHtml(min)}"` : ''} ${max ? `max="${escapeHtml(max)}"` : ''} tabindex="-1" aria-hidden="true" />
+      </label>
+    </div>${help ? `<span id="${helpId}" class="form-help">${help}</span>` : ''}`;
   }
 
   function daysUntil(dateValue) {
@@ -1334,6 +1626,10 @@
   }
 
   function setPage(page) {
+    if (currentPage === 'settings' && page !== 'settings' && settingsPreviewActive) {
+      settingsPreviewActive = false;
+      applyVisualPreferences(settings);
+    }
     currentPage = page;
     closeDrawer();
     closeModal();
@@ -1396,7 +1692,7 @@
     return `
       <div class="page-stack">
         <div class="page-header">
-          <div><p class="eyebrow">Bonjour</p><h1>La vie de ${escapeHtml(pet.name)}</h1><p>L’essentiel, sans surcharge.</p></div>
+          <div><p class="eyebrow">Bonjour</p><h1>La vie de ${escapeHtml(pet.name)}</h1><p>Les informations importantes de votre animal, réunies au même endroit.</p></div>
         </div>
 
         <div class="home-layout">
@@ -1448,7 +1744,7 @@
         <article class="card priority-card">
           <div class="priority-accent" style="background:linear-gradient(90deg,#7dac92,#b6d3c5)"></div>
           <div class="priority-content">
-            <div class="priority-row"><div class="priority-icon" style="background:#e5f1ea">✓</div><div><p class="eyebrow">À ne pas manquer</p><h2>Tout va bien pour ${escapeHtml(pet.name)}</h2><p>Aucun rappel planifié ne demande ton attention.</p></div></div>
+            <div class="priority-row"><div class="priority-icon" style="background:#e5f1ea">✓</div><div><p class="eyebrow">À ne pas manquer</p><h2>Tout va bien pour ${escapeHtml(pet.name)}</h2><p>Aucun rappel planifié ne nécessite votre attention.</p></div></div>
           </div>
         </article>`;
     }
@@ -1484,7 +1780,7 @@
   }
 
   function renderEmptyMemory() {
-    return `<article class="card empty-state"><div style="font-size:2rem">📷</div><strong>Aucun souvenir</strong><p>Ajoute une photo ou une anecdote.</p><button class="primary-button" data-add="memory">Ajouter</button></article>`;
+    return `<article class="card empty-state"><div style="font-size:2rem">📷</div><strong>Aucun souvenir</strong><p>Ajoutez une photo ou une anecdote.</p><button class="primary-button" data-add="memory">Ajouter</button></article>`;
   }
 
   function healthViewData(filter = currentHealthFilter) {
@@ -1527,7 +1823,7 @@
             }).join('')}</div>
             <button class="health-tab-arrow" data-action="health-scroll-right" aria-label="Voir les catégories suivantes">›</button>
           </div>
-          <p class="health-swipe-hint">Fais glisser le bandeau sur le côté, ou utilise les flèches.</p>
+          <p class="health-swipe-hint">Faites glisser le bandeau sur le côté ou utilisez les flèches.</p>
         </section>
         <article class="card card-pad">
           <div class="card-title-row"><h2 id="healthListTitle">${escapeHtml(view.selectedLabel)}</h2><span id="healthListCount" class="summary-note">${view.items.length} élément${view.items.length > 1 ? 's' : ''}</span></div>
@@ -1671,7 +1967,7 @@
     return `
       <div class="page-stack">
         ${pageHeader('Poids', `Suivre l’évolution de ${escapeHtml(pet.name)} sans être anxiogène.`, 'weight')}
-        ${latestLooksWrong ? `<div class="logic-warning"><strong>Poids à vérifier</strong><span>${escapeHtml(pet.name)} est enregistré comme ${escapeHtml(pet.species.toLowerCase())}, mais ${formatWeight(latestKg)} semble être une erreur de saisie. Tu peux modifier ou supprimer cette mesure.</span></div>` : ''}
+        ${latestLooksWrong ? `<div class="logic-warning"><strong>Poids à vérifier</strong><span>${escapeHtml(pet.name)} est enregistré comme ${escapeHtml(pet.species.toLowerCase())}, mais ${formatWeight(latestKg)} semble être une erreur de saisie. Vous pouvez modifier ou supprimer cette mesure.</span></div>` : ''}
         <section class="summary-grid">
           ${summaryCard('Poids actuel', latest ? formatWeight(latestKg, 2) : '—', latest ? formatDate(latest.date, { short: true }) : 'Aucune mesure', 'weight')}
           ${summaryCard('Évolution', deltaDisplayed === null ? '—' : `${deltaDisplayed > 0 ? '+' : ''}${deltaDisplayed.toFixed(2).replace('.', ',')} ${settings.weightUnit}`, 'Depuis la dernière mesure', 'weight')}
@@ -1724,7 +2020,7 @@
 
     if (!chartItems.length) {
       ctx.textAlign = 'center';
-      ctx.fillText('Ajoute une première mesure', width / 2, height / 2);
+      ctx.fillText('Ajoutez une première mesure', width / 2, height / 2);
       return;
     }
 
@@ -1814,7 +2110,7 @@
               <div><p class="list-title">${escapeHtml(pet.name)}</p><p class="list-subtitle">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}${humanAgeCompactText(pet) ? ` · ${humanAgeCompactText(pet)}` : ''}</p></div>
               <button class="secondary-button" data-select-pet="${pet.id}">${pet.id === data.activePetId ? 'Actif' : 'Choisir'}</button>
             </article>`).join('')}
-        </div>` : `<article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Ajoute ton premier compagnon pour créer son carnet de vie.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article>`}
+        </div>` : `<article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Ajoutez votre premier compagnon pour créer son carnet de vie.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article>`}
       </div>`;
   }
 
@@ -1851,20 +2147,111 @@
   }
 
 
+  function paletteOptionsHtml() {
+    const presets = PALETTE_OPTIONS.map((palette) => `
+      <label class="theme-preset ${settings.palette === palette.id ? 'selected' : ''}" title="${escapeHtml(palette.description)}">
+        <input type="radio" name="paletteSetting" value="${palette.id}" ${settings.palette === palette.id ? 'checked' : ''} />
+        <span class="theme-preset-preview" aria-hidden="true" style="--preview-bg:${palette.lightBg};--preview-surface:${palette.lightSurface};--preview-primary:${palette.colors[0]};--preview-accent:${palette.colors[1]}">
+          <i class="theme-preset-card"></i><i class="theme-preset-button"></i><i class="theme-preset-dot"></i>
+        </span>
+        <span class="theme-preset-name">${palette.label}</span>
+        <span class="theme-preset-check" aria-hidden="true">✓</span>
+      </label>`).join('');
+    const custom = normalizeCustomColors(settings.customColors);
+    return `${presets}
+      <label class="theme-preset theme-preset-custom ${settings.palette === 'custom' ? 'selected' : ''}" title="Créer votre propre thème">
+        <input type="radio" name="paletteSetting" value="custom" ${settings.palette === 'custom' ? 'checked' : ''} />
+        <span class="theme-preset-preview" aria-hidden="true" style="--preview-bg:${custom.lightBg};--preview-surface:${custom.lightSurface};--preview-primary:${custom.primary};--preview-accent:${custom.accent}">
+          <i class="theme-preset-card"></i><i class="theme-preset-button"></i><i class="theme-preset-dot"></i>
+        </span>
+        <span class="theme-preset-name">Personnalisé</span>
+        <span class="theme-preset-check" aria-hidden="true">✓</span>
+      </label>`;
+  }
+
+  function customColorInput(id, label, value) {
+    return `<label class="custom-color-field" for="${id}"><span>${label}</span><span class="custom-color-control"><input id="${id}" class="custom-theme-color" type="color" value="${escapeHtml(value)}" /><code>${escapeHtml(value.toUpperCase())}</code></span></label>`;
+  }
+
+  function customThemeEditorHtml() {
+    const custom = normalizeCustomColors(settings.customColors);
+    return `
+      <section id="customThemeEditor" class="custom-theme-editor ${settings.palette === 'custom' ? 'open' : ''}" aria-label="Personnalisation du thème">
+        <div class="custom-theme-heading"><div><strong>Créer mon thème</strong><span>Les textes et bordures s’adaptent automatiquement pour rester lisibles.</span></div><button type="button" class="text-button" data-action="reset-custom-theme">Valeurs Animoa</button></div>
+        <div class="custom-color-group"><h3>Couleurs principales</h3><div class="custom-color-grid">${customColorInput('customPrimary', 'Principale', custom.primary)}${customColorInput('customAccent', 'Secondaire', custom.accent)}</div></div>
+        <div class="custom-color-group"><h3>Mode clair</h3><div class="custom-color-grid">${customColorInput('customLightBg', 'Fond', custom.lightBg)}${customColorInput('customLightSurface', 'Cartes', custom.lightSurface)}</div></div>
+        <div class="custom-color-group"><h3>Mode sombre</h3><div class="custom-color-grid">${customColorInput('customDarkBg', 'Fond', custom.darkBg)}${customColorInput('customDarkSurface', 'Cartes', custom.darkSurface)}</div></div>
+      </section>`;
+  }
+
+  function readCustomThemeColors() {
+    const fallback = normalizeCustomColors(settings.customColors);
+    return normalizeCustomColors({
+      primary: document.getElementById('customPrimary')?.value || fallback.primary,
+      accent: document.getElementById('customAccent')?.value || fallback.accent,
+      lightBg: document.getElementById('customLightBg')?.value || fallback.lightBg,
+      lightSurface: document.getElementById('customLightSurface')?.value || fallback.lightSurface,
+      darkBg: document.getElementById('customDarkBg')?.value || fallback.darkBg,
+      darkSurface: document.getElementById('customDarkSurface')?.value || fallback.darkSurface
+    });
+  }
+
+  function currentThemeFormValue() {
+    return normalizeSettings({
+      ...settings,
+      theme: document.getElementById('themeSetting')?.value || settings.theme,
+      palette: document.querySelector('input[name="paletteSetting"]:checked')?.value || settings.palette,
+      customColors: readCustomThemeColors()
+    });
+  }
+
+  function updateThemeSettingsUi(palette) {
+    document.querySelectorAll('.theme-preset').forEach((option) => option.classList.toggle('selected', option.querySelector('input')?.value === palette));
+    document.getElementById('customThemeEditor')?.classList.toggle('open', palette === 'custom');
+    document.querySelectorAll('.custom-color-field').forEach((field) => {
+      const input = field.querySelector('input[type="color"]');
+      const code = field.querySelector('code');
+      if (input && code) code.textContent = input.value.toUpperCase();
+    });
+    const custom = readCustomThemeColors();
+    const customPreview = document.querySelector('.theme-preset input[value="custom"]')?.closest('.theme-preset')?.querySelector('.theme-preset-preview');
+    if (customPreview) {
+      customPreview.style.setProperty('--preview-bg', custom.lightBg);
+      customPreview.style.setProperty('--preview-surface', custom.lightSurface);
+      customPreview.style.setProperty('--preview-primary', custom.primary);
+      customPreview.style.setProperty('--preview-accent', custom.accent);
+    }
+  }
+
+  function previewThemeFromSettings() {
+    const preview = currentThemeFormValue();
+    settingsPreviewActive = true;
+    updateThemeSettingsUi(preview.palette);
+    applyVisualPreferences(preview);
+  }
+
   function renderSettings() {
     const user = window.AnimoaAuth?.getUser?.();
     const cloudEnabled = window.AnimoaCloud?.available?.();
     return `
-      <div class="page-stack">
-        <div class="page-header"><div><p class="eyebrow">Application</p><h1>Paramètres</h1><p>Seulement les réglages réellement utiles.</p></div></div>
-        <article class="card card-pad settings-section">
-          <div class="card-title-row"><div><p class="eyebrow">Préférences</p><h2>Affichage et unités</h2></div></div>
+      <div class="page-stack settings-page">
+        <div class="page-header"><div><p class="eyebrow">Application</p><h1>Paramètres</h1><p>Personnalisez Animoa selon vos préférences.</p></div></div>
+        <article class="card card-pad theme-studio-card">
+          <div class="theme-studio-top">
+            <div><p class="eyebrow">Thème</p><h2>Choisissez votre ambiance</h2><p class="settings-section-intro">Le résultat s’affiche immédiatement. Enregistrez uniquement lorsque le rendu vous convient.</p></div>
+            <label class="theme-mode-control" for="themeSetting"><span>Mode</span><select id="themeSetting"><option value="system" ${settings.theme === 'system' ? 'selected' : ''}>Selon l’appareil</option><option value="light" ${settings.theme === 'light' ? 'selected' : ''}>Clair</option><option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>Sombre</option></select></label>
+          </div>
+          <div class="theme-preset-grid" role="radiogroup" aria-label="Thèmes prêts à l’emploi">${paletteOptionsHtml()}</div>
+          ${customThemeEditorHtml()}
+          <div class="theme-action-row"><button type="button" class="secondary-button" data-action="restore-theme-preview">Annuler l’aperçu</button><button type="button" class="primary-button" data-action="save-theme">Enregistrer le thème</button></div>
+        </article>
+        <article class="card card-pad settings-section compact-settings-card">
+          <div class="card-title-row"><div><p class="eyebrow">Préférences</p><h2>Langue et unités</h2></div></div>
           <div class="form-grid settings-grid">
             <div class="form-row"><label for="languageSetting">Langue</label><select id="languageSetting"><option value="fr" ${settings.language === 'fr' ? 'selected' : ''}>Français</option><option value="en" ${settings.language === 'en' ? 'selected' : ''}>English</option></select></div>
-            <div class="form-row"><label for="themeSetting">Apparence</label><select id="themeSetting"><option value="system" ${settings.theme === 'system' ? 'selected' : ''}>Système</option><option value="light" ${settings.theme === 'light' ? 'selected' : ''}>Clair</option><option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>Sombre</option></select></div>
-            <div class="form-row"><label for="currencySetting">Devise</label><select id="currencySetting">${currencyOptionsHtml()}</select><span class="form-help">La devise change l’affichage des montants, sans convertir les anciennes dépenses.</span></div>
+            <div class="form-row"><label for="currencySetting">Devise</label><select id="currencySetting">${currencyOptionsHtml()}</select><span class="form-help">Les montants déjà enregistrés ne sont pas convertis.</span></div>
             <div class="form-row"><label for="weightSetting">Unité de poids</label><select id="weightSetting"><option value="kg" ${settings.weightUnit === 'kg' ? 'selected' : ''}>Kilogrammes (kg)</option><option value="lb" ${settings.weightUnit === 'lb' ? 'selected' : ''}>Livres (lb)</option></select></div>
-            <div class="button-row"><button class="primary-button" data-action="save-settings">Enregistrer</button></div>
+            <div class="button-row"><button class="primary-button" data-action="save-settings">Enregistrer les préférences</button></div>
           </div>
         </article>
         <article class="card card-pad account-card">
@@ -1872,12 +2259,12 @@
           <div class="account-copy"><p class="eyebrow">Compte</p><h2>${escapeHtml(user?.email || (window.AnimoaAuth?.isLocalPreview?.() ? 'Mode local de prévisualisation' : 'Animoa'))}</h2><p>${cloudEnabled ? 'Les données de ce compte sont synchronisées avec Supabase.' : 'Les données restent uniquement dans ce navigateur.'}</p><span class="account-sync ${syncState}">${cloudEnabled ? 'Synchronisation sécurisée activée' : 'Mode local de prévisualisation'}</span></div>
           <button class="secondary-button" data-action="logout">Se déconnecter</button>
         </article>
-        <article class="card card-pad danger-zone">
+        <article class="card card-pad danger-zone settings-compact-row">
           <div><p class="eyebrow danger-eyebrow">Données enregistrées</p><h2>Effacer toutes les données</h2><p>Cette action supprime le carnet et les photos de ce compte.</p></div>
           <button class="danger-button" data-action="reset-data">Effacer toutes les données</button>
         </article>
-        <article class="card card-pad settings-support-card">
-          <div><p class="eyebrow">Aide & support</p><h2>Besoin d’aide avec Animoa ?</h2><p>Consulte le guide ou écris directement à l’équipe Animoa.</p></div>
+        <article class="card card-pad settings-support-card settings-compact-row">
+          <div><p class="eyebrow">Aide & support</p><h2>Besoin d’aide avec Animoa ?</h2><p>Consultez le guide ou contactez directement l’équipe Animoa.</p></div>
           <div class="settings-support-actions"><button class="secondary-button" data-page="help">Guide de l’application</button><button class="primary-button" data-page="contact">Nous contacter</button></div>
         </article>
         <div class="settings-legal-row"><button data-page="privacy">Confidentialité</button><span>·</span><button data-page="legal">Mentions légales</button><span>·</span><span>Version ${APP_VERSION}</span></div>
@@ -1892,18 +2279,18 @@
         <div class="page-header"><div><p class="eyebrow">Aide & support</p><h1>Guide de l’application</h1><p>Les réponses simples pour utiliser Animoa au quotidien.</p></div></div>
         <article class="card card-pad support-intro-card">
           <div class="support-icon">🐾</div>
-          <div><h2>Besoin d’un coup de patte ?</h2><p>Ouvre une rubrique ci-dessous. Ton carnet et tes données ne seront pas modifiés.</p></div>
+          <div><h2>Besoin d’un coup de patte ?</h2><p>Ouvrez une rubrique ci-dessous. Votre carnet et vos données ne seront pas modifiés.</p></div>
         </article>
         <section class="faq-list" aria-label="Guide Animoa">
-          <details class="faq-item"><summary>Ajouter ou modifier un animal</summary><div><p>Ouvre le menu, puis <strong>Mes animaux</strong>. Tu peux créer un compagnon, modifier sa fiche, changer sa photo ou sélectionner l’animal consulté.</p></div></details>
-          <details class="faq-item"><summary>Ajouter un rendez-vous</summary><div><p>Appuie sur le bouton central avec la patte, puis sur <strong>Rendez-vous</strong>. Indique la date et écris l’heure avec quatre chiffres : <strong>1245</strong> devient <strong>12:45</strong>.</p></div></details>
-          <details class="faq-item"><summary>Ajouter un vaccin, un traitement ou une analyse</summary><div><p>Depuis l’ajout rapide, choisis <strong>Santé</strong>, puis le type voulu. Les onglets du carnet servent ensuite à filtrer les informations déjà enregistrées.</p></div></details>
-          <details class="faq-item"><summary>Ajouter une photo ou un document</summary><div><p>Choisis le fichier dans le formulaire. Pour une photo de profil ou un souvenir, Animoa ouvre le recadrage avant l’enregistrement.</p></div></details>
+          <details class="faq-item"><summary>Ajouter ou modifier un animal</summary><div><p>Ouvrez le menu, puis <strong>Mes animaux</strong>. Vous pouvez créer un compagnon, modifier sa fiche, changer sa photo ou sélectionner l’animal consulté.</p></div></details>
+          <details class="faq-item"><summary>Ajouter un rendez-vous</summary><div><p>Appuyez sur le bouton central avec la patte, puis sur <strong>Rendez-vous</strong>. Indiquez la date et, si vous la connaissez, l’heure. La saisie <strong>1245</strong> devient automatiquement <strong>12:45</strong>.</p></div></details>
+          <details class="faq-item"><summary>Ajouter un vaccin, un traitement ou une analyse</summary><div><p>Depuis l’ajout rapide, choisissez <strong>Santé</strong>, puis le type souhaité. Les onglets du carnet servent ensuite à filtrer les informations déjà enregistrées.</p></div></details>
+          <details class="faq-item"><summary>Ajouter une photo ou un document</summary><div><p>Choisissez le fichier dans le formulaire. Pour une photo de profil ou un souvenir, Animoa ouvre le recadrage avant l’enregistrement.</p></div></details>
           <details class="faq-item"><summary>Gérer les rappels</summary><div><p>La cloche affiche les rappels non lus. <strong>Marquer comme lu</strong> retire le point rouge sans supprimer le rappel et sans désactiver l’e-mail automatique.</p></div></details>
-          <details class="faq-item"><summary>Changer le thème ou les unités</summary><div><p>Ouvre <strong>Paramètres</strong> pour choisir le mode clair, sombre ou automatique, la devise et l’unité de poids.</p></div></details>
+          <details class="faq-item"><summary>Changer le thème ou les unités</summary><div><p>Ouvrez <strong>Paramètres</strong> pour choisir une palette de couleurs, le mode clair ou sombre, la devise et l’unité de poids.</p></div></details>
         </section>
         <article class="card card-pad support-contact-card">
-          <div><p class="eyebrow">Une autre question ?</p><h2>Écris-nous directement</h2><p>Le formulaire transmettra ton message à ${SUPPORT_EMAIL}.</p></div>
+          <div><p class="eyebrow">Une autre question ?</p><h2>Contactez-nous directement</h2><p>Le formulaire transmettra votre message à ${SUPPORT_EMAIL}.</p></div>
           <button class="primary-button" data-page="contact">Nous contacter</button>
         </article>
       </div>`;
@@ -1919,13 +2306,13 @@
           <form id="supportForm" class="form-grid" novalidate>
             <div class="form-row"><label for="supportCategory">Sujet</label><select id="supportCategory" name="category" required><option value="Question">Question</option><option value="Problème technique">Problème technique</option><option value="Suggestion">Suggestion</option><option value="Compte et données">Compte et données</option><option value="Autre">Autre</option></select></div>
             <div class="form-row"><label for="supportEmail">Adresse e-mail pour la réponse</label><input id="supportEmail" name="email" type="email" value="${escapeHtml(email)}" placeholder="nom@exemple.fr" required /></div>
-            <div class="form-row"><label for="supportMessage">Message</label><textarea id="supportMessage" name="message" minlength="10" maxlength="4000" required placeholder="Explique-nous ce dont tu as besoin…"></textarea><span class="form-help">Ne communique jamais ton mot de passe ni ton code d’invitation.</span></div>
+            <div class="form-row"><label for="supportMessage">Message</label><textarea id="supportMessage" name="message" minlength="10" maxlength="4000" required placeholder="Décrivez votre demande…"></textarea><span class="form-help">Ne communiquez jamais votre mot de passe ni votre code d’invitation.</span></div>
             <div class="form-row support-file-row"><label for="supportScreenshot">Capture d’écran — facultatif</label><input id="supportScreenshot" class="support-attachment-input" name="screenshot" type="file" accept="image/jpeg,image/png,image/webp" /><span id="supportScreenshotName" class="form-help">Image JPG, PNG ou WebP, 2 Mo maximum.</span></div>
             <div class="contact-destination"><span>✉️</span><div><strong>Destinataire</strong><a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a></div></div>
             <button id="supportSubmitButton" class="primary-button" type="submit">Envoyer le message</button>
           </form>
         </article>
-        <p class="support-fallback-note">Si l’envoi intégré n’est pas encore activé, Animoa ouvrira automatiquement ton application de messagerie avec le message prérempli.</p>
+        <p class="support-fallback-note">Si l’envoi intégré n’est pas encore activé, Animoa ouvrira automatiquement votre application de messagerie avec le message prérempli.</p>
       </div>`;
   }
 
@@ -1939,7 +2326,7 @@
           <h2>Pourquoi ces données sont utilisées</h2><p>Elles servent uniquement à fournir le carnet Animoa, synchroniser les informations, envoyer les rappels demandés, sécuriser le compte et répondre aux messages adressés au support.</p>
           <h2>Services techniques</h2><p>Le fonctionnement peut s’appuyer sur Supabase pour le compte et les données, Vercel pour l’hébergement de l’application, Brevo pour les e-mails automatiques et Infomaniak pour la boîte de contact.</p>
           <h2>Conservation et suppression</h2><p>Les données sont conservées tant que le compte est utilisé. Elles peuvent être effacées depuis les paramètres ou sur demande. La suppression d’un compte et de ses données peut être demandée à <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>.</p>
-          <h2>Vos droits</h2><p>Tu peux demander l’accès, la correction, l’export ou la suppression des données associées à ton compte en écrivant à l’adresse de contact. Animoa ne vend pas les données personnelles à des annonceurs.</p>
+          <h2>Vos droits</h2><p>Vous pouvez demander l’accès, la correction, l’export ou la suppression des données associées à votre compte en écrivant à l’adresse de contact. Animoa ne vend pas les données personnelles à des annonceurs.</p>
           <div class="legal-contact-box"><strong>Contact confidentialité</strong><a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a></div>
         </article>
       </div>`;
@@ -1965,7 +2352,7 @@
     if (!file) return null;
     const type = detectedFileType(file);
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(type)) throw new Error('La capture doit être une image JPG, PNG ou WebP.');
-    if (file.size > 2 * 1024 * 1024) throw new Error('La capture est trop volumineuse. Choisis une image de moins de 2 Mo.');
+    if (file.size > 2 * 1024 * 1024) throw new Error('La capture est trop volumineuse. Veuillez choisir une image de moins de 2 Mo.');
     const dataUrl = await blobToDataUrl(fileWithDetectedType(file));
     return {
       name: String(file.name || 'capture-animoa.png').replace(/[^a-zA-Z0-9._-]/g, '-').slice(0, 90),
@@ -1983,11 +2370,11 @@
   async function handleSupportSubmit(form) {
     const button = form.querySelector('#supportSubmitButton');
     const category = requiredText(form.elements.category.value, 'le sujet');
-    const email = requiredText(form.elements.email.value, 'ton adresse e-mail');
-    const message = requiredText(form.elements.message.value, 'ton message');
+    const email = requiredText(form.elements.email.value, 'votre adresse e-mail');
+    const message = requiredText(form.elements.message.value, 'votre message');
     if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('L’adresse e-mail n’est pas valide.');
-    if (message.length < 10) throw new Error('Ton message doit contenir au moins 10 caractères.');
-    if (message.length > 4000) throw new Error('Ton message est trop long.');
+    if (message.length < 10) throw new Error('Votre message doit contenir au moins 10 caractères.');
+    if (message.length > 4000) throw new Error('Votre message est trop long.');
 
     const previousText = button?.textContent || 'Envoyer le message';
     if (button) { button.disabled = true; button.textContent = 'Envoi…'; }
@@ -1997,7 +2384,7 @@
       const canInvoke = Boolean(client && window.AnimoaAuth?.getUser?.() && !window.AnimoaAuth?.isLocalPreview?.());
       if (!canInvoke) {
         openSupportEmailFallback({ category, email, message });
-        showToast('Ton application de messagerie va s’ouvrir.');
+        showToast('Votre application de messagerie va s’ouvrir.');
         return;
       }
 
@@ -2007,7 +2394,7 @@
       if (error || response?.ok !== true) {
         console.warn('Formulaire de contact intégré indisponible', error || response);
         openSupportEmailFallback({ category, email, message });
-        showToast('L’envoi intégré est indisponible : ton application de messagerie va s’ouvrir.');
+        showToast('L’envoi intégré est indisponible : votre application de messagerie va s’ouvrir.');
         return;
       }
 
@@ -2027,7 +2414,7 @@
   }
 
   function renderNoPet() {
-    return `<div class="page-stack"><div class="page-header"><div><p class="eyebrow">Bienvenue</p><h1>Ajoute ton premier compagnon</h1><p>Animoa commencera par créer son carnet de vie.</p></div></div><article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Quelques informations suffisent pour commencer.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article></div>`;
+    return `<div class="page-stack"><div class="page-header"><div><p class="eyebrow">Bienvenue</p><h1>Ajoutez votre premier compagnon</h1><p>Animoa commencera par créer son carnet de vie.</p></div></div><article class="card empty-state"><div style="font-size:2.6rem">🐾</div><strong>Aucun compagnon</strong><p>Quelques informations suffisent pour commencer.</p><button class="primary-button" data-add="pet">Ajouter un nouveau compagnon</button></article></div>`;
   }
 
   function emptyList(message) {
@@ -2077,6 +2464,7 @@
   }
 
   function closeModal() {
+    modalBody?.querySelectorAll('.file-picker-input').forEach(releaseFilePreviewUrl);
     clearTimeout(modalCloseTimer);
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
@@ -2090,7 +2478,7 @@
   }
 
   function openAddMenu() {
-    openModal('Que veux-tu ajouter ?', `
+    openModal('Que souhaitez-vous ajouter ?', `
       <div class="add-choice-grid">
         <button class="add-choice" data-add="appointment"><span>📅</span>Rendez-vous</button>
         <button class="add-choice" data-add="health"><span>🩺</span>Santé</button>
@@ -2104,7 +2492,7 @@
 
   function openAddForm(type) {
     if (type !== 'pet' && !activePet()) {
-      showToast('Ajoute d’abord un animal.');
+      showToast('Veuillez d’abord ajouter un animal.');
       type = 'pet';
     }
     const forms = {
@@ -2130,29 +2518,33 @@
     const date = item?.date || todayIso();
     const min = status === 'planned' ? todayIso() : '';
     const max = status === 'done' ? todayIso() : '';
-    const showTime = status === 'planned' || selectedType === 'Rendez-vous';
-    const timeLabel = selectedType === 'Rendez-vous' ? 'Heure du rendez-vous' : 'Heure prévue';
-    return `<form id="healthForm" class="form-grid" data-editing="${item?.id || ''}">
+    const isAppointment = selectedType === 'Rendez-vous';
+    const showTime = status === 'planned' || isAppointment;
+    const timeRequired = showTime && !isAppointment;
+    const timeLabel = isAppointment ? 'Heure du rendez-vous' : 'Heure prévue';
+    const timeHelp = isAppointment ? 'Heure facultative' : 'Format : 12:45';
+    return `<form id="healthForm" class="form-grid professional-form" data-editing="${item?.id || ''}">
       <div class="form-row"><label for="healthType">Type</label><select id="healthType" name="type" required>${['Vaccin','Rendez-vous','Traitement','Médicament','Analyse','Document','Autre'].map((type) => `<option value="${type}" ${optionSelected(selectedType, type)}>${type}</option>`).join('')}</select></div>
       <div class="form-row"><label for="healthTitle">Titre</label><input id="healthTitle" name="title" required value="${escapeHtml(item?.title || '')}" placeholder="Ex. Rappel annuel" /></div>
-      <div class="form-columns health-schedule-fields"><div class="form-row health-date-field"><label for="healthDate">Date</label><input id="healthDate" name="date" type="date" value="${date}" ${min ? `min="${min}"` : ''} ${max ? `max="${max}"` : ''} required /><span id="healthDateHelp" class="form-help"></span></div><div class="form-row health-status-field"><label for="healthStatus">État</label><select id="healthStatus" name="status"><option value="planned" ${optionSelected(status, 'planned')}>À venir</option><option value="done" ${optionSelected(status, 'done')}>Effectué</option></select><span class="form-help health-status-placeholder" aria-hidden="true">&nbsp;</span></div></div>
-      <div class="form-row" id="healthTimeRow" ${showTime ? '' : 'hidden'}><label id="healthTimeLabel" for="healthTime">${timeLabel}</label><input id="healthTime" name="time" type="text" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="HH:MM" value="${escapeHtml(validTime(item?.time) ? item.time : '')}" ${showTime ? 'required' : 'disabled'} aria-describedby="healthTimeHelp" /><span id="healthTimeHelp" class="form-help">Écris directement 4 chiffres, par exemple 1245 pour 12:45.</span></div>
+      <div class="form-columns health-schedule-fields"><div class="form-row health-date-field"><label for="healthDate">Date</label>${dateInputControl({ id: 'healthDate', name: 'date', value: date, min, max, required: true, describedBy: 'healthDateHelp' })}<span id="healthDateHelp" class="form-help" hidden></span></div><div class="form-row health-status-field"><label for="healthStatus">État</label><select id="healthStatus" name="status"><option value="planned" ${optionSelected(status, 'planned')}>À venir</option><option value="done" ${optionSelected(status, 'done')}>Effectué</option></select></div></div>
+      <div class="form-row" id="healthTimeRow" ${showTime ? '' : 'hidden'}><label id="healthTimeLabel" for="healthTime">${timeLabel}</label><input id="healthTime" name="time" type="text" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="${isAppointment ? 'HH:MM — facultatif' : 'HH:MM'}" value="${escapeHtml(validTime(item?.time) ? item.time : '')}" ${showTime ? (timeRequired ? 'required' : '') : 'disabled'} aria-describedby="healthTimeHelp" /><span id="healthTimeHelp" class="form-help">${timeHelp}</span></div>
       <div class="form-row"><label for="healthProfessional">Vétérinaire ou professionnel</label><input id="healthProfessional" name="professional" value="${escapeHtml(item?.professional || '')}" placeholder="Facultatif" /></div>
       <div class="form-row"><label for="healthNote">Note</label><textarea id="healthNote" name="note" placeholder="Informations utiles">${escapeHtml(item?.note || '')}</textarea></div>
-      ${filePicker('healthAttachment', 'attachment', Boolean(item?.attachment), item?.attachment ? 'Laisse vide pour conserver le fichier actuel.' : 'Ajoute une image ou un document utile.', 'image/*,.pdf,.doc,.docx')}
+      ${filePicker({ fieldId: 'healthAttachment', name: 'attachment', label: 'Pièce jointe', existingRef: item?.attachment || '', existingName: item?.attachmentName || '', existingType: item?.attachmentType || '', accept: 'image/*,.pdf,.doc,.docx' })}
       <label class="checkbox-row"><input name="reminder" type="checkbox" ${item ? (item.reminder ? 'checked' : '') : 'checked'} /> Créer un rappel dans Animoa</label>
-      <button class="primary-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer'}</button>
+      <button class="primary-button form-submit-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer'}</button>
     </form>`;
   }
 
   function expenseForm(item = null) {
     const editing = Boolean(item);
     const categories = ['Nourriture','Vétérinaire','Médicaments','Toilettage','Jouets','Accessoires','Assurance','Autre'];
-    return `<form id="expenseForm" class="form-grid" data-editing="${item?.id || ''}">
-      <div class="form-columns"><div class="form-row"><label for="expenseAmount">Montant</label><input id="expenseAmount" name="amount" type="number" min="0" step="0.01" inputmode="decimal" required value="${item?.amount ?? ''}" placeholder="0,00" /></div><div class="form-row"><label for="expenseDate">Date</label><input id="expenseDate" name="date" type="date" value="${item?.date || todayIso()}" max="${todayIso()}" required /></div></div>
+    return `<form id="expenseForm" class="form-grid professional-form" data-editing="${item?.id || ''}">
+      <div class="form-columns"><div class="form-row"><label for="expenseAmount">Montant</label><input id="expenseAmount" name="amount" type="number" min="0" step="0.01" inputmode="decimal" required value="${item?.amount ?? ''}" placeholder="0,00" /></div><div class="form-row"><label for="expenseDate">Date</label>${dateInputControl({ id: 'expenseDate', name: 'date', value: item?.date || todayIso(), max: todayIso(), required: true })}</div></div>
       <div class="form-row"><label for="expenseCategory">Catégorie</label><select id="expenseCategory" name="category">${categories.map((category) => `<option value="${category}" ${optionSelected(item?.category, category)}>${category}</option>`).join('')}</select></div>
-      <div class="form-row"><label for="expenseNote">Description</label><input id="expenseNote" name="note" value="${escapeHtml(item?.note || '')}" placeholder="Ex. Croquettes" /></div>
-      <button class="primary-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer la dépense'}</button>
+      <div class="form-row"><label for="expenseNote">Description</label><input id="expenseNote" name="note" value="${escapeHtml(item?.note || '')}" placeholder="Ex. Consultation vétérinaire" /></div>
+      ${filePicker({ fieldId: 'expenseAttachment', name: 'attachment', label: 'Justificatif', existingRef: item?.attachment || '', existingName: item?.attachmentName || '', existingType: item?.attachmentType || '', accept: 'image/*,.pdf,.doc,.docx' })}
+      <button class="primary-button form-submit-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer la dépense'}</button>
     </form>`;
   }
 
@@ -2160,31 +2552,45 @@
     const pet = activePet();
     const limits = displayWeightLimits(pet?.species || 'Autre');
     const value = item ? displayWeightValue(weightValueKg(item)) : '';
-    return `<form id="weightForm" class="form-grid" data-editing="${item?.id || ''}">
-      <div class="form-columns"><div class="form-row"><label for="weightValue">Poids (${settings.weightUnit})</label><input id="weightValue" name="value" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" inputmode="decimal" required value="${value ?? ''}" placeholder="0,0" /><span class="form-help">Pour un ${limits.label}, valeur admise : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div><div class="form-row"><label for="weightDate">Date</label><input id="weightDate" name="date" type="date" value="${item?.date || todayIso()}" max="${todayIso()}" required /></div></div>
+    return `<form id="weightForm" class="form-grid professional-form" data-editing="${item?.id || ''}">
+      <div class="form-columns"><div class="form-row"><label for="weightValue">Poids (${settings.weightUnit})</label><input id="weightValue" name="value" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" inputmode="decimal" required value="${value ?? ''}" placeholder="0,0" /><span class="form-help">Plage indicative : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}</span></div><div class="form-row"><label for="weightDate">Date</label>${dateInputControl({ id: 'weightDate', name: 'date', value: item?.date || todayIso(), max: todayIso(), required: true })}</div></div>
       <div class="form-row"><label for="weightNote">Note</label><input id="weightNote" name="note" value="${escapeHtml(item?.note || '')}" placeholder="Facultatif" /></div>
-      <button class="primary-button" type="submit">${item ? 'Enregistrer les modifications' : 'Enregistrer le poids'}</button>
+      <button class="primary-button form-submit-button" type="submit">${item ? 'Enregistrer les modifications' : 'Enregistrer le poids'}</button>
     </form>`;
   }
 
-  function filePicker(fieldId, name, hasExisting, helpText, accept = "image/*") {
-    const isAttachment = name === 'attachment';
-    const actionLabel = isAttachment
-      ? (hasExisting ? 'Remplacer le fichier ou l’image' : 'Ajouter un fichier ou une image')
-      : (hasExisting ? 'Remplacer la photo' : 'Ajouter une photo');
-    return `<div class="form-row file-picker-row"><label>${name === 'attachment' ? 'Fichier ou image' : 'Photo'}</label><div class="file-picker"><input class="file-picker-input" id="${fieldId}" name="${name}" type="file" accept="${accept}" tabindex="-1" /><label class="file-picker-button" for="${fieldId}"><img src="assets/animoa-icon-official.png" alt="" /><span>${actionLabel}</span></label><span class="file-picker-name">Aucun fichier sélectionné</span></div><span class="form-help">${helpText}</span></div>`;
+  function filePicker({ fieldId, name, label, existingRef = '', existingName = '', existingType = '', accept = 'image/*' }) {
+    const hasExisting = Boolean(existingRef && existingRef !== placeholderImage);
+    const isPhoto = name === 'photo';
+    const existingIsImage = isPhoto || String(existingType || '').startsWith('image/');
+    const addLabel = isPhoto ? 'Ajouter une photo' : 'Ajouter une photo ou un fichier';
+    const replaceLabel = isPhoto ? 'Remplacer la photo' : 'Remplacer la pièce jointe';
+    const displayName = existingName || (isPhoto ? 'Photo actuelle' : 'Fichier actuel');
+    const existingPreview = hasExisting ? `
+      <div class="file-picker-preview" data-preview-source="existing">
+        <div class="file-preview-media">${existingIsImage ? `<img class="file-preview-image media-loading" data-image-ref="${escapeHtml(existingRef)}" alt="Aperçu de ${escapeHtml(displayName)}" />` : '<span class="file-preview-icon" aria-hidden="true">📄</span>'}</div>
+        <div class="file-preview-copy"><strong>${escapeHtml(displayName)}</strong><span>${existingIsImage ? 'Image jointe' : 'Document joint'}</span></div>
+        <button class="file-preview-remove" type="button" data-action="remove-file-selection" data-input-id="${fieldId}" aria-label="Retirer le fichier">✕</button>
+      </div>` : '<div class="file-picker-preview" data-preview-source="none" hidden></div>';
+    return `<div class="form-row file-picker-row"><label>${label}</label><div class="file-picker" data-has-existing="${hasExisting ? 'true' : 'false'}" data-existing-ref="${escapeHtml(existingRef)}" data-existing-name="${escapeHtml(displayName)}" data-existing-type="${escapeHtml(existingType)}" data-is-photo="${isPhoto ? 'true' : 'false'}">
+      <input class="file-picker-input" id="${fieldId}" name="${name}" type="file" accept="${accept}" tabindex="-1" />
+      <input type="hidden" name="${name}Remove" value="0" />
+      <div class="file-picker-toolbar"><label class="file-picker-button" for="${fieldId}"><img src="assets/animoa-icon-official.png" alt="" /><span class="file-picker-button-text">${hasExisting ? replaceLabel : addLabel}</span></label><span class="file-picker-name">${hasExisting ? escapeHtml(displayName) : 'Aucun fichier sélectionné'}</span></div>
+      ${existingPreview}
+    </div></div>`;
   }
 
   function memoryForm(item = null) {
     const editing = Boolean(item);
     const types = ['Moment important','Première fois','Anniversaire','Anecdote'];
-    return `<form id="memoryForm" class="form-grid" data-editing="${item?.id || ''}">
+    const existingImage = item?.image && item.image !== placeholderImage ? item.image : '';
+    return `<form id="memoryForm" class="form-grid professional-form" data-editing="${item?.id || ''}">
       <div class="form-row"><label for="memoryTitle">Titre</label><input id="memoryTitle" name="title" required value="${escapeHtml(item?.title || '')}" placeholder="Ex. Première baignade" /></div>
-      <div class="form-columns"><div class="form-row"><label for="memoryDate">Date</label><input id="memoryDate" name="date" type="date" value="${item?.date || todayIso()}" max="${todayIso()}" required /></div><div class="form-row"><label for="memoryType">Type</label><select id="memoryType" name="type">${types.map((type) => `<option value="${type}" ${optionSelected(item?.type, type)}>${type}</option>`).join('')}</select></div></div>
-      ${filePicker('memoryPhoto', 'photo', editing, editing ? 'Laisse vide pour conserver la photo actuelle.' : 'La photo est automatiquement allégée puis stockée séparément.')}
-      <div class="form-row"><label for="memoryNote">Anecdote</label><textarea id="memoryNote" name="note" placeholder="Raconte ce moment...">${escapeHtml(item?.note || '')}</textarea></div>
+      <div class="form-columns"><div class="form-row"><label for="memoryDate">Date</label>${dateInputControl({ id: 'memoryDate', name: 'date', value: item?.date || todayIso(), max: todayIso(), required: true })}</div><div class="form-row"><label for="memoryType">Type</label><select id="memoryType" name="type">${types.map((type) => `<option value="${type}" ${optionSelected(item?.type, type)}>${type}</option>`).join('')}</select></div></div>
+      ${filePicker({ fieldId: 'memoryPhoto', name: 'photo', label: 'Photo', existingRef: existingImage, existingName: item?.title ? `Photo — ${item.title}` : 'Photo du souvenir', existingType: 'image/webp' })}
+      <div class="form-row"><label for="memoryNote">Anecdote</label><textarea id="memoryNote" name="note" placeholder="Racontez ce moment…">${escapeHtml(item?.note || '')}</textarea></div>
       <label class="checkbox-row"><input name="favorite" type="checkbox" ${item?.favorite ? 'checked' : ''} /> Ajouter aux favoris</label>
-      <button class="primary-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer le souvenir'}</button>
+      <button class="primary-button form-submit-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer le souvenir'}</button>
     </form>`;
   }
 
@@ -2194,19 +2600,21 @@
     const currentWeight = latestWeight ? displayWeightValue(weightValueKg(latestWeight)) : '';
     const species = pet?.species || 'Chien';
     const limits = displayWeightLimits(species);
-    return `<form id="petForm" class="form-grid" data-editing="${editing ? pet.id : ''}" data-weight-id="${latestWeight?.id || ''}" data-original-weight="${currentWeight ?? ''}" data-original-weight-date="${latestWeight?.date || ''}">
+    const existingImage = pet?.image && pet.image !== placeholderImage ? pet.image : '';
+    return `<form id="petForm" class="form-grid professional-form" data-editing="${editing ? pet.id : ''}" data-weight-id="${latestWeight?.id || ''}" data-original-weight="${currentWeight ?? ''}" data-original-weight-date="${latestWeight?.date || ''}">
       <div class="form-row"><label for="petName">Nom</label><input id="petName" name="name" required value="${escapeHtml(pet?.name || '')}" placeholder="Ex. Milo" /></div>
       <div class="form-columns desktop-three"><div class="form-row"><label for="petSpecies">Espèce</label><select id="petSpecies" name="species"><option value="Chien" ${optionSelected(species, 'Chien')}>Chien</option><option value="Chat" ${optionSelected(species, 'Chat')}>Chat</option><option value="Lapin" ${optionSelected(species, 'Lapin')}>Lapin</option><option value="Oiseau" ${optionSelected(species, 'Oiseau')}>Oiseau</option><option value="Autre" ${optionSelected(species, 'Autre')}>Autre</option></select></div><div class="form-row"><label for="petBreed">Race, variété ou type</label><input id="petBreed" name="breed" value="${escapeHtml(pet?.breed || '')}" /></div><div class="form-row"><label for="petSex">Sexe</label><select id="petSex" name="sex"><option value="Non renseigné" ${optionSelected(pet?.sex || 'Non renseigné', 'Non renseigné')}>Non renseigné</option><option value="Femelle" ${optionSelected(pet?.sex, 'Femelle')}>Femelle</option><option value="Mâle" ${optionSelected(pet?.sex, 'Mâle')}>Mâle</option></select></div></div>
-      <div class="form-row dog-size-row" id="dogSizeRow" ${species === 'Chien' ? '' : 'hidden'}><label for="petDogSize">Gabarit adulte du chien</label><select id="petDogSize" name="dogSize"><option value="auto" ${optionSelected(pet?.dogSize || 'auto', 'auto')}>Automatique selon le poids</option><option value="small" ${optionSelected(pet?.dogSize, 'small')}>Petit — moins de 10 kg</option><option value="medium" ${optionSelected(pet?.dogSize, 'medium')}>Moyen — 10 à 25 kg</option><option value="large" ${optionSelected(pet?.dogSize, 'large')}>Grand — 25 à 40 kg</option><option value="giant" ${optionSelected(pet?.dogSize, 'giant')}>Géant — plus de 40 kg</option></select><span class="form-help">Ce choix améliore l’estimation de l’équivalent en âge humain. « Automatique » utilise le dernier poids enregistré.</span></div>
-      <div class="form-columns"><div class="form-row"><label for="petBirth">Date de naissance</label><input id="petBirth" name="birthDate" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="JJ/MM/AAAA" value="${escapeHtml(isoDateToFrench(pet?.birthDate || ''))}" aria-describedby="petBirthHelp" /><span id="petBirthHelp" class="form-help">Écris directement les 8 chiffres, par exemple 15062009.</span></div><div class="form-row"><label for="petColor">Couleur</label><input id="petColor" name="color" value="${escapeHtml(pet?.color || '')}" /></div></div>
-      <div class="weight-profile-box"><div><strong>Poids actuel</strong><span>Cette valeur reste liée à l’historique de poids.</span></div><div class="form-columns"><div class="form-row"><label for="petCurrentWeight">Poids (${settings.weightUnit})</label><input id="petCurrentWeight" name="currentWeight" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" value="${currentWeight ?? ''}" placeholder="Facultatif" /></div><div class="form-row"><label for="petCurrentWeightDate">Date de pesée</label><input id="petCurrentWeightDate" name="currentWeightDate" type="date" max="${todayIso()}" value="${latestWeight?.date || todayIso()}" /></div></div><span id="petWeightGuide" class="form-help">Pour un ${limits.label} : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.</span></div>
-      ${filePicker('petPhoto', 'photo', editing, 'Laisse vide pour conserver la photo actuelle. La nouvelle photo sera automatiquement allégée.')}
+      <div class="form-row dog-size-row" id="dogSizeRow" ${species === 'Chien' ? '' : 'hidden'}><label for="petDogSize">Gabarit adulte du chien</label><select id="petDogSize" name="dogSize"><option value="auto" ${optionSelected(pet?.dogSize || 'auto', 'auto')}>Automatique selon le poids</option><option value="small" ${optionSelected(pet?.dogSize, 'small')}>Petit — moins de 10 kg</option><option value="medium" ${optionSelected(pet?.dogSize, 'medium')}>Moyen — 10 à 25 kg</option><option value="large" ${optionSelected(pet?.dogSize, 'large')}>Grand — 25 à 40 kg</option><option value="giant" ${optionSelected(pet?.dogSize, 'giant')}>Géant — plus de 40 kg</option></select><span class="form-help">Utilisé pour l’estimation de l’âge humain.</span></div>
+      <div class="form-columns"><div class="form-row"><label for="petBirth">Date de naissance</label>${dateInputControl({ id: 'petBirth', name: 'birthDate', value: pet?.birthDate || '', max: todayIso() })}</div><div class="form-row"><label for="petColor">Couleur</label><input id="petColor" name="color" value="${escapeHtml(pet?.color || '')}" /></div></div>
+      <div class="weight-profile-box"><div><strong>Poids actuel</strong><span>Ajouté à l’historique du poids.</span></div><div class="form-columns"><div class="form-row"><label for="petCurrentWeight">Poids (${settings.weightUnit})</label><input id="petCurrentWeight" name="currentWeight" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" value="${currentWeight ?? ''}" placeholder="Facultatif" /></div><div class="form-row"><label for="petCurrentWeightDate">Date de pesée</label>${dateInputControl({ id: 'petCurrentWeightDate', name: 'currentWeightDate', value: latestWeight?.date || todayIso(), max: todayIso() })}</div></div><span id="petWeightGuide" class="form-help">Plage indicative : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}</span></div>
+      ${filePicker({ fieldId: 'petPhoto', name: 'photo', label: 'Photo de profil', existingRef: existingImage, existingName: pet?.name ? `Photo de ${pet.name}` : 'Photo de profil', existingType: 'image/webp' })}
       <div class="form-row"><label for="petIdentification">Identification</label><input id="petIdentification" name="identification" value="${escapeHtml(pet?.identification || '')}" placeholder="Puce, tatouage..." /></div>
       <div class="form-row"><label for="petAllergies">Allergies</label><input id="petAllergies" name="allergies" value="${escapeHtml(pet?.allergies || '')}" /></div>
       <div class="form-row"><label for="petImportant">Informations importantes</label><textarea id="petImportant" name="importantInfo">${escapeHtml(pet?.importantInfo || '')}</textarea></div>
-      <button class="primary-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Créer le profil'}</button>
+      <button class="primary-button form-submit-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Créer le profil'}</button>
     </form>`;
   }
+
 
   async function handleFormSubmit(form) {
     const formData = new FormData(form);
@@ -2218,16 +2626,19 @@
     try {
       if (form.id === 'healthForm') {
         const status = String(formData.get('status'));
-        const date = String(formData.get('date'));
+        const date = parseFrenchDate(formData.get('date'), 'La date', { required: true });
         const type = normalizeHealthType(formData.get('type'));
-        const needsTime = status === 'planned' || type === 'Rendez-vous';
-        const time = needsTime ? parseHealthTime(formData.get('time')) : '';
+        const isAppointment = type === 'Rendez-vous';
+        const showsTime = status === 'planned' || isAppointment;
+        const timeRequired = status === 'planned' && !isAppointment;
+        const time = showsTime ? parseHealthTime(formData.get('time'), timeRequired) : '';
         validateHealthDate(status, date);
-        if (needsTime) validateHealthDateTime(status, date, time);
+        if (validTime(time)) validateHealthDateTime(status, date, time);
         const existing = data.health.find((item) => item.id === form.dataset.editing);
-        const attachmentFile = form.querySelector('[name="attachment"]')?.files?.[0];
-        const oldAttachment = existing?.attachment;
-        let attachment = oldAttachment || '';
+        const attachmentFile = form.querySelector('[name="attachment"]')?.files?.[0] || null;
+        const removeAttachment = formData.get('attachmentRemove') === '1';
+        const oldAttachment = existing?.attachment || '';
+        let attachment = removeAttachment ? '' : oldAttachment;
         if (attachmentFile) {
           attachment = await fileToAttachmentRef(attachmentFile);
           if (attachment && attachment !== oldAttachment) createdMediaRefs.push(attachment);
@@ -2242,31 +2653,50 @@
           professional: String(formData.get('professional') || '').trim(),
           note: String(formData.get('note') || '').trim(),
           attachment,
-          attachmentName: attachmentFile?.name || existing?.attachmentName || '',
-          attachmentType: attachmentFile ? detectedFileType(attachmentFile) : (existing?.attachmentType || ''),
+          attachmentName: attachmentFile?.name || (attachment ? existing?.attachmentName || '' : ''),
+          attachmentType: attachmentFile ? detectedFileType(attachmentFile) : (attachment ? existing?.attachmentType || '' : ''),
           reminder: formData.get('reminder') === 'on',
           reminderRead: false
         };
         if (existing) Object.assign(existing, record); else data.health.push({ id: uid('health'), ...record });
         currentHealthFilter = record.type;
         saveData();
-        if (existing && attachmentFile && oldAttachment !== attachment) await deleteMediaIfUnused(oldAttachment);
+        if (existing && oldAttachment !== attachment) await deleteMediaIfUnused(oldAttachment);
         closeModal(); setPage('health'); showToast(existing ? 'Information de santé modifiée.' : 'Information de santé enregistrée.');
       }
 
       if (form.id === 'expenseForm') {
-        const date = String(formData.get('date'));
+        const date = parseFrenchDate(formData.get('date'), 'La date de la dépense', { required: true });
         validatePastOrToday(date, 'La date de la dépense');
         const amount = Number(formData.get('amount'));
-        if (!Number.isFinite(amount) || amount <= 0) throw new Error('Indique un montant supérieur à zéro.');
-        const record = { petId: activePet().id, amount, date, category: formData.get('category'), note: String(formData.get('note') || '').trim() };
+        if (!Number.isFinite(amount) || amount <= 0) throw new Error('Veuillez indiquer un montant supérieur à zéro.');
         const existing = data.expenses.find((item) => item.id === form.dataset.editing);
+        const attachmentFile = form.querySelector('[name="attachment"]')?.files?.[0] || null;
+        const removeAttachment = formData.get('attachmentRemove') === '1';
+        const oldAttachment = existing?.attachment || '';
+        let attachment = removeAttachment ? '' : oldAttachment;
+        if (attachmentFile) {
+          attachment = await fileToAttachmentRef(attachmentFile);
+          if (attachment && attachment !== oldAttachment) createdMediaRefs.push(attachment);
+        }
+        const record = {
+          petId: activePet().id,
+          amount,
+          date,
+          category: formData.get('category'),
+          note: String(formData.get('note') || '').trim(),
+          attachment,
+          attachmentName: attachmentFile?.name || (attachment ? existing?.attachmentName || '' : ''),
+          attachmentType: attachmentFile ? detectedFileType(attachmentFile) : (attachment ? existing?.attachmentType || '' : '')
+        };
         if (existing) Object.assign(existing, record); else data.expenses.push({ id: uid('expense'), ...record });
-        saveData(); closeModal(); setPage('expenses'); showToast(existing ? 'Dépense modifiée.' : 'Dépense enregistrée.');
+        saveData();
+        if (existing && oldAttachment !== attachment) await deleteMediaIfUnused(oldAttachment);
+        closeModal(); setPage('expenses'); showToast(existing ? 'Dépense modifiée.' : 'Dépense enregistrée.');
       }
 
       if (form.id === 'weightForm') {
-        const date = String(formData.get('date'));
+        const date = parseFrenchDate(formData.get('date'), 'La date de pesée', { required: true });
         validatePastOrToday(date, 'La date de pesée');
         const valueKg = inputWeightToKg(formData.get('value'));
         validateWeightForSpecies(valueKg, activePet().species);
@@ -2277,18 +2707,20 @@
       }
 
       if (form.id === 'memoryForm') {
-        const date = String(formData.get('date'));
+        const date = parseFrenchDate(formData.get('date'), 'La date du souvenir', { required: true });
         validatePastOrToday(date, 'La date du souvenir');
         const existing = data.memories.find((item) => item.id === form.dataset.editing);
         const photoInput = form.querySelector('[name="photo"]');
         const file = selectedPhotoFile(photoInput);
-        const oldImage = existing?.image;
-        const image = await fileToMediaRef(file) || oldImage || placeholderImage;
+        const removePhoto = formData.get('photoRemove') === '1';
+        const oldImage = existing?.image || '';
+        const retainedImage = removePhoto ? placeholderImage : (oldImage || placeholderImage);
+        const image = await fileToMediaRef(file) || retainedImage;
         if (file && image !== oldImage) createdMediaRefs.push(image);
         const record = { petId: activePet().id, title: requiredText(formData.get('title'), 'un titre'), date, type: formData.get('type'), note: String(formData.get('note') || '').trim(), image, favorite: formData.get('favorite') === 'on' };
         if (existing) Object.assign(existing, record); else data.memories.push({ id: uid('memory'), ...record });
         saveData();
-        if (existing && file && oldImage !== image) await deleteMediaIfUnused(oldImage);
+        if (existing && oldImage !== image) await deleteMediaIfUnused(oldImage);
         closeModal(); setPage('memories'); showToast(existing ? 'Souvenir modifié.' : 'Souvenir enregistré.');
       }
 
@@ -2297,8 +2729,10 @@
         const existing = editingId ? data.pets.find((pet) => pet.id === editingId) : null;
         const photoInput = form.querySelector('[name="photo"]');
         const file = selectedPhotoFile(photoInput);
-        const oldImage = existing?.image;
-        const image = await fileToMediaRef(file) || oldImage || placeholderImage;
+        const removePhoto = formData.get('photoRemove') === '1';
+        const oldImage = existing?.image || '';
+        const retainedImage = removePhoto ? placeholderImage : (oldImage || placeholderImage);
+        const image = await fileToMediaRef(file) || retainedImage;
         if (file && image !== oldImage) createdMediaRefs.push(image);
         const species = String(formData.get('species'));
         const birthDate = parseFrenchDate(formData.get('birthDate'), 'La date de naissance');
@@ -2317,7 +2751,7 @@
         if (weightRaw) {
           const valueKg = inputWeightToKg(weightRaw);
           validateWeightForSpecies(valueKg, species);
-          const weightDate = String(formData.get('currentWeightDate') || todayIso());
+          const weightDate = parseFrenchDate(formData.get('currentWeightDate') || isoDateToFrench(todayIso()), 'La date de pesée', { required: true });
           validatePastOrToday(weightDate, 'La date de pesée');
           const weightId = form.dataset.weightId;
           const existingWeight = weightId ? data.weights.find((item) => item.id === weightId && item.petId === petData.id) : null;
@@ -2327,7 +2761,7 @@
 
         data.activePetId = petData.id;
         saveData();
-        if (existing && file && oldImage !== image) await deleteMediaIfUnused(oldImage);
+        if (existing && oldImage !== image) await deleteMediaIfUnused(oldImage);
         closeModal(); setPage('pet'); showToast(existing ? 'Profil modifié.' : 'Animal ajouté.');
       }
     } catch (error) {
@@ -2371,7 +2805,8 @@
     const snapshot = clone(data);
     const memoriesToDelete = data.memories.filter((item) => item.petId === petId);
     const healthToDelete = data.health.filter((item) => item.petId === petId);
-    const mediaRefs = [pet.image, ...memoriesToDelete.map((item) => item.image), ...healthToDelete.map((item) => item.attachment)]
+    const expensesToDelete = data.expenses.filter((item) => item.petId === petId);
+    const mediaRefs = [pet.image, ...memoriesToDelete.map((item) => item.image), ...healthToDelete.map((item) => item.attachment), ...expensesToDelete.map((item) => item.attachment)]
       .filter((ref) => typeof ref === 'string' && (ref.startsWith(MEDIA_PREFIX) || ref.startsWith(CLOUD_PREFIX)));
 
     try {
@@ -2433,6 +2868,7 @@
       <div class="record-detail">
         <p class="record-big-value">${formatCurrency(item.amount)}</p>
         <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong><span>Description</span><strong>${escapeHtml(item.note || 'Aucune')}</strong></div>
+        ${item.attachment ? `<button class="attachment-preview" data-action="open-attachment" data-image-ref="${escapeHtml(item.attachment)}" data-file-type="${escapeHtml(item.attachmentType || '')}" data-file-name="${escapeHtml(item.attachmentName || 'Justificatif')}" data-attachment-context="Dépense"><span>${item.attachmentType?.startsWith('image/') ? '🖼️' : '📎'}</span><span>${escapeHtml(item.attachmentName || 'Voir le justificatif')}</span></button>` : ''}
         <div class="record-detail-actions"><button class="secondary-button" data-action="edit-expense-record" data-record-id="${item.id}">Modifier</button><button class="danger-button" data-action="request-delete-record" data-collection="expenses" data-record-id="${item.id}" data-label="cette dépense" data-return-page="expenses">Supprimer</button></div>
       </div>`, 'Dépense');
   }
@@ -2467,31 +2903,45 @@
     const row = document.getElementById('healthTimeRow');
     const input = document.getElementById('healthTime');
     const label = document.getElementById('healthTimeLabel');
+    const help = document.getElementById('healthTimeHelp');
     if (!type || !status || !row || !input) return;
     const isAppointment = normalizeHealthType(type.value) === 'Rendez-vous';
     const showTime = status.value === 'planned' || isAppointment;
+    const timeRequired = showTime && !isAppointment;
     row.hidden = !showTime;
     input.disabled = !showTime;
-    input.required = showTime;
+    input.required = timeRequired;
+    input.placeholder = isAppointment ? translateText('HH:MM (facultatif)') : 'HH:MM';
     if (label) label.textContent = translateText(isAppointment ? 'Heure du rendez-vous' : 'Heure prévue');
+    if (help) help.textContent = translateText(isAppointment ? 'Heure facultative' : 'Format : 12:45');
   }
 
   function syncHealthDateRules(adjustValue = false) {
     const status = document.getElementById('healthStatus');
     const date = document.getElementById('healthDate');
+    const picker = document.getElementById('healthDatePicker');
     const help = document.getElementById('healthDateHelp');
     if (!status || !date) return;
     const today = todayIso();
+    const parsed = tryParseFrenchDate(date.value);
     if (status.value === 'planned') {
-      date.min = today;
-      date.removeAttribute('max');
-      if (adjustValue && date.value < today) date.value = today;
-      if (help) help.textContent = translateText('Une information à venir doit être datée d’aujourd’hui ou plus tard.');
+      date.dataset.minDate = today;
+      date.dataset.maxDate = '';
+      if (picker) { picker.min = today; picker.removeAttribute('max'); }
+      if (adjustValue && parsed && parsed < today) {
+        date.value = isoDateToFrench(today);
+        if (picker) picker.value = today;
+      }
+      if (help) { help.textContent = ''; help.hidden = true; }
     } else {
-      date.max = today;
-      date.removeAttribute('min');
-      if (adjustValue && date.value > today) date.value = today;
-      if (help) help.textContent = translateText('Une information effectuée doit être datée d’aujourd’hui ou d’une date passée.');
+      date.dataset.minDate = '';
+      date.dataset.maxDate = today;
+      if (picker) { picker.max = today; picker.removeAttribute('min'); }
+      if (adjustValue && parsed && parsed > today) {
+        date.value = isoDateToFrench(today);
+        if (picker) picker.value = today;
+      }
+      if (help) { help.textContent = ''; help.hidden = true; }
     }
   }
 
@@ -2508,7 +2958,7 @@
     weightField.step = String(limits.step);
     if (dogSizeRow) dogSizeRow.hidden = speciesField.value !== 'Chien';
     if (dogSizeField) dogSizeField.disabled = speciesField.value !== 'Chien';
-    if (guideField) guideField.textContent = translateText(`Pour un ${limits.label} : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}.`);
+    if (guideField) guideField.textContent = translateText(`Plage indicative : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}`);
   }
 
   function restoreHealthTabsPosition() {
@@ -2607,7 +3057,7 @@
     const mediaRefsToDelete = [...allImageRefsFrom(data)];
     try {
       data = normalizeData(clone(defaultData));
-      settings = normalizeSettings({ language: settings.language, theme: settings.theme });
+      settings = normalizeSettings({ currency: settings.currency, weightUnit: settings.weightUnit, language: settings.language, theme: settings.theme, palette: settings.palette });
       saveData();
       saveSettings();
       await clearMediaStore(mediaRefsToDelete);
@@ -2645,6 +3095,10 @@
     if (action === 'close-menu') closeDrawer();
     if (action === 'open-add') openAddMenu();
     if (action === 'close-modal') closeModal();
+    if (action === 'remove-file-selection') {
+      const input = document.getElementById(target.dataset.inputId || '');
+      if (input) removeFilePickerSelection(input);
+    }
     if (action === 'switch-pet') showPetSwitcher();
     if (action === 'open-pet-photo') openPetPhoto(target.dataset.petId);
     if (action === 'photo-zoom-in') { photoViewerScale = Math.min(3, photoViewerScale + .25); updatePhotoViewer(); }
@@ -2667,17 +3121,45 @@
     if (action === 'edit-pet') openModal('Modifier le profil', petForm(activePet()), 'Profil');
     if (action === 'request-delete-pet') requestDeletePet();
     if (action === 'confirm-delete-pet') deletePet(target.dataset.petId);
-    if (action === 'save-settings') {
-      settings = normalizeSettings({
-        currency: document.getElementById('currencySetting')?.value,
-        weightUnit: document.getElementById('weightSetting')?.value,
-        language: document.getElementById('languageSetting')?.value,
-        theme: document.getElementById('themeSetting')?.value
-      });
+    if (action === 'save-theme') {
+      const preview = currentThemeFormValue();
+      settings = normalizeSettings({ ...settings, theme: preview.theme, palette: preview.palette, customColors: preview.customColors });
+      settingsPreviewActive = false;
       saveSettings();
       renderNavigation();
       renderPage();
-      showToast('Paramètres enregistrés.');
+      showToast('Thème enregistré.');
+    }
+    if (action === 'restore-theme-preview') {
+      settingsPreviewActive = false;
+      applyVisualPreferences(settings);
+      renderPage();
+      showToast('Aperçu annulé.');
+    }
+    if (action === 'reset-custom-theme') {
+      const values = normalizeCustomColors(DEFAULT_CUSTOM_COLORS);
+      const pairs = [['customPrimary', values.primary], ['customAccent', values.accent], ['customLightBg', values.lightBg], ['customLightSurface', values.lightSurface], ['customDarkBg', values.darkBg], ['customDarkSurface', values.darkSurface]];
+      pairs.forEach(([id, value]) => { const input = document.getElementById(id); if (input) input.value = value; });
+      const customRadio = document.querySelector('input[name="paletteSetting"][value="custom"]');
+      if (customRadio) customRadio.checked = true;
+      previewThemeFromSettings();
+    }
+    if (action === 'save-settings') {
+      const preview = currentThemeFormValue();
+      settings = normalizeSettings({
+        ...settings,
+        currency: document.getElementById('currencySetting')?.value,
+        weightUnit: document.getElementById('weightSetting')?.value,
+        language: document.getElementById('languageSetting')?.value,
+        theme: preview.theme,
+        palette: preview.palette,
+        customColors: preview.customColors
+      });
+      settingsPreviewActive = false;
+      saveSettings();
+      renderNavigation();
+      renderPage();
+      showToast('Préférences enregistrées.');
     }
     if (action === 'logout') {
       try { await flushCloudSave(); } catch {}
@@ -2690,10 +3172,10 @@
       const fileName = target.dataset.fileName || 'Fichier joint';
       resolveImageRef(ref).then((src) => {
         if (fileType.startsWith('image/') || !fileType) {
-          openModal(fileName, `<img src="${escapeHtml(src)}" alt="${escapeHtml(fileName)}" class="attachment-full" />`, 'Santé');
+          openModal(fileName, `<img src="${escapeHtml(src)}" alt="${escapeHtml(fileName)}" class="attachment-full" />`, target.dataset.attachmentContext || 'Santé');
         } else {
           const opened = window.open(src, '_blank', 'noopener,noreferrer');
-          if (!opened) showToast('Autorise l’ouverture du fichier dans ton navigateur.');
+          if (!opened) showToast('Veuillez autoriser l’ouverture du fichier dans votre navigateur.');
         }
       });
     }
@@ -2733,6 +3215,14 @@
   });
 
   document.addEventListener('change', (event) => {
+    if (event.target.matches('.date-picker-native')) {
+      const control = event.target.closest('[data-date-control]');
+      const textInput = control?.querySelector('.date-text-input');
+      if (textInput && event.target.value) {
+        textInput.value = isoDateToFrench(event.target.value);
+        textInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
     if (event.target.id === 'healthStatus') { syncHealthDateRules(true); syncHealthTimeField(); }
     if (event.target.id === 'healthType') syncHealthTimeField();
     if (event.target.id === 'petSpecies') syncPetWeightGuide();
@@ -2741,10 +3231,14 @@
       const label = document.getElementById('supportScreenshotName');
       if (label) label.textContent = file ? `${file.name} · ${(file.size / 1024 / 1024).toFixed(2).replace('.', ',')} Mo` : 'Image JPG, PNG ou WebP, 2 Mo maximum.';
     }
+    if (event.target.matches('input[name="paletteSetting"], #themeSetting')) {
+      previewThemeFromSettings();
+    }
     if (event.target.matches('.file-picker-input')) {
       const input = event.target;
       const originalFile = input.files?.[0] || null;
-      const label = input.closest('.file-picker')?.querySelector('.file-picker-name');
+      const picker = input.closest('.file-picker');
+      const label = picker?.querySelector('.file-picker-name');
       input.blur();
 
       const restorePickerPosition = () => requestAnimationFrame(() => {
@@ -2753,16 +3247,17 @@
       });
 
       if (!originalFile) {
-        preparedPhotoFiles.delete(input);
-        if (label) label.textContent = translateText('Aucun fichier sélectionné');
-        restorePickerPosition();
+        const hasExisting = picker?.dataset.hasExisting === 'true';
+        const suppressed = picker?.dataset.existingSuppressed === 'true';
+        if (hasExisting && !suppressed) restoreExistingFilePreview(input).finally(restorePickerPosition);
+        else { setFilePickerEmpty(input, { removeExisting: hasExisting && suppressed }); restorePickerPosition(); }
         return;
       }
 
       const shouldCrop = ['petPhoto', 'memoryPhoto'].includes(input.id) && detectedFileType(originalFile).startsWith('image/');
       if (!shouldCrop) {
         preparedPhotoFiles.delete(input);
-        if (label) label.textContent = translateText(originalFile.name);
+        showSelectedFilePreview(input, originalFile);
         restorePickerPosition();
         return;
       }
@@ -2776,16 +3271,22 @@
           if (!croppedFile) {
             preparedPhotoFiles.delete(input);
             input.value = '';
-            if (label) label.textContent = translateText('Aucun fichier sélectionné');
+            const hasExisting = picker?.dataset.hasExisting === 'true';
+            const suppressed = picker?.dataset.existingSuppressed === 'true';
+            if (hasExisting && !suppressed) return restoreExistingFilePreview(input);
+            setFilePickerEmpty(input, { removeExisting: hasExisting && suppressed });
             return;
           }
           preparedPhotoFiles.set(input, croppedFile);
-          if (label) label.textContent = translateText(`${originalFile.name} · recadrée`);
+          showSelectedFilePreview(input, croppedFile, `${originalFile.name} · recadrée`);
         })
         .catch((error) => {
           preparedPhotoFiles.delete(input);
           input.value = '';
-          if (label) label.textContent = translateText('Aucun fichier sélectionné');
+          const hasExisting = picker?.dataset.hasExisting === 'true';
+          const suppressed = picker?.dataset.existingSuppressed === 'true';
+          if (hasExisting && !suppressed) restoreExistingFilePreview(input).catch(() => setFilePickerEmpty(input));
+          else setFilePickerEmpty(input, { removeExisting: hasExisting && suppressed });
           showToast(error.message || 'Impossible de recadrer cette photo.');
         })
         .finally(restorePickerPosition);
@@ -2794,13 +3295,21 @@
 
 
   document.addEventListener('input', (event) => {
+    if (event.target.matches('.custom-theme-color')) {
+      const customRadio = document.querySelector('input[name="paletteSetting"][value="custom"]');
+      if (customRadio) customRadio.checked = true;
+      previewThemeFromSettings();
+    }
     if (event.target.id === 'healthTime') {
       const formatted = formatDirectTimeEntry(event.target.value);
       if (event.target.value !== formatted) event.target.value = formatted;
     }
-    if (event.target.id === 'petBirth') {
+    if (event.target.matches('.date-text-input')) {
       const formatted = formatDirectDateEntry(event.target.value);
       if (event.target.value !== formatted) event.target.value = formatted;
+      const parsed = tryParseFrenchDate(formatted);
+      const picker = event.target.closest('[data-date-control]')?.querySelector('.date-picker-native');
+      if (picker) picker.value = parsed;
     }
   });
 
@@ -2851,7 +3360,10 @@
     }
   }
 
-  window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (settings.theme === 'system') applyPreferences(); });
+  window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', () => {
+    if (settingsPreviewActive && currentPage === 'settings') applyVisualPreferences(currentThemeFormValue());
+    else if (settings.theme === 'system') applyPreferences();
+  });
   window.addEventListener('online', () => { retryCloudConnection().catch(() => {}); });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') flushCloudSave().catch(() => {});

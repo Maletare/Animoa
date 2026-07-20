@@ -15,7 +15,7 @@ type UserBundle = {
 };
 
 const DEFAULT_TIME_ZONE = "Europe/Paris";
-const DEFAULT_SEND_HOUR = 8;
+const UNTIMED_EVENT_SEND_HOUR = 12;
 const PAGE_SIZE = 500;
 const MAX_ERROR_LENGTH = 1000;
 const MAX_REPORTED_ERRORS = 50;
@@ -163,8 +163,7 @@ function eventIsDue(
     return remainingMs > 0 && remainingMs <= 24 * 60 * 60 * 1000;
   }
 
-  // Animoa enregistre actuellement une date sans heure.
-  // Le rappel part donc la veille à partir de l'heure configurée.
+  // Lorsqu’aucune heure n’est connue, le rappel part à midi la veille.
   const localNow = datePartsInTimeZone(now, timeZone);
   const today = isoDateInTimeZone(now, timeZone);
   const tomorrow = addDaysToIsoDate(today, 1);
@@ -273,6 +272,10 @@ function buildEmail(params: {
       : "",
   ].join("");
 
+  const reminderBadge = validTime(params.eventTime)
+    ? (isEnglish ? "Reminder · 24 hours" : "Rappel · 24 heures")
+    : (isEnglish ? "Reminder · day before" : "Rappel · la veille");
+
   const html = `<!doctype html>
 <html lang="${isEnglish ? "en" : "fr"}">
 <head>
@@ -294,7 +297,7 @@ function buildEmail(params: {
           <tr>
             <td style="padding:8px 34px 34px">
               <div style="display:inline-block;background:#e4f8f5;color:#118d84;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">
-                ${isEnglish ? "Reminder · 24 hours" : "Rappel · 24 heures"}
+                ${reminderBadge}
               </div>
 
               <h1 style="font-size:28px;line-height:1.2;margin:18px 0 10px;color:#173733">
@@ -426,16 +429,7 @@ export default {
         `${appUrl}/assets/animoa-logo-email.png`,
       );
 
-      const configuredHour = Number(
-        env("ANIMOA_REMINDER_SEND_HOUR", String(DEFAULT_SEND_HOUR)),
-      );
-
-      const sendHour =
-        Number.isInteger(configuredHour) &&
-          configuredHour >= 0 &&
-          configuredHour <= 23
-          ? configuredHour
-          : DEFAULT_SEND_HOUR;
+      const sendHour = UNTIMED_EVENT_SEND_HOUR;
 
       if (!dryRun && !brevoApiKey) {
         throw new Error("Le secret BREVO_API_KEY est absent.");

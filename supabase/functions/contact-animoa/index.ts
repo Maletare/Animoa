@@ -149,7 +149,7 @@ const authenticatedHandler = withSupabase({ auth: "user" }, async (request, ctx)
     const userId = safeString(ctx.userClaims?.id);
     const accountEmail = safeString(ctx.userClaims?.email);
     if (!userId || !accountEmail) return response({ error: "Compte utilisateur introuvable." }, 401);
-    if (!rateLimit(userId)) return response({ error: "Trop de messages ont été envoyés. Réessaie dans quelques minutes." }, 429);
+    if (!rateLimit(userId)) return response({ error: "Trop de messages ont été envoyés. Veuillez réessayer dans quelques minutes." }, 429);
 
     const body = await request.json() as Record<string, unknown>;
     const category = allowedCategory(safeString(body.category));

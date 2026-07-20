@@ -1,6 +1,7 @@
 (() => {
   'use strict';
 
+  const landingPage = document.getElementById('landingPage');
   const authShell = document.getElementById('authShell');
   const appShell = document.querySelector('.app-shell');
   const config = window.ANIMOA_CONFIG || {};
@@ -10,6 +11,8 @@
   let localPreview = false;
   let readyResolved = false;
   let readyUserId = null;
+  let pendingAuthMode = 'login';
+  let authListenerReady = false;
   let resolveReady;
   const readyPromise = new Promise((resolve) => { resolveReady = resolve; });
 
@@ -53,11 +56,12 @@
       emailRequired: 'Indiquez une adresse e-mail valide.',
       accountCreated: 'Compte créé. Vérifiez maintenant votre boîte e-mail.',
       googleContinue: 'Continuer avec Google',
-      googleExistingOnly: 'Google est disponible pour les comptes Animoa déjà créés. Pour une première inscription, utilise le code d’invitation.',
-      googleUnavailable: 'La connexion Google n’est pas encore activée. Utilise ton adresse e-mail pour le moment.',
-      googleNewAccountBlocked: 'Ce compte Google n’est pas encore inscrit. Crée d’abord ton compte Animoa avec le code d’invitation, puis utilise Google avec la même adresse e-mail.',
+      googleExistingOnly: 'Google est disponible pour les comptes Animoa déjà créés. Pour une première inscription, utilisez le code d’invitation.',
+      googleUnavailable: 'La connexion Google n’est pas encore activée. Utilisez votre adresse e-mail pour le moment.',
+      googleNewAccountBlocked: 'Ce compte Google n’est pas encore inscrit. Créez d’abord votre compte Animoa avec le code d’invitation, puis utilisez Google avec la même adresse e-mail.',
       or: 'ou',
-      terms: 'En continuant, vous accédez à votre carnet Animoa personnel et sécurisé.'
+      terms: 'En continuant, vous accédez à votre carnet Animoa personnel et sécurisé.',
+      backPublic: 'Retour à la présentation'
     },
     en: {
       tagline: 'Their whole life, close to you.',
@@ -102,7 +106,8 @@
       googleUnavailable: 'Google sign-in is not enabled yet. Use your email address for now.',
       googleNewAccountBlocked: 'This Google account is not registered yet. First create your Animoa account with the invitation code, then use Google with the same email address.',
       or: 'or',
-      terms: 'By continuing, you access your personal and secure Animoa journal.'
+      terms: 'By continuing, you access your personal and secure Animoa journal.',
+      backPublic: 'Back to the presentation'
     }
   };
 
@@ -125,16 +130,27 @@
     );
   }
 
+  function showLanding() {
+    if (landingPage) landingPage.hidden = false;
+    authShell.hidden = true;
+    appShell.hidden = true;
+    document.body.classList.remove('auth-visible');
+    document.body.classList.add('landing-visible');
+  }
+
   function showShell() {
+    if (landingPage) landingPage.hidden = true;
     authShell.hidden = false;
     appShell.hidden = true;
+    document.body.classList.remove('landing-visible');
     document.body.classList.add('auth-visible');
   }
 
   function showApp() {
+    if (landingPage) landingPage.hidden = true;
     authShell.hidden = true;
     appShell.hidden = false;
-    document.body.classList.remove('auth-visible');
+    document.body.classList.remove('auth-visible', 'landing-visible');
   }
 
   function logo() {
@@ -185,6 +201,7 @@
       </form>
       ${!signup ? `<button class="auth-text-button" data-auth-action="forgot">${c('forgot')}</button>` : ''}
       <p class="auth-legal">${c('terms')}</p>
+      <button class="auth-text-button auth-back-public" type="button" data-auth-action="public-home">${c('backPublic')}</button>
     </section>`;
   }
 
@@ -278,34 +295,60 @@
     }
   }
 
-  async function initialise() {
+  function ensureClient() {
+    if (!isConfigured()) return null;
+    if (!client) {
+      client = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+      });
+    }
+    if (!authListenerReady) {
+      authListenerReady = true;
+      client.auth.onAuthStateChange((event, session) => {
+        currentUser = session?.user || null;
+        if (event === 'PASSWORD_RECOVERY') {
+          setTimeout(() => renderRecovery(), 0);
+          return;
+        }
+        if (currentUser) resolveAppReady();
+        else if (event === 'SIGNED_OUT') location.reload();
+      });
+    }
+    return client;
+  }
+
+  function openAuthentication(mode = 'login') {
+    pendingAuthMode = mode === 'signup' ? 'signup' : 'login';
     const languageChosen = localStorage.getItem('animoa_language_selected') === '1';
     if (!languageChosen) return renderLanguageChoice();
-    if (!isConfigured()) return renderConfiguration();
+    if (!ensureClient()) return renderConfiguration();
+    renderLogin(pendingAuthMode);
+  }
 
-    client = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-    });
+  async function initialise() {
+    if (!isConfigured()) {
+      showLanding();
+      return;
+    }
 
-    client.auth.onAuthStateChange((event, session) => {
-      currentUser = session?.user || null;
-      if (event === 'PASSWORD_RECOVERY') {
-        setTimeout(() => renderRecovery(), 0);
-        return;
-      }
-      if (currentUser) resolveAppReady();
-      else if (event === 'SIGNED_OUT') location.reload();
-    });
-
+    ensureClient();
     const redirectError = authRedirectError();
     const { data, error } = await client.auth.getSession();
     if (error) console.warn('Session Animoa indisponible', error);
     currentUser = data?.session?.user || null;
     if (currentUser) resolveAppReady();
-    else renderLogin('login', redirectError);
+    else if (redirectError || new URLSearchParams(location.search).has('reset')) renderLogin('login', redirectError);
+    else showLanding();
   }
 
   document.addEventListener('click', async (event) => {
+    const publicTarget = event.target.closest('[data-public-action]');
+    if (publicTarget) {
+      const publicAction = publicTarget.dataset.publicAction;
+      if (publicAction === 'login' || publicAction === 'signup') openAuthentication(publicAction);
+      return;
+    }
+
     const languageButton = event.target.closest('[data-auth-language]');
     if (languageButton) {
       i18n.setLanguage(languageButton.dataset.authLanguage);
@@ -317,17 +360,8 @@
     const action = target.dataset.authAction;
     if (action === 'confirm-language') {
       localStorage.setItem('animoa_language_selected', '1');
-      if (!isConfigured()) renderConfiguration();
-      else {
-        client = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
-        client.auth.onAuthStateChange((eventName, session) => {
-          currentUser = session?.user || null;
-          if (eventName === 'PASSWORD_RECOVERY') return setTimeout(() => renderRecovery(), 0);
-          if (currentUser) resolveAppReady();
-          else if (eventName === 'SIGNED_OUT') location.reload();
-        });
-        renderLogin('login');
-      }
+      if (!ensureClient()) renderConfiguration();
+      else renderLogin(pendingAuthMode);
     }
     if (action === 'local-preview') {
       localPreview = true;
@@ -336,6 +370,7 @@
     }
     if (action === 'show-login') renderLogin('login');
     if (action === 'show-signup') renderLogin('signup');
+    if (action === 'public-home') showLanding();
     if (action === 'forgot') renderForgot();
     if (action === 'google') {
       await signInWithGoogle(target);

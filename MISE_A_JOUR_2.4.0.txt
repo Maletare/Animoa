@@ -1,0 +1,26 @@
+ANIMOA 2.4.0 — PAGE PUBLIQUE, QUESTIONNAIRE ET THÈMES ALLÉGÉS
+
+NOUVEAUTÉS
+- Page publique enrichie pour présenter clairement Animoa aux visiteurs et aux moteurs de recherche.
+- Questionnaire en 5 étapes intégré directement à la page publique.
+- Question 3 sans limite de choix.
+- Nouvelle formulation de la question 5 : « Qu’aimeriez-vous pouvoir faire avec Animoa ? ».
+- Champ e-mail affiché uniquement si la personne souhaite tester Animoa ou être informée.
+- Confirmation après l’envoi et contrôle simple contre les robots automatiques.
+- FAQ publique, titre Google, description, adresse canonique et données structurées.
+- Ajout de robots.txt et sitemap.xml.
+- Paramètres allégés : 8 thèmes prêts à l’emploi et un thème « Personnalisé ».
+- Aperçu instantané des thèmes conservé.
+
+ÉTAPE OBLIGATOIRE POUR ENREGISTRER LES RÉPONSES
+1. Ouvrir Supabase.
+2. Aller dans SQL Editor.
+3. Ouvrir le fichier INSTALLATION_QUESTIONNAIRE_PUBLIC.sql.
+4. Copier tout son contenu dans Supabase puis cliquer sur Run.
+
+Sans cette étape, la page et le questionnaire s’affichent correctement, mais Supabase refusera l’enregistrement des réponses.
+
+APRÈS LA MISE EN LIGNE
+- Envoyer https://animoa.fr/sitemap.xml dans Google Search Console.
+- Inspecter https://animoa.fr/ puis demander l’indexation.
+- Tester le questionnaire une fois sur téléphone et une fois sur ordinateur.

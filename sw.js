@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v2-20260719-clean-currencies-224';
+const CACHE_NAME = 'animoa-v2-20260720-public-survey-240';
 
 const CORE = [
   '/',
@@ -6,9 +6,12 @@ const CORE = [
   '/styles.css',
   '/i18n.js',
   '/auth.js',
+  '/questionnaire.js',
   '/cloud.js',
   '/app.js',
   '/site.webmanifest',
+  '/robots.txt',
+  '/sitemap.xml',
   '/assets/animoa-logo-official.png',
   '/assets/animoa-wordmark-official.png',
   '/assets/animoa-icon-official.png',
@@ -24,6 +27,7 @@ const ALWAYS_REFRESH = new Set([
   '/styles.css',
   '/i18n.js',
   '/auth.js',
+  '/questionnaire.js',
   '/cloud.js',
   '/app.js',
   '/supabase-config.js',

@@ -1,0 +1,12 @@
+ANIMOA 2.2.6 — Textes professionnels et saisie des dates
+
+Modifications :
+- remplacement de « L’essentiel, sans surcharge » par une formulation plus professionnelle ;
+- vouvoiement harmonisé dans l’ensemble de l’application ;
+- textes du formulaire de rendez-vous reformulés ;
+- heure du rendez-vous toujours facultative ;
+- sans heure, rappel e-mail prévu à midi la veille ;
+- tous les champs de date acceptent désormais la saisie manuelle au format JJ/MM/AAAA ;
+- un bouton calendrier reste disponible à côté de chaque champ de date ;
+- les dates impossibles, par exemple 32/02/1256, 31/04/2026 ou 29/02/2025, sont refusées ;
+- les contraintes passé/futur restent appliquées selon le type d’information.
