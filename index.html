@@ -28,7 +28,8 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <link rel="manifest" href="site.webmanifest" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=2.9.2" />
+  <link rel="stylesheet" href="styles.css?v=2.9.6" />
+  <link rel="stylesheet" href="landing-compact.css?v=2.9.6" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -74,190 +75,125 @@
   </script>
 </head>
 <body>
-  <main id="landingPage" class="landing-page">
-    <header class="landing-header">
-      <a class="landing-brand" href="#accueil" aria-label="Accueil Animoa">
-        <img src="assets/animoa-wordmark-official.png" alt="Animoa" width="800" height="182" fetchpriority="high" />
+  <main id="landingPage" class="landing-page compact-landing">
+    <header class="site-header">
+      <a class="brand" href="#accueil" aria-label="Accueil Animoa">
+        <img src="assets/animoa-wordmark-official.png" alt="Animoa" />
       </a>
-      <nav class="landing-nav" aria-label="Navigation de présentation">
-        <a href="#fonctionnalites">Fonctionnalités</a>
-        <a href="#questionnaire">Votre avis</a>
-        <a href="#faq">Questions fréquentes</a>
-      </nav>
-      <div class="landing-header-actions">
-        <button class="landing-login-button" type="button" data-public-action="login">Se connecter</button>
-        <button class="primary-button landing-signup-button" type="button" data-public-action="signup">Créer un compte</button>
-      </div>
+      <a class="login-link" href="#" data-public-action="login">Se connecter</a>
     </header>
-
-    <section id="accueil" class="landing-hero">
-      <div class="landing-hero-copy">
-        <p class="landing-kicker">Carnet de santé et de vie numérique</p>
-        <h1>Toute la vie de votre animal, réunie au même endroit.</h1>
-        <p class="landing-lead">Animoa vous aide à conserver ses informations importantes, préparer ses rendez-vous, suivre sa santé, ses dépenses et ses plus beaux souvenirs.</p>
-        <div class="landing-hero-actions">
-          <button class="primary-button landing-main-cta" type="button" data-public-action="signup">Découvrir Animoa</button>
-          <a class="secondary-button landing-link-button" href="#questionnaire">Donner mon avis</a>
-          <button class="landing-text-cta" type="button" data-public-action="login">J’ai déjà un compte</button>
-        </div>
-        <p class="landing-access-note">Application actuellement disponible en phase de test, sur invitation.</p>
-      </div>
-
-      <div class="landing-app-preview" aria-label="Aperçu des fonctionnalités Animoa">
-        <div class="landing-preview-top">
-          <img src="assets/animoa-icon-official.png" alt="" width="331" height="378" decoding="async" />
-          <div><strong>Le carnet de Milo</strong><span>Informations essentielles</span></div>
-        </div>
-        <div class="landing-preview-reminder">
-          <span class="landing-preview-icon">📅</span>
-          <div><small>Prochain rendez-vous</small><strong>Visite vétérinaire</strong><span>Jeudi 24 septembre</span></div>
-        </div>
-        <div class="landing-preview-grid">
-          <div><span>🩺</span><strong>Santé</strong><small>Vaccins et traitements</small></div>
-          <div><span>⚖️</span><strong>Poids</strong><small>Suivi de l’évolution</small></div>
-          <div><span>📎</span><strong>Documents</strong><small>Tout reste accessible</small></div>
-          <div><span>📷</span><strong>Souvenirs</strong><small>Ses moments précieux</small></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="fonctionnalites" class="landing-section">
-      <div class="landing-section-heading">
-        <p class="landing-kicker">Simple au quotidien</p>
-        <h2>Toutes les informations importantes, clairement organisées.</h2>
-        <p>Chaque rubrique a été pensée pour retrouver rapidement l’information dont vous avez besoin.</p>
-      </div>
-      <div class="landing-feature-grid">
-        <article><span>📅</span><h3>Rendez-vous et rappels</h3><p>Préparez les prochaines visites et conservez l’historique des rendez-vous.</p></article>
-        <article><span>🩺</span><h3>Santé et traitements</h3><p>Centralisez vaccins, analyses, médicaments, traitements et notes utiles.</p></article>
-        <article><span>⚖️</span><h3>Suivi du poids</h3><p>Visualisez simplement l’évolution du poids de votre animal au fil du temps.</p></article>
-        <article><span>💳</span><h3>Dépenses et justificatifs</h3><p>Enregistrez les dépenses et joignez factures, tickets ou ordonnances.</p></article>
-        <article><span>📎</span><h3>Documents accessibles</h3><p>Ajoutez les fichiers importants directement dans le carnet concerné.</p></article>
-        <article><span>📷</span><h3>Photos et souvenirs</h3><p>Conservez les moments importants qui racontent toute sa vie.</p></article>
-      </div>
-    </section>
-
-
-    <section id="questionnaire" class="landing-survey-section" aria-labelledby="surveyHeading">
-      <div class="landing-section-heading survey-intro">
-        <p class="landing-kicker">Construisons Animoa ensemble</p>
-        <h2 id="surveyHeading">Aidez-nous à améliorer Animoa</h2>
-        <p>Animoa est actuellement en phase de test. Cinq questions rapides nous aideront à créer une application réellement adaptée aux propriétaires d’animaux.</p>
-        <div class="survey-duration"><strong>Moins d’une minute</strong><span>Quatre réponses guidées et une réponse libre facultative.</span></div>
-      </div>
-
-      <div class="public-survey-card" id="publicSurveyCard">
-        <div class="survey-progress-block" aria-live="polite">
-          <div class="survey-progress-copy"><strong id="surveyStepLabel">Question 1 sur 5</strong><span id="surveyProgressPercent">20 %</span></div>
-          <div class="survey-progress-track" aria-hidden="true"><span id="surveyProgressBar"></span></div>
-        </div>
-
-        <form id="publicSurveyForm" novalidate>
-          <input class="survey-honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
-
-          <section class="survey-step active" data-survey-step="1" aria-labelledby="surveyQuestion1">
-            <div class="survey-question-heading"><h3 id="surveyQuestion1" tabindex="-1">Quels animaux avez-vous ?</h3><p>Sélectionnez toutes les réponses qui vous correspondent.</p></div>
-            <div class="survey-options survey-options-two">
-              <label class="survey-choice"><input type="checkbox" name="animals" value="Chien" /><span><i aria-hidden="true">✓</i><strong>Chien</strong></span></label>
-              <label class="survey-choice"><input type="checkbox" name="animals" value="Chat" /><span><i aria-hidden="true">✓</i><strong>Chat</strong></span></label>
-              <label class="survey-choice"><input type="checkbox" name="animals" value="Nouveaux animaux de compagnie" /><span><i aria-hidden="true">✓</i><strong>Nouveaux animaux de compagnie</strong><small>Lapin, rongeur, oiseau, reptile, furet, poisson…</small></span></label>
-              <label class="survey-choice"><input type="checkbox" name="animals" value="Autre" data-survey-toggle="otherAnimal" /><span><i aria-hidden="true">✓</i><strong>Autre</strong></span></label>
-              <label class="survey-choice survey-choice-wide"><input type="checkbox" name="animals" value="Je n’ai pas encore d’animal" /><span><i aria-hidden="true">✓</i><strong>Je n’ai pas encore d’animal</strong></span></label>
-            </div>
-            <label id="otherAnimalField" class="survey-conditional-field" hidden><span>Précisez, si vous le souhaitez</span><input type="text" name="other_animal" maxlength="80" placeholder="Exemple : cheval, chèvre…" /></label>
-            <p class="survey-error" data-survey-error="1" role="alert"></p>
-          </section>
-
-          <section class="survey-step" data-survey-step="2" aria-labelledby="surveyQuestion2" hidden>
-            <div class="survey-question-heading"><h3 id="surveyQuestion2" tabindex="-1">Comment conservez-vous actuellement les informations de vos animaux ?</h3><p>Choisissez la réponse la plus proche de votre situation.</p></div>
-            <div class="survey-options">
-              <label class="survey-choice"><input type="radio" name="current_method" value="Carnet papier" /><span><i aria-hidden="true">✓</i><strong>Dans un carnet papier</strong></span></label>
-              <label class="survey-choice"><input type="radio" name="current_method" value="Notes numériques" /><span><i aria-hidden="true">✓</i><strong>Dans les notes de mon téléphone ou ordinateur</strong></span></label>
-              <label class="survey-choice"><input type="radio" name="current_method" value="Autre application" /><span><i aria-hidden="true">✓</i><strong>Dans une autre application</strong></span></label>
-              <label class="survey-choice"><input type="radio" name="current_method" value="Plusieurs endroits" /><span><i aria-hidden="true">✓</i><strong>Dans plusieurs endroits différents</strong></span></label>
-              <label class="survey-choice"><input type="radio" name="current_method" value="Non centralisées" /><span><i aria-hidden="true">✓</i><strong>Je ne les centralise pas</strong></span></label>
-            </div>
-            <p class="survey-error" data-survey-error="2" role="alert"></p>
-          </section>
-
-          <section class="survey-step" data-survey-step="3" aria-labelledby="surveyQuestion3" hidden>
-            <div class="survey-question-heading"><h3 id="surveyQuestion3" tabindex="-1">Quelles fonctionnalités vous seraient les plus utiles ?</h3><p>Sélectionnez toutes les réponses qui vous correspondent.</p></div>
-            <div class="survey-options survey-options-two">
-              <label class="survey-choice"><input type="checkbox" name="features" value="Rendez-vous et rappels vétérinaires" /><span><i aria-hidden="true">✓</i><strong>Rendez-vous et rappels vétérinaires</strong></span></label>
-              <label class="survey-choice"><input type="checkbox" name="features" value="Vaccins et traitements" /><span><i aria-hidden="true">✓</i><strong>Vaccins et traitements</strong></span></label>
-              <label class="survey-choice"><input type="checkbox" name="features" value="Suivi du poids et de la santé" /><span><i aria-hidden="true">✓</i><strong>Suivi du poids et de la santé</strong></span></label>
-              <label class="survey-choice"><input type="checkbox" name="features" value="Documents, ordonnances et dépenses" /><span><i aria-hidden="true">✓</i><strong>Documents, ordonnances et dépenses</strong></span></label>
-              <label class="survey-choice"><input type="checkbox" name="features" value="Photos et souvenirs" /><span><i aria-hidden="true">✓</i><strong>Photos et souvenirs</strong></span></label>
-              <label class="survey-choice"><input type="checkbox" name="features" value="Partage avec un proche" /><span><i aria-hidden="true">✓</i><strong>Partage avec un proche</strong></span></label>
-            </div>
-            <p class="survey-error" data-survey-error="3" role="alert"></p>
-          </section>
-
-          <section class="survey-step" data-survey-step="4" aria-labelledby="surveyQuestion4" hidden>
-            <div class="survey-question-heading"><h3 id="surveyQuestion4" tabindex="-1">Souhaiteriez-vous participer aux tests d’Animoa ?</h3><p>Votre réponse n’entraîne aucun engagement.</p></div>
-            <div class="survey-options">
-              <label class="survey-choice"><input type="radio" name="testing_interest" value="Oui" data-survey-contact="true" /><span><i aria-hidden="true">✓</i><strong>Oui, je souhaite tester Animoa</strong></span></label>
-              <label class="survey-choice"><input type="radio" name="testing_interest" value="Peut-être" data-survey-contact="true" /><span><i aria-hidden="true">✓</i><strong>Peut-être, je souhaite être informé</strong></span></label>
-              <label class="survey-choice"><input type="radio" name="testing_interest" value="Non" /><span><i aria-hidden="true">✓</i><strong>Non, pas pour le moment</strong></span></label>
-            </div>
-            <label id="surveyEmailField" class="survey-conditional-field" hidden><span>Adresse e-mail</span><input type="email" name="email" maxlength="160" autocomplete="email" placeholder="vous@exemple.fr" /><small>Elle sera uniquement utilisée pour vous contacter au sujet des tests d’Animoa.</small></label>
-            <p class="survey-error" data-survey-error="4" role="alert"></p>
-          </section>
-
-          <section class="survey-step" data-survey-step="5" aria-labelledby="surveyQuestion5" hidden>
-            <div class="survey-question-heading"><h3 id="surveyQuestion5" tabindex="-1">Qu’aimeriez-vous pouvoir faire avec Animoa ?</h3><p>Partagez librement une idée, un besoin ou une fonctionnalité importante pour vous. Cette réponse est facultative.</p></div>
-            <label class="survey-textarea-field"><span>Votre idée ou votre besoin</span><textarea name="desired_use" maxlength="300" rows="5" placeholder="Exemple : partager facilement les informations de mon animal avec un proche…"></textarea><small><span id="surveyCharacterCount">0</span>/300 caractères</small></label>
-            <p class="survey-error" data-survey-error="5" role="alert"></p>
-          </section>
-
-          <div class="survey-actions">
-            <button id="surveyPreviousButton" class="secondary-button" type="button" data-survey-action="previous" hidden>Précédent</button>
-            <button id="surveyNextButton" class="primary-button" type="button" data-survey-action="next">Continuer</button>
-            <button id="surveySubmitButton" class="primary-button" type="submit" hidden>Envoyer mes réponses</button>
+      <section class="hero" id="accueil">
+        <div class="hero-copy">
+          <p class="eyebrow">Le carnet de vie de votre animal</p>
+          <h1>Tout ce qui compte pour lui, toujours à portée de main.</h1>
+          <p class="hero-lead">Rendez-vous, poids et documents : Animoa rassemble l’essentiel dans un carnet simple à consulter, partout.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#" data-public-action="signup">Découvrir Animoa</a>
+            <span class="test-note">Accès actuellement sur invitation</span>
           </div>
-          <p class="survey-privacy-note">Les réponses sont utilisées uniquement pour améliorer Animoa. Votre adresse e-mail n’est demandée que si vous souhaitez être contacté au sujet des tests.</p>
-        </form>
+        </div>
 
-        <section id="surveySuccess" class="survey-success" hidden aria-live="assertive" aria-atomic="true">
-          <div class="survey-success-icon" aria-hidden="true">✓</div>
-          <p class="survey-success-label">Questionnaire envoyé</p>
-          <h3>Merci ! Vos réponses ont bien été enregistrées.</h3>
-          <p>Votre avis nous aidera à améliorer Animoa et à mieux répondre aux besoins des propriétaires d’animaux.</p>
-          <div class="survey-success-actions">
-            <button class="primary-button" type="button" data-public-action="signup">Découvrir Animoa</button>
-            <a class="secondary-button survey-return-link" href="#accueil">Revenir à la présentation</a>
+        <div class="phone-stage" aria-label="Aperçu d’Animoa">
+          <div class="glow glow-one"></div>
+          <div class="glow glow-two"></div>
+          <div class="phone-card">
+            <div class="phone-topbar">
+              <div class="mini-brand">
+                <img src="assets/animoa-icon-official.png" alt="" />
+                <div><strong>Milo</strong><span>Mon carnet Animoa</span></div>
+              </div>
+              <span class="avatar">M</span>
+            </div>
+
+            <div class="welcome-card">
+              <span class="small-label">Prochain rendez-vous</span>
+              <div class="welcome-row">
+                <div class="calendar-icon">24</div>
+                <div><strong>Visite vétérinaire</strong><span>Jeudi · 10 h 30</span></div>
+              </div>
+            </div>
+
+            <div class="quick-grid">
+              <div class="quick-card"><span class="quick-icon">⚖️</span><strong>12,4 kg</strong><small>Dernier poids</small></div>
+              <div class="quick-card"><span class="quick-icon">📎</span><strong>8 fichiers</strong><small>Documents</small></div>
+            </div>
+
+            <div class="activity-card">
+              <div><span class="activity-dot"></span><strong>Vaccin annuel</strong></div>
+              <span>À venir</span>
+            </div>
           </div>
-          <button class="survey-restart-link" type="button" data-survey-action="restart">Envoyer une autre réponse</button>
-        </section>
-      </div>
-    </section>
+        </div>
+      </section>
 
-    <section id="faq" class="landing-faq-section" aria-labelledby="landingFaqHeading">
-      <div class="landing-section-heading">
-        <p class="landing-kicker">Questions fréquentes</p>
-        <h2 id="landingFaqHeading">Mieux comprendre Animoa</h2>
-      </div>
-      <div class="landing-faq-grid">
-        <details><summary>À quoi sert Animoa ?</summary><p>Animoa centralise les rendez-vous vétérinaires, vaccins, traitements, poids, dépenses, documents et souvenirs de vos animaux dans un même carnet numérique.</p></details>
-        <details><summary>Animoa remplace-t-il le vétérinaire ?</summary><p>Non. Animoa est un outil d’organisation et de suivi personnel. Il ne remplace jamais un avis, un diagnostic ou un traitement vétérinaire.</p></details>
-        <details><summary>Mes informations sont-elles accessibles sur plusieurs appareils ?</summary><p>Une fois connecté, le carnet Animoa peut être synchronisé avec le compte afin de retrouver ses informations sur les appareils compatibles.</p></details>
-        <details><summary>Puis-je participer à la phase de test ?</summary><p>Oui. Répondez au questionnaire et indiquez que vous souhaitez tester Animoa. Une adresse e-mail vous sera alors demandée pour pouvoir vous contacter.</p></details>
-      </div>
-    </section>
+      <section class="benefits" aria-labelledby="benefits-title">
+        <div class="section-heading">
+          <p class="eyebrow">Utile dans la vraie vie</p>
+          <h2 id="benefits-title">Trois gestes simples, un quotidien mieux organisé.</h2>
+        </div>
 
-    <section id="test" class="landing-test-section">
-      <div>
-        <p class="landing-kicker">Animoa évolue avec vous</p>
-        <h2>Une application actuellement en phase de test.</h2>
-        <p>Cette première version permet de découvrir Animoa dans des conditions réelles. Les fonctions et la présentation continueront d’être améliorées progressivement.</p>
-      </div>
-      <button class="primary-button" type="button" data-public-action="signup">Accéder à l’application</button>
-    </section>
+        <div class="benefit-grid">
+          <article class="benefit-card">
+            <div class="benefit-icon">📅</div>
+            <h3>Ne manquez plus un rendez-vous</h3>
+            <p>Retrouvez les prochaines visites et les soins à prévoir au même endroit.</p>
+            <div class="benefit-example"><span>Prochaine visite</span><strong>24 septembre</strong></div>
+          </article>
 
-    <footer class="landing-footer">
-      <img src="assets/animoa-wordmark-official.png" alt="Animoa" width="800" height="182" loading="lazy" decoding="async" />
-      <p>Toute sa vie, près de vous.</p>
-      <button type="button" data-public-action="login">Se connecter</button>
+          <article class="benefit-card">
+            <div class="benefit-icon">⚖️</div>
+            <h3>Suivez son poids en un coup d’œil</h3>
+            <p>Visualisez facilement son évolution sans rechercher vos anciennes notes.</p>
+            <div class="weight-chart" aria-label="Exemple de courbe de poids">
+              <span style="height:34%"></span><span style="height:45%"></span><span style="height:52%"></span><span style="height:60%"></span><span style="height:67%"></span>
+            </div>
+          </article>
+
+          <article class="benefit-card">
+            <div class="benefit-icon">📎</div>
+            <h3>Gardez ses documents avec vous</h3>
+            <p>Ordonnances, analyses et justificatifs restent accessibles, même chez le vétérinaire.</p>
+            <div class="document-list"><span>Ordonnance.pdf</span><span>Analyse_sang.pdf</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="story-section">
+        <div class="story-card">
+          <div class="story-copy">
+            <p class="eyebrow">Un seul carnet</p>
+            <h2>Moins de recherches, plus de sérénité.</h2>
+            <p>Les informations importantes de votre animal sont réunies dans une application pensée pour être rapide, claire et agréable à utiliser.</p>
+          </div>
+          <div class="story-points" aria-label="Points forts d’Animoa">
+            <div><span>✓</span><p><strong>Clair</strong><small>Chaque information à sa place</small></p></div>
+            <div><span>✓</span><p><strong>Pratique</strong><small>Accessible sur téléphone et ordinateur</small></p></div>
+            <div><span>✓</span><p><strong>Personnel</strong><small>Un carnet pour chacun de vos animaux</small></p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="survey-teaser" aria-labelledby="survey-title">
+        <div>
+          <p class="eyebrow">Votre expérience compte</p>
+          <h2 id="survey-title">Aidez-nous à améliorer Animoa.</h2>
+          <p>Quelques questions rapides pour mieux comprendre vos besoins.</p>
+        </div>
+        <a class="button button-secondary" href="questionnaire.html">Donner mon avis</a>
+      </section>
+
+      <section class="final-cta">
+        <img src="assets/animoa-icon-official.png" alt="" />
+        <div>
+          <h2>Toute sa vie, près de vous.</h2>
+          <p>Découvrez une manière plus simple de suivre l’essentiel.</p>
+        </div>
+        <a class="button button-primary" href="#" data-public-action="signup">Découvrir Animoa</a>
+      </section>
+    <footer class="site-footer">
+      <img src="assets/animoa-wordmark-official.png" alt="Animoa" />
+      <p>© 2026 Animoa</p>
+      
     </footer>
   </main>
 
@@ -314,7 +250,7 @@
         <span aria-hidden="true">·</span>
         <button type="button" data-page="legal">Mentions légales</button>
         <span aria-hidden="true">·</span>
-        <span id="drawerAppVersion">Version 2.9.2</span>
+        <span id="drawerAppVersion">Version 2.9.6</span>
       </div>
     </div>
   </aside>
@@ -336,11 +272,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="supabase-config.js?v=2.9.2"></script>
-  <script src="i18n.js?v=2.9.2"></script>
-  <script src="auth.js?v=2.9.2"></script>
-  <script src="questionnaire.js?v=2.9.2"></script>
-  <script src="cloud.js?v=2.9.2"></script>
-  <script src="app.js?v=2.9.2"></script>
+  <script src="supabase-config.js?v=2.9.6"></script>
+  <script src="i18n.js?v=2.9.6"></script>
+  <script src="auth.js?v=2.9.6"></script>
+  <script src="cloud.js?v=2.9.6"></script>
+  <script src="app.js?v=2.9.6"></script>
 </body>
 </html>

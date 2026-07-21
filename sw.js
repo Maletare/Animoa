@@ -1,9 +1,11 @@
-const CACHE_NAME = 'animoa-v2.9.2-settings-region';
+const CACHE_NAME = 'animoa-v2.9.6-public-page';
 
 const CORE = [
   '/',
   '/index.html',
   '/styles.css',
+  '/landing-compact.css',
+  '/questionnaire.html',
   '/supabase-config.js',
   '/i18n.js',
   '/auth.js',
@@ -26,6 +28,8 @@ const CORE = [
 const ALWAYS_REFRESH = new Set([
   '/index.html',
   '/styles.css',
+  '/landing-compact.css',
+  '/questionnaire.html',
   '/supabase-config.js',
   '/i18n.js',
   '/auth.js',

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr" data-theme="system" data-palette="animoa">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#23b9ad" />
+  <meta name="description" content="Donnez votre avis pour aider à améliorer Animoa." />
+  <title>Donner mon avis — Animoa</title>
+  <link rel="icon" href="assets/animoa-icon-64.png" type="image/png" />
+  <link rel="stylesheet" href="styles.css?v=2.9.5" />
+</head>
+<body class="landing-visible">
+  <main id="landingPage" class="landing-page questionnaire-page">
+    <header class="landing-header">
+      <a class="landing-brand" href="index.html" aria-label="Retour à Animoa"><img src="assets/animoa-wordmark-official.png" alt="Animoa" width="800" height="182" /></a>
+      <a class="landing-login-button" href="index.html">Retour à l’accueil</a>
+    </header>
+    <section id="questionnaire" class="landing-survey-section" aria-labelledby="surveyHeading">
+      <div class="landing-section-heading survey-intro">
+        <p class="landing-kicker">Construisons Animoa ensemble</p>
+        <h2 id="surveyHeading">Aidez-nous à améliorer Animoa</h2>
+        <p>Animoa est actuellement en phase de test. Cinq questions rapides nous aideront à créer une application réellement adaptée aux propriétaires d’animaux.</p>
+        <div class="survey-duration"><strong>Moins d’une minute</strong><span>Quatre réponses guidées et une réponse libre facultative.</span></div>
+      </div>
+
+      <div class="public-survey-card" id="publicSurveyCard">
+        <div class="survey-progress-block" aria-live="polite">
+          <div class="survey-progress-copy"><strong id="surveyStepLabel">Question 1 sur 5</strong><span id="surveyProgressPercent">20 %</span></div>
+          <div class="survey-progress-track" aria-hidden="true"><span id="surveyProgressBar"></span></div>
+        </div>
+
+        <form id="publicSurveyForm" novalidate>
+          <input class="survey-honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <section class="survey-step active" data-survey-step="1" aria-labelledby="surveyQuestion1">
+            <div class="survey-question-heading"><h3 id="surveyQuestion1" tabindex="-1">Quels animaux avez-vous ?</h3><p>Sélectionnez toutes les réponses qui vous correspondent.</p></div>
+            <div class="survey-options survey-options-two">
+              <label class="survey-choice"><input type="checkbox" name="animals" value="Chien" /><span><i aria-hidden="true">✓</i><strong>Chien</strong></span></label>
+              <label class="survey-choice"><input type="checkbox" name="animals" value="Chat" /><span><i aria-hidden="true">✓</i><strong>Chat</strong></span></label>
+              <label class="survey-choice"><input type="checkbox" name="animals" value="Nouveaux animaux de compagnie" /><span><i aria-hidden="true">✓</i><strong>Nouveaux animaux de compagnie</strong><small>Lapin, rongeur, oiseau, reptile, furet, poisson…</small></span></label>
+              <label class="survey-choice"><input type="checkbox" name="animals" value="Autre" data-survey-toggle="otherAnimal" /><span><i aria-hidden="true">✓</i><strong>Autre</strong></span></label>
+              <label class="survey-choice survey-choice-wide"><input type="checkbox" name="animals" value="Je n’ai pas encore d’animal" /><span><i aria-hidden="true">✓</i><strong>Je n’ai pas encore d’animal</strong></span></label>
+            </div>
+            <label id="otherAnimalField" class="survey-conditional-field" hidden><span>Précisez, si vous le souhaitez</span><input type="text" name="other_animal" maxlength="80" placeholder="Exemple : cheval, chèvre…" /></label>
+            <p class="survey-error" data-survey-error="1" role="alert"></p>
+          </section>
+
+          <section class="survey-step" data-survey-step="2" aria-labelledby="surveyQuestion2" hidden>
+            <div class="survey-question-heading"><h3 id="surveyQuestion2" tabindex="-1">Comment conservez-vous actuellement les informations de vos animaux ?</h3><p>Choisissez la réponse la plus proche de votre situation.</p></div>
+            <div class="survey-options">
+              <label class="survey-choice"><input type="radio" name="current_method" value="Carnet papier" /><span><i aria-hidden="true">✓</i><strong>Dans un carnet papier</strong></span></label>
+              <label class="survey-choice"><input type="radio" name="current_method" value="Notes numériques" /><span><i aria-hidden="true">✓</i><strong>Dans les notes de mon téléphone ou ordinateur</strong></span></label>
+              <label class="survey-choice"><input type="radio" name="current_method" value="Autre application" /><span><i aria-hidden="true">✓</i><strong>Dans une autre application</strong></span></label>
+              <label class="survey-choice"><input type="radio" name="current_method" value="Plusieurs endroits" /><span><i aria-hidden="true">✓</i><strong>Dans plusieurs endroits différents</strong></span></label>
+              <label class="survey-choice"><input type="radio" name="current_method" value="Non centralisées" /><span><i aria-hidden="true">✓</i><strong>Je ne les centralise pas</strong></span></label>
+            </div>
+            <p class="survey-error" data-survey-error="2" role="alert"></p>
+          </section>
+
+          <section class="survey-step" data-survey-step="3" aria-labelledby="surveyQuestion3" hidden>
+            <div class="survey-question-heading"><h3 id="surveyQuestion3" tabindex="-1">Quelles fonctionnalités vous seraient les plus utiles ?</h3><p>Sélectionnez toutes les réponses qui vous correspondent.</p></div>
+            <div class="survey-options survey-options-two">
+              <label class="survey-choice"><input type="checkbox" name="features" value="Rendez-vous et rappels vétérinaires" /><span><i aria-hidden="true">✓</i><strong>Rendez-vous et rappels vétérinaires</strong></span></label>
+              <label class="survey-choice"><input type="checkbox" name="features" value="Vaccins et traitements" /><span><i aria-hidden="true">✓</i><strong>Vaccins et traitements</strong></span></label>
+              <label class="survey-choice"><input type="checkbox" name="features" value="Suivi du poids et de la santé" /><span><i aria-hidden="true">✓</i><strong>Suivi du poids et de la santé</strong></span></label>
+              <label class="survey-choice"><input type="checkbox" name="features" value="Documents, ordonnances et dépenses" /><span><i aria-hidden="true">✓</i><strong>Documents, ordonnances et dépenses</strong></span></label>
+              <label class="survey-choice"><input type="checkbox" name="features" value="Photos et souvenirs" /><span><i aria-hidden="true">✓</i><strong>Photos et souvenirs</strong></span></label>
+              <label class="survey-choice"><input type="checkbox" name="features" value="Partage avec un proche" /><span><i aria-hidden="true">✓</i><strong>Partage avec un proche</strong></span></label>
+            </div>
+            <p class="survey-error" data-survey-error="3" role="alert"></p>
+          </section>
+
+          <section class="survey-step" data-survey-step="4" aria-labelledby="surveyQuestion4" hidden>
+            <div class="survey-question-heading"><h3 id="surveyQuestion4" tabindex="-1">Souhaiteriez-vous participer aux tests d’Animoa ?</h3><p>Votre réponse n’entraîne aucun engagement.</p></div>
+            <div class="survey-options">
+              <label class="survey-choice"><input type="radio" name="testing_interest" value="Oui" data-survey-contact="true" /><span><i aria-hidden="true">✓</i><strong>Oui, je souhaite tester Animoa</strong></span></label>
+              <label class="survey-choice"><input type="radio" name="testing_interest" value="Peut-être" data-survey-contact="true" /><span><i aria-hidden="true">✓</i><strong>Peut-être, je souhaite être informé</strong></span></label>
+              <label class="survey-choice"><input type="radio" name="testing_interest" value="Non" /><span><i aria-hidden="true">✓</i><strong>Non, pas pour le moment</strong></span></label>
+            </div>
+            <label id="surveyEmailField" class="survey-conditional-field" hidden><span>Adresse e-mail</span><input type="email" name="email" maxlength="160" autocomplete="email" placeholder="vous@exemple.fr" /><small>Elle sera uniquement utilisée pour vous contacter au sujet des tests d’Animoa.</small></label>
+            <p class="survey-error" data-survey-error="4" role="alert"></p>
+          </section>
+
+          <section class="survey-step" data-survey-step="5" aria-labelledby="surveyQuestion5" hidden>
+            <div class="survey-question-heading"><h3 id="surveyQuestion5" tabindex="-1">Qu’aimeriez-vous pouvoir faire avec Animoa ?</h3><p>Partagez librement une idée, un besoin ou une fonctionnalité importante pour vous. Cette réponse est facultative.</p></div>
+            <label class="survey-textarea-field"><span>Votre idée ou votre besoin</span><textarea name="desired_use" maxlength="300" rows="5" placeholder="Exemple : partager facilement les informations de mon animal avec un proche…"></textarea><small><span id="surveyCharacterCount">0</span>/300 caractères</small></label>
+            <p class="survey-error" data-survey-error="5" role="alert"></p>
+          </section>
+
+          <div class="survey-actions">
+            <button id="surveyPreviousButton" class="secondary-button" type="button" data-survey-action="previous" hidden>Précédent</button>
+            <button id="surveyNextButton" class="primary-button" type="button" data-survey-action="next">Continuer</button>
+            <button id="surveySubmitButton" class="primary-button" type="submit" hidden>Envoyer mes réponses</button>
+          </div>
+          <p class="survey-privacy-note">Les réponses sont utilisées uniquement pour améliorer Animoa. Votre adresse e-mail n’est demandée que si vous souhaitez être contacté au sujet des tests.</p>
+        </form>
+
+        <section id="surveySuccess" class="survey-success" hidden aria-live="assertive" aria-atomic="true">
+          <div class="survey-success-icon" aria-hidden="true">✓</div>
+          <p class="survey-success-label">Questionnaire envoyé</p>
+          <h3>Merci ! Vos réponses ont bien été enregistrées.</h3>
+          <p>Votre avis nous aidera à améliorer Animoa et à mieux répondre aux besoins des propriétaires d’animaux.</p>
+          <div class="survey-success-actions">
+            <button class="primary-button" type="button" onclick="location.href='index.html#inscription'">Découvrir Animoa</button>
+            <a class="secondary-button survey-return-link" href="index.html">Revenir à la présentation</a>
+          </div>
+          <button class="survey-restart-link" type="button" data-survey-action="restart">Envoyer une autre réponse</button>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=2.9.5"></script>
+  <script src="questionnaire.js?v=2.9.5"></script>
+</body>
+</html>

@@ -168,6 +168,7 @@
       </div>
       <button type="button" class="primary-button auth-submit" data-auth-action="confirm-language">${c('continue')}</button>
     </section>`;
+    decorateRequiredAuthFields();
   }
 
   function renderConfiguration() {
@@ -200,9 +201,9 @@
         <button class="primary-button auth-submit" type="submit">${signup ? c('signup') : c('login')}</button>
       </form>
       ${!signup ? `<button type="button" class="auth-text-button" data-auth-action="forgot">${c('forgot')}</button>` : ''}
-      <p class="auth-legal">${c('terms')}</p>
       <button class="auth-text-button auth-back-public" type="button" data-auth-action="public-home">${c('backPublic')}</button>
     </section>`;
+    decorateRequiredAuthFields();
   }
 
   function renderConfirmation() {
@@ -213,11 +214,13 @@
   function renderForgot(message = '') {
     showShell();
     authShell.innerHTML = `<section class="auth-card">${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('forgotTitle')}</h1><p>${c('forgotText')}</p></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="forgotForm" class="auth-form"><label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required /></label><button class="primary-button auth-submit" type="submit">${c('sendLink')}</button></form><button type="button" class="auth-text-button" data-auth-action="show-login">${c('back')}</button></section>`;
+    decorateRequiredAuthFields();
   }
 
   function renderRecovery(message = '') {
     showShell();
     authShell.innerHTML = `<section class="auth-card">${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('newPassword')}</h1></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="recoveryForm" class="auth-form"><label><span>${c('newPassword')}</span><input name="password" type="password" autocomplete="new-password" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label><button class="primary-button auth-submit" type="submit">${c('updatePassword')}</button></form></section>`;
+    decorateRequiredAuthFields();
   }
 
   function escapeHtml(value = '') {
@@ -344,6 +347,7 @@
   document.addEventListener('click', async (event) => {
     const publicTarget = event.target.closest('[data-public-action]');
     if (publicTarget) {
+      event.preventDefault();
       const publicAction = publicTarget.dataset.publicAction;
       if (publicAction === 'login' || publicAction === 'signup') openAuthentication(publicAction);
       return;

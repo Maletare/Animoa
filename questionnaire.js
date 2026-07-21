@@ -126,7 +126,10 @@
   }
 
   async function saveResponse(data) {
-    const client = window.AnimoaAuth?.getClient?.();
+    let client = window.AnimoaAuth?.getClient?.();
+    if (!client && window.supabase?.createClient && window.ANIMOA_CONFIG?.supabaseUrl && window.ANIMOA_CONFIG?.supabaseAnonKey) {
+      client = window.supabase.createClient(window.ANIMOA_CONFIG.supabaseUrl, window.ANIMOA_CONFIG.supabaseAnonKey);
+    }
     if (!client) throw new Error('Le formulaire ne peut pas encore être envoyé. Réessayez dans quelques instants.');
     const { error } = await client.from('animoa_survey_responses').insert(data);
     if (error) {
