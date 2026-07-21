@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v2.8.2-calendar-final';
+const CACHE_NAME = 'animoa-v2.9.2-settings-region';
 
 const CORE = [
   '/',
