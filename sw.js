@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v2.4.4-maintenance';
+const CACHE_NAME = 'animoa-v2.6.0-calendar-integration';
 
 const CORE = [
   '/',

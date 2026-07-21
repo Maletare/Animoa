@@ -8,8 +8,29 @@
   const MEDIA_STORE_NAME = 'images';
   const MEDIA_PREFIX = 'media:';
   const CLOUD_PREFIX = 'cloud:';
-  const APP_VERSION = '2.4.4';
+  const APP_VERSION = '2.6.0';
   const SUPPORT_EMAIL = 'contact@animoa.fr';
+  const PET_CATALOG = Object.freeze({"Chien":[{"name":"Affenpinscher","size":"small","lifespan":14,"fci":186},{"name":"Airedale Terrier","size":"medium","lifespan":12.5,"fci":7},{"name":"Akita","size":"large","lifespan":11,"fci":255},{"name":"Akita Americain","size":"large","lifespan":11,"fci":344},{"name":"American Foxhound","size":"medium","lifespan":12.5,"fci":303},{"name":"American Staffordshire Terrier","size":"medium","lifespan":12.5,"fci":286},{"name":"Anglo-Français de Petite Venerie","size":"medium","lifespan":12.5,"fci":325},{"name":"Ariegeois","size":"medium","lifespan":12.5,"fci":20},{"name":"Azawakh","size":"large","lifespan":11,"fci":307},{"name":"Bangkaew de Thailande","size":"medium","lifespan":12.5,"fci":358},{"name":"Barbet","size":"medium","lifespan":12.5,"fci":105},{"name":"Barbu Tcheque","size":"medium","lifespan":12.5,"fci":245},{"name":"Barzoi - Levrier de Chasse Russe","size":"large","lifespan":11,"fci":193},{"name":"Basenji","size":"medium","lifespan":12.5,"fci":43},{"name":"Basset Artesien Normand","size":"small","lifespan":14,"fci":34},{"name":"Basset Bleu de Gascogne","size":"small","lifespan":14,"fci":35},{"name":"Basset de Westphalie","size":"small","lifespan":14,"fci":100},{"name":"Basset des Alpes","size":"small","lifespan":14,"fci":254},{"name":"Basset Fauve de Bretagne","size":"small","lifespan":14,"fci":36},{"name":"Basset Hound","size":"small","lifespan":14,"fci":163},{"name":"Basset Suedois","size":"small","lifespan":14,"fci":130},{"name":"Beagle","size":"medium","lifespan":12.5,"fci":161},{"name":"Beagle-Harrier","size":"medium","lifespan":12.5,"fci":290},{"name":"Berger Allemand","size":"large","lifespan":11,"fci":166},{"name":"Berger Australien","size":"medium","lifespan":12.5,"fci":342},{"name":"Berger Bergamasque","size":"medium","lifespan":12.5,"fci":194},{"name":"Berger Blanc Suisse","size":"large","lifespan":11,"fci":347},{"name":"Berger d'Asie Centrale","size":"medium","lifespan":12.5,"fci":335},{"name":"Berger de Beauce","size":"medium","lifespan":12.5,"fci":44},{"name":"Berger de Bosnie-Herzegovine et de Croatie","size":"medium","lifespan":12.5,"fci":355},{"name":"Berger de Brie","size":"medium","lifespan":12.5,"fci":113},{"name":"Berger de La Maremme et des Abruzzes","size":"medium","lifespan":12.5,"fci":201},{"name":"Berger de Picardie - Berger Picard","size":"medium","lifespan":12.5,"fci":176},{"name":"Berger de Russie Meridionale","size":"giant","lifespan":9.5,"fci":326},{"name":"Berger du Caucase","size":"giant","lifespan":9.5,"fci":328},{"name":"Berger du Karst","size":"medium","lifespan":12.5,"fci":278},{"name":"Berger Finnois de Laponie","size":"medium","lifespan":12.5,"fci":284},{"name":"Berger Hollandais","size":"large","lifespan":11,"fci":223},{"name":"Berger Miniature Américain","size":"medium","lifespan":12.5,"fci":367},{"name":"Berger Polonais de Plaine","size":"medium","lifespan":12.5,"fci":251},{"name":"Bichon à Poil Frise","size":"small","lifespan":14,"fci":215},{"name":"Bichon Bolonais","size":"small","lifespan":14,"fci":196},{"name":"Bichon Havanais","size":"small","lifespan":14,"fci":250},{"name":"Bichon Maltais","size":"small","lifespan":14,"fci":65},{"name":"Billy","size":"medium","lifespan":12.5,"fci":25},{"name":"Border Collie","size":"medium","lifespan":12.5,"fci":297},{"name":"Border Terrier","size":"small","lifespan":14,"fci":10},{"name":"Bouledogue Français","size":"small","lifespan":14,"fci":101},{"name":"Bouvier Appenzellois","size":"medium","lifespan":12.5,"fci":46},{"name":"Bouvier Australien","size":"medium","lifespan":12.5,"fci":287},{"name":"Bouvier Australien Courte Queue","size":"medium","lifespan":12.5,"fci":351},{"name":"Bouvier Bernois","size":"large","lifespan":11,"fci":45},{"name":"Bouvier de L'Entlebuch","size":"medium","lifespan":12.5,"fci":47},{"name":"Bouvier des Ardennes","size":"medium","lifespan":12.5,"fci":171},{"name":"Bouvier des Flandres","size":"large","lifespan":11,"fci":191},{"name":"Boxer","size":"large","lifespan":11,"fci":144},{"name":"Brachet Allemand","size":"medium","lifespan":12.5,"fci":299},{"name":"Brachet de Styrie à Poil Dur","size":"medium","lifespan":12.5,"fci":62},{"name":"Brachet Noir & Feu (Quatre-Oeille)","size":"medium","lifespan":12.5,"fci":63},{"name":"Brachet Polonais","size":"medium","lifespan":12.5,"fci":52},{"name":"Brachet Tyrolien","size":"medium","lifespan":12.5,"fci":68},{"name":"Braque Allemand à Poil Court","size":"large","lifespan":11,"fci":119},{"name":"Braque d'Auvergne","size":"large","lifespan":11,"fci":180},{"name":"Braque de L'Ariège","size":"large","lifespan":11,"fci":177},{"name":"Braque de Weimar","size":"large","lifespan":11,"fci":99},{"name":"Braque du Bourbonnais","size":"large","lifespan":11,"fci":179},{"name":"Braque Français - Type Gascogne","size":"large","lifespan":11,"fci":133},{"name":"Braque Français - Type Pyrenees","size":"large","lifespan":11,"fci":134},{"name":"Braque Hongrois à Poil Court (Vizsla)","size":"large","lifespan":11,"fci":57},{"name":"Braque Hongrois à Poil Dur","size":"large","lifespan":11,"fci":239},{"name":"Braque Italien","size":"large","lifespan":11,"fci":202},{"name":"Braque Saint-Germain","size":"large","lifespan":11,"fci":115},{"name":"Braque Slovaque à Poil Dur","size":"large","lifespan":11,"fci":320},{"name":"Briquet Griffon Vendeen","size":"medium","lifespan":12.5,"fci":19},{"name":"Broholmer","size":"giant","lifespan":9.5,"fci":315},{"name":"Buhund Norvegien","size":"medium","lifespan":12.5,"fci":237},{"name":"Bull Terrier","size":"medium","lifespan":12.5,"fci":11},{"name":"Bull Terrier Miniature","size":"small","lifespan":14,"fci":359},{"name":"Bulldog","size":"medium","lifespan":12.5,"fci":149},{"name":"Bulldog Campeiro Brésilien","size":"medium","lifespan":12.5,"fci":374},{"name":"Bulldog Continental","size":"medium","lifespan":12.5,"fci":369},{"name":"Bullmastiff","size":"giant","lifespan":9.5,"fci":157},{"name":"Cairn Terrier","size":"small","lifespan":14,"fci":4},{"name":"Caniche","size":"medium","lifespan":12.5,"fci":172},{"name":"Carlin","size":"small","lifespan":14,"fci":253},{"name":"Cavalier King Charles Spaniel","size":"small","lifespan":14,"fci":136},{"name":"Chien à Loutre","size":"medium","lifespan":12.5,"fci":294},{"name":"Chien Berger Croate","size":"medium","lifespan":12.5,"fci":277},{"name":"Chien Chinois à Crête","size":"small","lifespan":14,"fci":288},{"name":"Chien Courant d'Estonie","size":"medium","lifespan":12.5,"fci":366},{"name":"Chien Courant d'Istrie à Poil Dur","size":"medium","lifespan":12.5,"fci":152},{"name":"Chien Courant d'Istrie à Poil Ras","size":"medium","lifespan":12.5,"fci":151},{"name":"Chien Courant de Bosnie à Poil Raide - Dit Barak","size":"medium","lifespan":12.5,"fci":155},{"name":"Chien Courant de Halden","size":"medium","lifespan":12.5,"fci":267},{"name":"Chien Courant de Hamilton","size":"medium","lifespan":12.5,"fci":132},{"name":"Chien Courant de Hygen","size":"medium","lifespan":12.5,"fci":266},{"name":"Chien Courant de La Vallee de La Save","size":"medium","lifespan":12.5,"fci":154},{"name":"Chien Courant de Montagne du Montenegro","size":"medium","lifespan":12.5,"fci":279},{"name":"Chien Courant de Schiller","size":"medium","lifespan":12.5,"fci":131},{"name":"Chien Courant de Transylvanie","size":"medium","lifespan":12.5,"fci":241},{"name":"Chien Courant des Apennins","size":"medium","lifespan":12.5,"fci":375},{"name":"Chien Courant des Tatras","size":"medium","lifespan":12.5,"fci":377},{"name":"Chien Courant du Småland","size":"medium","lifespan":12.5,"fci":129},{"name":"Chien Courant Espagnol","size":"medium","lifespan":12.5,"fci":204},{"name":"Chien Courant Finlandais","size":"medium","lifespan":12.5,"fci":51},{"name":"Chien Courant Grec","size":"medium","lifespan":12.5,"fci":214},{"name":"Chien Courant Italien  à Poil Dur","size":"medium","lifespan":12.5,"fci":198},{"name":"Chien Courant Italien à Poil Ras","size":"medium","lifespan":12.5,"fci":337},{"name":"Chien Courant Norvegien","size":"medium","lifespan":12.5,"fci":203},{"name":"Chien Courant Polonais","size":"medium","lifespan":12.5,"fci":354},{"name":"Chien Courant Serbe","size":"medium","lifespan":12.5,"fci":150},{"name":"Chien Courant Slovaque","size":"medium","lifespan":12.5,"fci":244},{"name":"Chien Courant Suisse","size":"medium","lifespan":12.5,"fci":59},{"name":"Chien Courant Tricolore Serbe","size":"medium","lifespan":12.5,"fci":229},{"name":"Chien d'Arret Allemand à Poil Dur","size":"medium","lifespan":12.5,"fci":98},{"name":"Chien d'Arret Allemand à Poil Raide","size":"medium","lifespan":12.5,"fci":232},{"name":"Chien d'Arret Danois Ancestral","size":"medium","lifespan":12.5,"fci":281},{"name":"Chien d'Arret Frison","size":"medium","lifespan":12.5,"fci":222},{"name":"Chien d'Arret Portugais","size":"medium","lifespan":12.5,"fci":187},{"name":"Chien d'Artois","size":"medium","lifespan":12.5,"fci":28},{"name":"Chien d'Eau Americain","size":"medium","lifespan":12.5,"fci":301},{"name":"Chien d'Eau Espagnol","size":"medium","lifespan":12.5,"fci":336},{"name":"Chien d'Eau Frison","size":"medium","lifespan":12.5,"fci":221},{"name":"Chien d'Eau Irlandais","size":"medium","lifespan":12.5,"fci":124},{"name":"Chien d'Eau Portugais","size":"medium","lifespan":12.5,"fci":37},{"name":"Chien d'Eau Romagnol","size":"medium","lifespan":12.5,"fci":298},{"name":"Chien d'Elan Norvegien Gris","size":"medium","lifespan":12.5,"fci":242},{"name":"Chien d'Elan Norvegien Noir","size":"medium","lifespan":12.5,"fci":268},{"name":"Chien d'Elan Suedois","size":"medium","lifespan":12.5,"fci":42},{"name":"Chien d'Ours de Carelie","size":"medium","lifespan":12.5,"fci":48},{"name":"Chien d'Oysel Allemand","size":"medium","lifespan":12.5,"fci":104},{"name":"Chien de Bali -  Kintamani","size":"medium","lifespan":12.5,"fci":362},{"name":"Chien de Berger Anglais Ancestral","size":"large","lifespan":11,"fci":16},{"name":"Chien de Berger Belge","size":"large","lifespan":11,"fci":15},{"name":"Chien de Berger Catalan","size":"medium","lifespan":12.5,"fci":87},{"name":"Chien de Berger de Bohême - Berger de Bohême","size":"medium","lifespan":12.5,"fci":364},{"name":"Chien de Berger de La Serra de Aires","size":"medium","lifespan":12.5,"fci":93},{"name":"Chien de Berger de Majorque","size":"medium","lifespan":12.5,"fci":321},{"name":"Chien de Berger des Pyrenees à Face Rase","size":"medium","lifespan":12.5,"fci":138},{"name":"Chien de Berger des Pyrenees à Poil Long","size":"medium","lifespan":12.5,"fci":141},{"name":"Chien de Berger des Shetland","size":"medium","lifespan":12.5,"fci":88},{"name":"Chien de Berger Islandais","size":"medium","lifespan":12.5,"fci":289},{"name":"Chien de Berger Kangal","size":"giant","lifespan":9.5,"fci":331},{"name":"Chien de Berger Macédonien Karaman","size":"giant","lifespan":9.5,"fci":378},{"name":"Chien de Berger Polonais des Tatras","size":"medium","lifespan":12.5,"fci":252},{"name":"Chien de Berger Roumain Corb","size":"medium","lifespan":12.5,"fci":373},{"name":"Chien de Berger Roumain de Bucovine","size":"giant","lifespan":9.5,"fci":357},{"name":"Chien de Berger Roumain de Mioritza","size":"medium","lifespan":12.5,"fci":349},{"name":"Chien de Berger Roumain des Carpathes","size":"medium","lifespan":12.5,"fci":350},{"name":"Chien de Berger Yougoslave de Charplanina","size":"medium","lifespan":12.5,"fci":41},{"name":"Chien de Canaan","size":"medium","lifespan":12.5,"fci":273},{"name":"Chien de Castro Laboreiro","size":"medium","lifespan":12.5,"fci":170},{"name":"Chien de Cour Italien","size":"medium","lifespan":12.5,"fci":343},{"name":"Chien de Ferme Dano-Suedois","size":"medium","lifespan":12.5,"fci":356},{"name":"Chien de Garenne des Canaries","size":"medium","lifespan":12.5,"fci":329},{"name":"Chien de Garenne Portugais","size":"medium","lifespan":12.5,"fci":94},{"name":"Chien de La Serra Da Estrela","size":"medium","lifespan":12.5,"fci":173},{"name":"Chien de Leonberg","size":"giant","lifespan":9.5,"fci":145},{"name":"Chien de Montagne de L'Atlas (Aïdi)","size":"medium","lifespan":12.5,"fci":247},{"name":"Chien de Montagne des Pyrenees","size":"giant","lifespan":9.5,"fci":137},{"name":"Chien de Perdrix de Drente","size":"medium","lifespan":12.5,"fci":224},{"name":"Chien de Recherche Au Sang de Hanovre","size":"medium","lifespan":12.5,"fci":213},{"name":"Chien de Rhodesie à Crete Dorsale","size":"medium","lifespan":12.5,"fci":146},{"name":"Chien de Rouge de Baviere","size":"medium","lifespan":12.5,"fci":217},{"name":"Chien de Saint Hubert","size":"medium","lifespan":12.5,"fci":84},{"name":"Chien de Taiwan","size":"medium","lifespan":12.5,"fci":348},{"name":"Chien de Terre-Neuve","size":"giant","lifespan":9.5,"fci":50},{"name":"Chien du Groenland","size":"medium","lifespan":12.5,"fci":274},{"name":"Chien du Mont Saint-Bernard - Saint-Bernard","size":"giant","lifespan":9.5,"fci":61},{"name":"Chien du Pharaon","size":"medium","lifespan":12.5,"fci":248},{"name":"Chien Esquimau Canadien","size":"medium","lifespan":12.5,"fci":211},{"name":"Chien Finnois de Laponie","size":"medium","lifespan":12.5,"fci":189},{"name":"Chien Loup Tchecoslovaque","size":"medium","lifespan":12.5,"fci":332},{"name":"Chien Noir & Feu Pour La Chasse Au Raton Laveur","size":"medium","lifespan":12.5,"fci":300},{"name":"Chien Norvegien de Macareux","size":"medium","lifespan":12.5,"fci":265},{"name":"Chien Nu du Perou","size":"medium","lifespan":12.5,"fci":310},{"name":"Chien Thailandais à Crete Dorsale","size":"medium","lifespan":12.5,"fci":338},{"name":"Chien-Loup de Saarloos","size":"large","lifespan":11,"fci":311},{"name":"Chihuahua","size":"small","lifespan":14,"fci":218},{"name":"Chow Chow","size":"medium","lifespan":12.5,"fci":205},{"name":"Cimarron Uruguayen","size":"medium","lifespan":12.5,"fci":353},{"name":"Cirneco de L'Etna","size":"medium","lifespan":12.5,"fci":199},{"name":"Clumber Spaniel","size":"medium","lifespan":12.5,"fci":109},{"name":"Cocker Américain","size":"medium","lifespan":12.5,"fci":167},{"name":"Cocker Spaniel Anglais","size":"medium","lifespan":12.5,"fci":5},{"name":"Collie à Poil Court","size":"medium","lifespan":12.5,"fci":296},{"name":"Collie à Poil Long","size":"medium","lifespan":12.5,"fci":156},{"name":"Collie Barbu","size":"medium","lifespan":12.5,"fci":271},{"name":"Coton de Tulear","size":"small","lifespan":14,"fci":283},{"name":"Dalmatien","size":"large","lifespan":11,"fci":153},{"name":"Dandie Dinmont Terrier","size":"small","lifespan":14,"fci":168},{"name":"Deerhound","size":"medium","lifespan":12.5,"fci":164},{"name":"Deutsch Langhaar","size":"medium","lifespan":12.5,"fci":117},{"name":"Dobermann","size":"large","lifespan":11,"fci":143},{"name":"Dogue Allemand","size":"giant","lifespan":9.5,"fci":235},{"name":"Dogue Argentin","size":"large","lifespan":11,"fci":292},{"name":"Dogue de Bordeaux","size":"giant","lifespan":9.5,"fci":116},{"name":"Dogue de Majorque","size":"medium","lifespan":12.5,"fci":249},{"name":"Dogue du Tibet","size":"large","lifespan":11,"fci":230},{"name":"English Foxhound","size":"medium","lifespan":12.5,"fci":159},{"name":"English Springer Spaniel","size":"medium","lifespan":12.5,"fci":125},{"name":"Epagneul Bleu de Picardie","size":"medium","lifespan":12.5,"fci":106},{"name":"Epagneul Breton","size":"medium","lifespan":12.5,"fci":95},{"name":"Epagneul de Pont-Audemer","size":"medium","lifespan":12.5,"fci":114},{"name":"Epagneul Français","size":"medium","lifespan":12.5,"fci":175},{"name":"Epagneul Japonais","size":"small","lifespan":14,"fci":206},{"name":"Epagneul King Charles","size":"small","lifespan":14,"fci":128},{"name":"Epagneul Nain Continental","size":"small","lifespan":14,"fci":77},{"name":"Epagneul Picard","size":"medium","lifespan":12.5,"fci":108},{"name":"Epagneul Tibetain","size":"small","lifespan":14,"fci":231},{"name":"Eurasier","size":"large","lifespan":11,"fci":291},{"name":"Field Spaniel","size":"medium","lifespan":12.5,"fci":123},{"name":"Fila Brasileiro","size":"giant","lifespan":9.5,"fci":225},{"name":"Fila de Saint Miguel","size":"medium","lifespan":12.5,"fci":340},{"name":"Fox Terrier à Poil Lisse","size":"small","lifespan":14,"fci":12},{"name":"Fox-Terrier à Poil Dur","size":"medium","lifespan":12.5,"fci":169},{"name":"Français Blanc et Noir","size":"medium","lifespan":12.5,"fci":220},{"name":"Français Blanc et Orange","size":"medium","lifespan":12.5,"fci":316},{"name":"Français Tricolore","size":"medium","lifespan":12.5,"fci":219},{"name":"Gascon Saintongeois","size":"medium","lifespan":12.5,"fci":21},{"name":"Golden Retriever","size":"large","lifespan":11,"fci":111},{"name":"Grand Anglo-Français Blanc & Orange","size":"medium","lifespan":12.5,"fci":324},{"name":"Grand Anglo-Français Blanc et Noir","size":"medium","lifespan":12.5,"fci":323},{"name":"Grand Anglo-Français Tricolore","size":"medium","lifespan":12.5,"fci":322},{"name":"Grand Basset Griffon Vendeen","size":"medium","lifespan":12.5,"fci":33},{"name":"Grand Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":22},{"name":"Grand Bouvier Suisse","size":"large","lifespan":11,"fci":58},{"name":"Grand Epagneul de Münster","size":"medium","lifespan":12.5,"fci":118},{"name":"Grand Griffon Vendeen","size":"medium","lifespan":12.5,"fci":282},{"name":"Griffon à Poil Dur Korthals","size":"medium","lifespan":12.5,"fci":107},{"name":"Griffon Belge","size":"small","lifespan":14,"fci":81},{"name":"Griffon Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":32},{"name":"Griffon Bruxellois","size":"small","lifespan":14,"fci":80},{"name":"Griffon Fauve de Bretagne","size":"medium","lifespan":12.5,"fci":66},{"name":"Griffon Nivernais","size":"medium","lifespan":12.5,"fci":17},{"name":"Harrier","size":"medium","lifespan":12.5,"fci":295},{"name":"Hokkaido","size":"medium","lifespan":12.5,"fci":261},{"name":"Hovawart","size":"large","lifespan":11,"fci":190},{"name":"Husky de Sibérie","size":"large","lifespan":11,"fci":270},{"name":"Jindo Coreen","size":"medium","lifespan":12.5,"fci":334},{"name":"Kai","size":"medium","lifespan":12.5,"fci":317},{"name":"Kazakh Tazy","size":"large","lifespan":11,"fci":372},{"name":"Kelpie Australien","size":"medium","lifespan":12.5,"fci":293},{"name":"Kishu","size":"medium","lifespan":12.5,"fci":318},{"name":"Komondor","size":"giant","lifespan":9.5,"fci":53},{"name":"Kromfohrländer","size":"medium","lifespan":12.5,"fci":192},{"name":"Kuvasz","size":"giant","lifespan":9.5,"fci":54},{"name":"Laïka de Iakoutie","size":"medium","lifespan":12.5,"fci":365},{"name":"Laika de Siberie Occidentale","size":"medium","lifespan":12.5,"fci":306},{"name":"Laika de Siberie Orientale","size":"medium","lifespan":12.5,"fci":305},{"name":"Laika Russo-Europeen","size":"medium","lifespan":12.5,"fci":304},{"name":"Lakeland Terrier","size":"small","lifespan":14,"fci":70},{"name":"Lancashire Heeler","size":"medium","lifespan":12.5,"fci":360},{"name":"Landseer (Type Continental-Europeen)","size":"giant","lifespan":9.5,"fci":226},{"name":"Lapphund Suedois","size":"medium","lifespan":12.5,"fci":135},{"name":"Levrette d'Italie","size":"medium","lifespan":12.5,"fci":200},{"name":"Levrier Afghan","size":"large","lifespan":11,"fci":228},{"name":"Levrier Anglais","size":"medium","lifespan":12.5,"fci":158},{"name":"Levrier Espagnol","size":"medium","lifespan":12.5,"fci":285},{"name":"Levrier Hongrois","size":"medium","lifespan":12.5,"fci":240},{"name":"Levrier Irlandais","size":"giant","lifespan":9.5,"fci":160},{"name":"Levrier Polonais","size":"medium","lifespan":12.5,"fci":333},{"name":"Lhasa Apso","size":"small","lifespan":14,"fci":227},{"name":"Malamute de L'Alaska","size":"large","lifespan":11,"fci":243},{"name":"Mastiff","size":"giant","lifespan":9.5,"fci":264},{"name":"Matin des Pyrenees","size":"giant","lifespan":9.5,"fci":92},{"name":"Matin Espagnol","size":"giant","lifespan":9.5,"fci":91},{"name":"Matin Napolitain","size":"giant","lifespan":9.5,"fci":197},{"name":"Mâtin Transmontano","size":"giant","lifespan":9.5,"fci":368},{"name":"Mudi","size":"medium","lifespan":12.5,"fci":238},{"name":"Nederlandse Kooikerhondje","size":"medium","lifespan":12.5,"fci":314},{"name":"Norfolk Terrier","size":"small","lifespan":14,"fci":272},{"name":"Norwich Terrier","size":"small","lifespan":14,"fci":72},{"name":"Pekinois","size":"small","lifespan":14,"fci":207},{"name":"Perdiguero de Burgos","size":"medium","lifespan":12.5,"fci":90},{"name":"Petit Basset Griffon Vendeen","size":"small","lifespan":14,"fci":67},{"name":"Petit Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":31},{"name":"Petit Brabançon","size":"small","lifespan":14,"fci":82},{"name":"Petit Chien Courant Suisse","size":"medium","lifespan":12.5,"fci":60},{"name":"Petit Chien Lion","size":"small","lifespan":14,"fci":233},{"name":"Petit Chien Russe","size":"medium","lifespan":12.5,"fci":352},{"name":"Petit Epagneul de Münster","size":"medium","lifespan":12.5,"fci":102},{"name":"Pinscher Allemand","size":"medium","lifespan":12.5,"fci":184},{"name":"Pinscher Autrichien","size":"medium","lifespan":12.5,"fci":64},{"name":"Pinscher Nain","size":"small","lifespan":14,"fci":185},{"name":"Pisteur Brésilien","size":"medium","lifespan":12.5,"fci":275},{"name":"Podenco d'Ibiza","size":"medium","lifespan":12.5,"fci":89},{"name":"Pointer Anglais","size":"large","lifespan":11,"fci":1},{"name":"Poitevin","size":"medium","lifespan":12.5,"fci":24},{"name":"Porcelaine","size":"medium","lifespan":12.5,"fci":30},{"name":"Presa Canario","size":"giant","lifespan":9.5,"fci":346},{"name":"Pudelpointer","size":"large","lifespan":11,"fci":216},{"name":"Puli","size":"medium","lifespan":12.5,"fci":55},{"name":"Pumi","size":"medium","lifespan":12.5,"fci":56},{"name":"Rafeiro de L'Alentejo","size":"medium","lifespan":12.5,"fci":96},{"name":"Ratier de Prague","size":"small","lifespan":14,"fci":363},{"name":"Ratier Valencien","size":"small","lifespan":14,"fci":370},{"name":"Retriever à Poil Boucle","size":"large","lifespan":11,"fci":110},{"name":"Retriever à Poil Plat","size":"large","lifespan":11,"fci":121},{"name":"Retriever de La Baie de Chesapeake","size":"large","lifespan":11,"fci":263},{"name":"Retriever de La Nouvelle Ecosse","size":"large","lifespan":11,"fci":312},{"name":"Retriever du Labrador","size":"large","lifespan":11,"fci":122},{"name":"Rottweiler","size":"large","lifespan":11,"fci":147},{"name":"Sabueso Fino Colombiano","size":"medium","lifespan":12.5,"fci":376},{"name":"Saluki","size":"large","lifespan":11,"fci":269},{"name":"Samoyede","size":"large","lifespan":11,"fci":212},{"name":"Schapendoes Neerlandais","size":"medium","lifespan":12.5,"fci":313},{"name":"Schipperke","size":"small","lifespan":14,"fci":83},{"name":"Schnauzer","size":"medium","lifespan":12.5,"fci":182},{"name":"Schnauzer Geant","size":"medium","lifespan":12.5,"fci":181},{"name":"Schnauzer Nain","size":"medium","lifespan":12.5,"fci":183},{"name":"Sealyham Terrier","size":"small","lifespan":14,"fci":74},{"name":"Segugio Maremmano","size":"medium","lifespan":12.5,"fci":361},{"name":"Setter Anglais","size":"large","lifespan":11,"fci":2},{"name":"Setter Gordon","size":"large","lifespan":11,"fci":6},{"name":"Setter Irlandais Rouge","size":"large","lifespan":11,"fci":120},{"name":"Setter Irlandais Rouge et Blanc","size":"large","lifespan":11,"fci":330},{"name":"Shar Pei","size":"medium","lifespan":12.5,"fci":309},{"name":"Shiba","size":"medium","lifespan":12.5,"fci":257},{"name":"Shih Tzu","size":"small","lifespan":14,"fci":208},{"name":"Shikoku","size":"medium","lifespan":12.5,"fci":319},{"name":"Skye Terrier","size":"small","lifespan":14,"fci":75},{"name":"Sloughi","size":"large","lifespan":11,"fci":188},{"name":"Smous des Pays-Bas","size":"medium","lifespan":12.5,"fci":308},{"name":"Spinone","size":"medium","lifespan":12.5,"fci":165},{"name":"Spitz Allemand","size":"medium","lifespan":12.5,"fci":97},{"name":"Spitz de Norrbotten","size":"medium","lifespan":12.5,"fci":276},{"name":"Spitz Finlandais","size":"medium","lifespan":12.5,"fci":49},{"name":"Spitz Japonais","size":"medium","lifespan":12.5,"fci":262},{"name":"Staffordshire Bull Terrier","size":"medium","lifespan":12.5,"fci":76},{"name":"Sussex Spaniel","size":"medium","lifespan":12.5,"fci":127},{"name":"Tchouvatch Slovaque","size":"medium","lifespan":12.5,"fci":142},{"name":"Teckel","size":"small","lifespan":14,"fci":148},{"name":"Terrier Andalou","size":"small","lifespan":14,"fci":371},{"name":"Terrier Anglais d'Agrement (Noir et Feu)","size":"medium","lifespan":12.5,"fci":13},{"name":"Terrier Australien","size":"small","lifespan":14,"fci":8},{"name":"Terrier Australien à Poil Soyeux","size":"small","lifespan":14,"fci":236},{"name":"Terrier Bresilien","size":"small","lifespan":14,"fci":341},{"name":"Terrier de Bedlington","size":"small","lifespan":14,"fci":9},{"name":"Terrier de Boston","size":"medium","lifespan":12.5,"fci":140},{"name":"Terrier de Chasse Allemand","size":"medium","lifespan":12.5,"fci":103},{"name":"Terrier de Manchester","size":"medium","lifespan":12.5,"fci":71},{"name":"Terrier du Reverend Russell","size":"medium","lifespan":12.5,"fci":339},{"name":"Terrier du Yorkshire","size":"small","lifespan":14,"fci":86},{"name":"Terrier Ecossais","size":"medium","lifespan":12.5,"fci":73},{"name":"Terrier Irlandais","size":"medium","lifespan":12.5,"fci":139},{"name":"Terrier Irlandais à Poil Doux","size":"medium","lifespan":12.5,"fci":40},{"name":"Terrier Irlandais Glen Of Imaal","size":"medium","lifespan":12.5,"fci":302},{"name":"Terrier Jack Russell","size":"small","lifespan":14,"fci":345},{"name":"Terrier Japonais","size":"small","lifespan":14,"fci":259},{"name":"Terrier Kerry Blue","size":"medium","lifespan":12.5,"fci":3},{"name":"Terrier Noir Russe","size":"medium","lifespan":12.5,"fci":327},{"name":"Terrier Tcheque","size":"medium","lifespan":12.5,"fci":246},{"name":"Terrier Tibetain","size":"small","lifespan":14,"fci":209},{"name":"Tosa","size":"giant","lifespan":9.5,"fci":260},{"name":"Vallhund Suedois - Spitz des Visigoths","size":"medium","lifespan":12.5,"fci":14},{"name":"Volpino Italien","size":"medium","lifespan":12.5,"fci":195},{"name":"Welsh Corgi (Cardigan)","size":"medium","lifespan":12.5,"fci":38},{"name":"Welsh Corgi (Pembroke)","size":"medium","lifespan":12.5,"fci":39},{"name":"Welsh Springer Spaniel","size":"medium","lifespan":12.5,"fci":126},{"name":"Welsh Terrier","size":"small","lifespan":14,"fci":78},{"name":"West Highland White Terrier","size":"small","lifespan":14,"fci":85},{"name":"Whippet","size":"medium","lifespan":12.5,"fci":162},{"name":"Xoloitzcuintle","size":"medium","lifespan":12.5,"fci":234},{"name":"Croisé","size":"medium","lifespan":12.5,"fci":null},{"name":"Race inconnue","size":"medium","lifespan":12.5,"fci":null},{"name":"Autre race","size":"medium","lifespan":12.5,"fci":null}],"Chat":[{"name":"Exotic Shorthair","lifespan":15},{"name":"Persan","lifespan":15},{"name":"Ragdoll","lifespan":15},{"name":"Sacré de Birmanie","lifespan":15},{"name":"Turc de Van","lifespan":15},{"name":"American Curl à poil long","lifespan":15},{"name":"American Curl à poil court","lifespan":15},{"name":"LaPerm à poil long","lifespan":15},{"name":"LaPerm à poil court","lifespan":15},{"name":"Maine Coon","lifespan":15},{"name":"Neva Masquerade","lifespan":15},{"name":"Chat des forêts norvégiennes","lifespan":15},{"name":"Sibérien","lifespan":15},{"name":"Angora turc","lifespan":15},{"name":"Bengal","lifespan":15},{"name":"British Longhair","lifespan":15},{"name":"Burmilla","lifespan":15},{"name":"British Shorthair","lifespan":15},{"name":"Burmese","lifespan":15},{"name":"Chartreux","lifespan":15},{"name":"Cymric","lifespan":15},{"name":"Européen","lifespan":15},{"name":"Bobtail des Kouriles à poil long","lifespan":15},{"name":"Bobtail des Kouriles à poil court","lifespan":15},{"name":"Korat","lifespan":15},{"name":"Manx","lifespan":15},{"name":"Mau égyptien","lifespan":15},{"name":"Ocicat","lifespan":15},{"name":"Singapura","lifespan":15},{"name":"Snowshoe","lifespan":15},{"name":"Sokoke","lifespan":15},{"name":"Selkirk Rex à poil long","lifespan":15},{"name":"Selkirk Rex à poil court","lifespan":15},{"name":"Abyssin","lifespan":15},{"name":"Balinais","lifespan":15},{"name":"Cornish Rex","lifespan":15},{"name":"Devon Rex","lifespan":15},{"name":"Donskoy","lifespan":15},{"name":"German Rex","lifespan":15},{"name":"Bobtail japonais à poil court","lifespan":15},{"name":"Oriental à poil long","lifespan":15},{"name":"Oriental à poil court","lifespan":15},{"name":"Peterbald","lifespan":15},{"name":"Bleu russe","lifespan":15},{"name":"Siamois","lifespan":15},{"name":"Somali","lifespan":15},{"name":"Sphynx","lifespan":15},{"name":"Thaï","lifespan":15},{"name":"Bombay","lifespan":15},{"name":"Lykoi","lifespan":15},{"name":"Chat domestique à poil long","lifespan":15},{"name":"Chat domestique à poil court","lifespan":15},{"name":"Croisé","lifespan":15},{"name":"Race inconnue","lifespan":15},{"name":"Autre race","lifespan":15}],"Lapin":[{"name":"Alaska","size":"medium","lifespan":9.5},{"name":"Angora français","size":"medium","lifespan":9.5},{"name":"Argenté anglais","size":"small","lifespan":10.5},{"name":"Argenté de Champagne","size":"medium","lifespan":9.5},{"name":"Argenté de Saint-Hubert","size":"medium","lifespan":9.5},{"name":"Barbu de Gand","size":"medium","lifespan":9.5},{"name":"Bélier anglais","size":"large","lifespan":8.5},{"name":"Bélier de Meissen","size":"large","lifespan":8.5},{"name":"Bélier français","size":"giant","lifespan":7.5},{"name":"Blanc de Hotot","size":"medium","lifespan":9.5},{"name":"Blanc de Vendée","size":"medium","lifespan":9.5},{"name":"Brun marron de Lorraine","size":"small","lifespan":10.5},{"name":"Californien","size":"medium","lifespan":9.5},{"name":"Chamois de Thuringe","size":"medium","lifespan":9.5},{"name":"Chinchilla","size":"small","lifespan":10.5},{"name":"Fauve de Bourgogne","size":"medium","lifespan":9.5},{"name":"Feh de Marbourg","size":"small","lifespan":10.5},{"name":"Géant blanc du Bouscat","size":"giant","lifespan":7.5},{"name":"Géant des Flandres","size":"giant","lifespan":7.5},{"name":"Géant papillon français","size":"giant","lifespan":7.5},{"name":"Grand argenté clair","size":"large","lifespan":8.5},{"name":"Grand chinchilla","size":"large","lifespan":8.5},{"name":"Grand russe","size":"large","lifespan":8.5},{"name":"Havane français","size":"small","lifespan":10.5},{"name":"Hermine","size":"dwarf","lifespan":11},{"name":"Hollandais","size":"small","lifespan":10.5},{"name":"Japonais","size":"medium","lifespan":9.5},{"name":"Lapin chèvre","size":"medium","lifespan":9.5},{"name":"Lièvre belge","size":"large","lifespan":8.5},{"name":"Lynx","size":"small","lifespan":10.5},{"name":"Nain angora","size":"dwarf","lifespan":11},{"name":"Nain bélier","size":"dwarf","lifespan":11},{"name":"Nain bélier angora","size":"dwarf","lifespan":11},{"name":"Nain bélier Rex","size":"dwarf","lifespan":11},{"name":"Nain bélier Satin","size":"dwarf","lifespan":11},{"name":"Nain bélier tête de lion","size":"dwarf","lifespan":11},{"name":"Nain de couleur","size":"dwarf","lifespan":11},{"name":"Nain lièvre","size":"dwarf","lifespan":11},{"name":"Nain papillon","size":"dwarf","lifespan":11},{"name":"Nain renard","size":"dwarf","lifespan":11},{"name":"Nain Rex","size":"dwarf","lifespan":11},{"name":"Nain Satin","size":"dwarf","lifespan":11},{"name":"Nain tête de lion","size":"dwarf","lifespan":11},{"name":"Néo-Zélandais","size":"large","lifespan":8.5},{"name":"Normand","size":"medium","lifespan":9.5},{"name":"Papillon anglais","size":"small","lifespan":10.5},{"name":"Papillon rhénan","size":"medium","lifespan":9.5},{"name":"Perl Feh","size":"small","lifespan":10.5},{"name":"Petit bélier","size":"small","lifespan":10.5},{"name":"Petit Rex","size":"small","lifespan":10.5},{"name":"Renard suisse","size":"medium","lifespan":9.5},{"name":"Rex","size":"medium","lifespan":9.5},{"name":"Russe","size":"small","lifespan":10.5},{"name":"Sablé des Vosges","size":"small","lifespan":10.5},{"name":"Satin","size":"medium","lifespan":9.5},{"name":"Vienne bleu","size":"large","lifespan":8.5},{"name":"Croisé","size":"medium","lifespan":9.5},{"name":"Race inconnue","size":"medium","lifespan":9.5},{"name":"Autre race","size":"medium","lifespan":9.5}],"Oiseau":[{"name":"Amazone à ailes orange","scientific":"Amazona amazonica","lifespan":45,"maturityMonths":48},{"name":"Amazone à front bleu","scientific":"Amazona aestiva","lifespan":50,"maturityMonths":48},{"name":"Amazone à front jaune","scientific":"Amazona ochrocephala","lifespan":50,"maturityMonths":48},{"name":"Ara bleu et jaune","scientific":"Ara ararauna","lifespan":55,"maturityMonths":60},{"name":"Ara chloroptère","scientific":"Ara chloropterus","lifespan":55,"maturityMonths":60},{"name":"Ara hyacinthe","scientific":"Anodorhynchus hyacinthinus","lifespan":55,"maturityMonths":72},{"name":"Ara militaire","scientific":"Ara militaris","lifespan":50,"maturityMonths":60},{"name":"Ara noble","scientific":"Diopsittaca nobilis","lifespan":30,"maturityMonths":30},{"name":"Ara rouge","scientific":"Ara macao","lifespan":55,"maturityMonths":60},{"name":"Bengali rouge","scientific":"Amandava amandava","lifespan":8,"maturityMonths":7},{"name":"Cacatoès à huppe jaune","scientific":"Cacatua galerita","lifespan":55,"maturityMonths":60},{"name":"Cacatoès blanc","scientific":"Cacatua alba","lifespan":55,"maturityMonths":60},{"name":"Cacatoès de Goffin","scientific":"Cacatua goffiniana","lifespan":40,"maturityMonths":36},{"name":"Cacatoès de Leadbeater","scientific":"Lophochroa leadbeateri","lifespan":50,"maturityMonths":60},{"name":"Cacatoès rosalbin","scientific":"Eolophus roseicapilla","lifespan":45,"maturityMonths":48},{"name":"Caille du Japon","scientific":"Coturnix japonica","lifespan":5,"maturityMonths":2},{"name":"Caïque à tête noire","scientific":"Pionites melanocephalus","lifespan":30,"maturityMonths":30},{"name":"Calopsitte élégante","scientific":"Nymphicus hollandicus","lifespan":18,"maturityMonths":12},{"name":"Canari domestique","scientific":"Serinus canaria domestica","lifespan":12,"maturityMonths":10},{"name":"Colombe diamant","scientific":"Geopelia cuneata","lifespan":12,"maturityMonths":8},{"name":"Conure à joues vertes","scientific":"Pyrrhura molinae","lifespan":25,"maturityMonths":18},{"name":"Conure jandaya","scientific":"Aratinga jandaya","lifespan":30,"maturityMonths":24},{"name":"Conure mitrée","scientific":"Psittacara mitratus","lifespan":30,"maturityMonths":30},{"name":"Conure nanday","scientific":"Aratinga nenday","lifespan":30,"maturityMonths":24},{"name":"Conure soleil","scientific":"Aratinga solstitialis","lifespan":30,"maturityMonths":24},{"name":"Cordon-bleu à joues rouges","scientific":"Uraeginthus bengalus","lifespan":8,"maturityMonths":7},{"name":"Diamant de Gould","scientific":"Erythrura gouldiae","lifespan":8,"maturityMonths":8},{"name":"Diamant mandarin","scientific":"Taeniopygia guttata","lifespan":8,"maturityMonths":6},{"name":"Inséparable de Fischer","scientific":"Agapornis fischeri","lifespan":18,"maturityMonths":10},{"name":"Inséparable masqué","scientific":"Agapornis personatus","lifespan":18,"maturityMonths":10},{"name":"Inséparable rosegorge","scientific":"Agapornis roseicollis","lifespan":18,"maturityMonths":10},{"name":"Lori rouge","scientific":"Eos bornea","lifespan":25,"maturityMonths":24},{"name":"Loriquet arc-en-ciel","scientific":"Trichoglossus moluccanus","lifespan":20,"maturityMonths":24},{"name":"Moineau du Japon","scientific":"Lonchura striata domestica","lifespan":8,"maturityMonths":7},{"name":"Padda de Java","scientific":"Lonchura oryzivora","lifespan":10,"maturityMonths":8},{"name":"Perroquet de Jardine","scientific":"Poicephalus gulielmi","lifespan":30,"maturityMonths":30},{"name":"Perroquet de Meyer","scientific":"Poicephalus meyeri","lifespan":25,"maturityMonths":24},{"name":"Perroquet Eclectus","scientific":"Eclectus roratus","lifespan":40,"maturityMonths":36},{"name":"Perroquet gris du Gabon","scientific":"Psittacus erithacus","lifespan":45,"maturityMonths":48},{"name":"Perruche à collier","scientific":"Psittacula krameri","lifespan":25,"maturityMonths":24},{"name":"Perruche à croupion rouge","scientific":"Psephotus haematonotus","lifespan":15,"maturityMonths":12},{"name":"Perruche à moustaches","scientific":"Psittacula alexandri","lifespan":25,"maturityMonths":24},{"name":"Perruche à tête prune","scientific":"Psittacula cyanocephala","lifespan":20,"maturityMonths":24},{"name":"Perruche alexandre","scientific":"Psittacula eupatria","lifespan":30,"maturityMonths":30},{"name":"Perruche Catherine","scientific":"Bolborhynchus lineola","lifespan":15,"maturityMonths":12},{"name":"Perruche de Bourke","scientific":"Neopsephotus bourkii","lifespan":12,"maturityMonths":10},{"name":"Perruche de Derby","scientific":"Psittacula derbiana","lifespan":25,"maturityMonths":30},{"name":"Perruche de Pennant","scientific":"Platycercus elegans","lifespan":20,"maturityMonths":18},{"name":"Perruche moine","scientific":"Myiopsitta monachus","lifespan":25,"maturityMonths":18},{"name":"Perruche omnicolore","scientific":"Platycercus eximius","lifespan":18,"maturityMonths":18},{"name":"Perruche ondulée","scientific":"Melopsittacus undulatus","lifespan":12,"maturityMonths":8},{"name":"Perruche splendide","scientific":"Neophema splendida","lifespan":12,"maturityMonths":10},{"name":"Perruche turquoisine","scientific":"Neophema pulchella","lifespan":12,"maturityMonths":10},{"name":"Pigeon domestique","scientific":"Columba livia domestica","lifespan":15,"maturityMonths":8},{"name":"Pionus à tête bleue","scientific":"Pionus menstruus","lifespan":30,"maturityMonths":30},{"name":"Poule domestique","scientific":"Gallus gallus domesticus","lifespan":10,"maturityMonths":6},{"name":"Toui céleste","scientific":"Forpus coelestis","lifespan":18,"maturityMonths":12},{"name":"Toui du Mexique","scientific":"Forpus cyanopygius","lifespan":18,"maturityMonths":12},{"name":"Tourterelle rieuse","scientific":"Streptopelia risoria","lifespan":15,"maturityMonths":8},{"name":"Youyou du Sénégal","scientific":"Poicephalus senegalus","lifespan":25,"maturityMonths":24},{"name":"Espèce inconnue","scientific":"","lifespan":15,"maturityMonths":12},{"name":"Autre espèce","scientific":"","lifespan":15,"maturityMonths":12}]});
+  const BREED_PICKER_POPULAR = Object.freeze({
+    Chien: ['Croisé', 'Race inconnue', 'Golden Retriever', 'Retriever du Labrador', 'Berger Allemand', 'Berger Australien', 'Chien de Berger Belge', 'Bouledogue Français', 'Chihuahua', 'Caniche', 'Beagle', 'Staffordshire Bull Terrier', 'Terrier du Yorkshire', 'Border Collie', 'Chien du Mont Saint-Bernard - Saint-Bernard'],
+    Chat: ['Chat domestique à poil court', 'Chat domestique à poil long', 'Croisé', 'Race inconnue', 'Maine Coon', 'Sacré de Birmanie', 'Siamois', 'Persan', 'Bengal', 'British Shorthair', 'Ragdoll', 'Sphynx'],
+    Lapin: ['Croisé', 'Race inconnue', 'Nain bélier', 'Nain de couleur', 'Nain tête de lion', 'Bélier français', 'Fauve de Bourgogne', 'Rex', 'Géant des Flandres'],
+    Oiseau: ['Espèce inconnue', 'Perruche ondulée', 'Calopsitte élégante', 'Canari domestique', 'Inséparable rosegorge', 'Diamant mandarin', 'Perroquet gris du Gabon', 'Conure à joues vertes', 'Perruche à collier', 'Tourterelle rieuse']
+  });
+  let breedPickerState = null;
+  let breedPickerCloseTimer = null;
+
+  const RELEASE_SEEN_KEY = `animoa_release_seen_${APP_VERSION}`;
+  const RELEASE_NOTES = Object.freeze({
+    title: 'Animoa a été mis à jour',
+    subtitle: 'Vos rendez-vous peuvent maintenant rejoindre votre calendrier.',
+    items: [
+      'Animoa propose d’ajouter les rendez-vous à votre calendrier après leur enregistrement.',
+      'Le nom de l’animal, la date, l’heure, le professionnel, le lieu et les notes sont repris automatiquement.',
+      'Animoa ne consulte pas vos rendez-vous personnels : seul un événement Animoa est créé à votre demande.',
+      'Un badge indique les rendez-vous déjà préparés pour votre calendrier.'
+    ]
+  });
 
   const HEALTH_TYPES = ['Tous', 'Vaccin', 'Rendez-vous', 'Traitement', 'Médicament', 'Analyse', 'Document'];
   const KG_PER_LB = 0.45359237;
@@ -1429,11 +1450,285 @@
   function resolvedDogSize(pet, weightKg = null) {
     const chosen = String(pet?.dogSize || 'auto');
     if (['small', 'medium', 'large', 'giant'].includes(chosen)) return chosen;
-    return dogSizeFromWeight(weightKg);
+    const weight = Number(weightKg);
+    if (Number.isFinite(weight) && weight > 0) return dogSizeFromWeight(weight);
+    return catalogEntry('Chien', pet?.breed)?.size || 'medium';
   }
 
   function dogSizeLabel(size) {
     return ({ small: 'petit', medium: 'moyen', large: 'grand', giant: 'géant' })[size] || 'moyen';
+  }
+
+  function normalizeCatalogText(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[’'`´-]/g, ' ')
+      .replace(/[^a-zA-Z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+
+  function petCatalogEntries(species) {
+    return Array.isArray(PET_CATALOG?.[species]) ? PET_CATALOG[species] : [];
+  }
+
+  function catalogEntry(species, breed) {
+    const needle = normalizeCatalogText(breed);
+    if (!needle) return null;
+    const aliases = species === 'Chien' && ['saint bernard', 'saint-bernard', 'chien du mont saint bernard'].includes(needle)
+      ? 'chien du mont saint bernard saint bernard'
+      : needle;
+    return petCatalogEntries(species).find((entry) => {
+      const entryText = normalizeCatalogText(entry.name);
+      return entryText === aliases || (species === 'Chien' && entryText === 'chien du mont saint bernard saint bernard' && aliases.includes('saint bernard'));
+    }) || null;
+  }
+
+  function breedFieldLabel() {
+    return 'Race, variété ou type';
+  }
+
+  function breedDisplayName(species, entry) {
+    if (!entry) return '';
+    if (species === 'Chien' && normalizeCatalogText(entry.name) === 'chien du mont saint bernard saint bernard') return 'Saint-Bernard';
+    return entry.name;
+  }
+
+  function breedFieldPlaceholder(species) {
+    if (species === 'Oiseau') return 'Choisir une espèce';
+    if (species === 'Autre') return 'Précisez le type de votre animal';
+    return `Choisir une race de ${species.toLowerCase()}`;
+  }
+
+  function breedCatalogHelp() {
+    return '';
+  }
+
+  function breedSelectHtml(species, selectedValue = '') {
+    const entries = petCatalogEntries(species);
+    if (!entries.length) {
+      return `<input id="petBreed" name="breedChoice" value="${escapeHtml(selectedValue)}" placeholder="Précisez la race, la variété ou le type" autocomplete="off" />`;
+    }
+
+    const otherLabel = species === 'Oiseau' ? 'Autre espèce' : 'Autre race';
+    const selectedEntry = catalogEntry(species, selectedValue);
+    const isCustomValue = Boolean(selectedValue) && !selectedEntry;
+    const isOther = isCustomValue || selectedEntry?.name === otherLabel;
+    const storedValue = isOther ? '__other__' : (selectedEntry?.name || '');
+    const shownValue = isCustomValue
+      ? selectedValue
+      : (selectedEntry ? breedDisplayName(species, selectedEntry) : breedFieldPlaceholder(species));
+
+    return `<div class="pet-breed-picker-field">
+      <input id="petBreed" name="breedChoice" type="hidden" value="${escapeHtml(storedValue)}" />
+      <button class="pet-breed-picker-trigger ${storedValue ? 'has-value' : ''}" type="button" data-action="open-breed-picker" aria-haspopup="dialog">
+        <span class="pet-breed-picker-value">${escapeHtml(shownValue)}</span>
+        <span class="pet-breed-picker-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div id="petBreedOtherRow" class="pet-breed-other-row" ${isOther ? '' : 'hidden'}>
+        <label for="petBreedOther">Précisez</label>
+        <input id="petBreedOther" name="breedOther" value="${escapeHtml(isCustomValue ? selectedValue : '')}" placeholder="${escapeHtml(species === 'Oiseau' ? 'Nom de l’espèce' : 'Nom de la race')}" autocomplete="off" />
+      </div>
+    </div>`;
+  }
+
+  function breedPickerSpecialName(species, entry) {
+    const name = entry?.name || '';
+    if (species === 'Oiseau') return ['Espèce inconnue', 'Autre espèce'].includes(name);
+    return ['Croisé', 'Race inconnue', 'Autre race'].includes(name);
+  }
+
+  function breedPickerFilters(species) {
+    if (species === 'Chien') return [
+      ['popular', 'Courants'], ['all', 'Toutes'], ['small', 'Petit'], ['medium', 'Moyen'], ['large', 'Grand'], ['giant', 'Géant']
+    ];
+    if (species === 'Chat') return [
+      ['popular', 'Courants'], ['all', 'Toutes'], ['short', 'Poil court'], ['long', 'Poil long'], ['hairless', 'Sans poil']
+    ];
+    if (species === 'Lapin') return [
+      ['popular', 'Courants'], ['all', 'Toutes'], ['dwarf', 'Nain'], ['small', 'Petit'], ['medium', 'Moyen'], ['large', 'Grand'], ['giant', 'Géant']
+    ];
+    if (species === 'Oiseau') return [
+      ['popular', 'Courants'], ['all', 'Toutes'], ['parakeet', 'Perruches'], ['parrot', 'Perroquets'], ['smallbird', 'Petits oiseaux'], ['otherbird', 'Autres']
+    ];
+    return [['all', 'Toutes']];
+  }
+
+  function breedPickerIsPopular(species, entry) {
+    const popular = BREED_PICKER_POPULAR[species] || [];
+    const entryName = normalizeCatalogText(entry?.name);
+    return popular.some((name) => normalizeCatalogText(name) === entryName);
+  }
+
+  function catCoatGroup(entry) {
+    const name = normalizeCatalogText(entry?.name);
+    if (/sphynx|peterbald|donskoy/.test(name)) return 'hairless';
+    if (/poil long|maine coon|persan|ragdoll|sacre de birmanie|norvegien|somali|angora|nebelung|himalayen|balinais/.test(name)) return 'long';
+    return 'short';
+  }
+
+  function birdGroup(entry) {
+    const name = normalizeCatalogText(entry?.name);
+    if (/perruche|calopsitte|inseparable|toui/.test(name)) return 'parakeet';
+    if (/amazone|ara |^ara|cacatoes|perroquet|conure|pionus|caique|lori|loriquet|youyou/.test(name)) return 'parrot';
+    if (/canari|diamant|moineau|padda|bengali|cordon-bleu/.test(name)) return 'smallbird';
+    return 'otherbird';
+  }
+
+  function breedPickerMatchesFilter(species, entry, filter) {
+    if (breedPickerSpecialName(species, entry)) return false;
+    if (filter === 'all') return true;
+    if (filter === 'popular') return breedPickerIsPopular(species, entry);
+    if (species === 'Chien' || species === 'Lapin') return entry.size === filter;
+    if (species === 'Chat') return catCoatGroup(entry) === filter;
+    if (species === 'Oiseau') return birdGroup(entry) === filter;
+    return true;
+  }
+
+  function breedPickerEntrySearch(species, entry) {
+    const aliases = species === 'Chien' && normalizeCatalogText(entry?.name) === 'chien du mont saint bernard saint bernard'
+      ? ' saint bernard saint-bernard '
+      : '';
+    return normalizeCatalogText(`${entry?.name || ''} ${entry?.scientific || ''}${aliases}`);
+  }
+
+  function breedPickerSubtitle(species, entry) {
+    if (species === 'Chien') return `${dogSizeLabel(entry.size)} gabarit`;
+    if (species === 'Lapin') return ({ dwarf: 'gabarit nain', small: 'petit gabarit', medium: 'gabarit moyen', large: 'grand gabarit', giant: 'gabarit géant' })[entry.size] || '';
+    if (species === 'Oiseau') return entry.scientific || '';
+    if (species === 'Chat') return ({ short: 'poil court', long: 'poil long', hairless: 'sans poil' })[catCoatGroup(entry)] || '';
+    return '';
+  }
+
+  function ensureBreedPicker() {
+    if (document.getElementById('petBreedPickerBackdrop')) return;
+    document.body.insertAdjacentHTML('beforeend', `<div id="petBreedPickerBackdrop" class="pet-breed-picker-backdrop" hidden>
+      <section id="petBreedPicker" class="pet-breed-picker" role="dialog" aria-modal="true" aria-labelledby="petBreedPickerTitle">
+        <header class="pet-breed-picker-header">
+          <div><p class="eyebrow">PROFIL</p><h2 id="petBreedPickerTitle">Choisir</h2></div>
+          <button class="icon-button" type="button" data-action="close-breed-picker" aria-label="Fermer">✕</button>
+        </header>
+        <div class="pet-breed-picker-search-wrap">
+          <span class="pet-breed-picker-search-icon" aria-hidden="true">⌕</span>
+          <input id="petBreedPickerSearch" type="search" placeholder="Rechercher…" autocomplete="off" spellcheck="false" />
+          <button id="petBreedPickerClear" class="pet-breed-picker-clear" type="button" data-action="clear-breed-picker-search" aria-label="Effacer la recherche" hidden>✕</button>
+        </div>
+        <div id="petBreedPickerFilters" class="pet-breed-picker-filters" aria-label="Filtres"></div>
+        <div id="petBreedPickerResults" class="pet-breed-picker-results"></div>
+      </section>
+    </div>`);
+  }
+
+  function renderBreedPicker() {
+    if (!breedPickerState) return;
+    ensureBreedPicker();
+    const { species, query, filter, selected } = breedPickerState;
+    const title = document.getElementById('petBreedPickerTitle');
+    const search = document.getElementById('petBreedPickerSearch');
+    const filters = document.getElementById('petBreedPickerFilters');
+    const results = document.getElementById('petBreedPickerResults');
+    const clearSearch = document.getElementById('petBreedPickerClear');
+    if (title) title.textContent = species === 'Oiseau' ? 'Choisir une espèce' : `Choisir une race de ${species.toLowerCase()}`;
+    if (search && search.value !== query) search.value = query;
+    if (clearSearch) clearSearch.hidden = !query;
+    if (filters) filters.innerHTML = breedPickerFilters(species).map(([id, label]) => `<button type="button" class="pet-breed-filter-chip ${filter === id ? 'active' : ''}" data-action="filter-breed-picker" data-filter="${id}">${label}</button>`).join('');
+
+    const allEntries = petCatalogEntries(species);
+    const special = allEntries.filter((entry) => breedPickerSpecialName(species, entry));
+    const normalizedQuery = normalizeCatalogText(query);
+    let entries = allEntries.filter((entry) => !breedPickerSpecialName(species, entry));
+    if (normalizedQuery) entries = entries.filter((entry) => breedPickerEntrySearch(species, entry).includes(normalizedQuery));
+    else entries = entries.filter((entry) => breedPickerMatchesFilter(species, entry, filter));
+    entries.sort((a, b) => breedDisplayName(species, a).localeCompare(breedDisplayName(species, b), 'fr', { sensitivity: 'base' }));
+
+    const specialHtml = !normalizedQuery ? `<div class="pet-breed-picker-section"><h3>Choix rapides</h3><div class="pet-breed-quick-grid">${special.map((entry) => {
+      const value = entry.name === (species === 'Oiseau' ? 'Autre espèce' : 'Autre race') ? '__other__' : entry.name;
+      const checked = value === selected || normalizeCatalogText(entry.name) === normalizeCatalogText(selected);
+      return `<button type="button" class="pet-breed-quick-choice ${checked ? 'selected' : ''}" data-action="choose-breed" data-breed-value="${escapeHtml(value)}">${escapeHtml(entry.name)}</button>`;
+    }).join('')}</div></div>` : '';
+
+    const listHtml = entries.length ? entries.map((entry) => {
+      const checked = normalizeCatalogText(entry.name) === normalizeCatalogText(selected);
+      const subtitle = breedPickerSubtitle(species, entry);
+      return `<button type="button" class="pet-breed-result ${checked ? 'selected' : ''}" data-action="choose-breed" data-breed-value="${escapeHtml(entry.name)}">
+        <span class="pet-breed-result-copy"><strong>${escapeHtml(breedDisplayName(species, entry))}</strong>${subtitle ? `<small>${escapeHtml(subtitle)}</small>` : ''}</span>
+        <span class="pet-breed-result-check" aria-hidden="true">${checked ? '✓' : '›'}</span>
+      </button>`;
+    }).join('') : `<div class="pet-breed-empty"><strong>Aucun résultat</strong><span>Essayez un autre mot ou un autre filtre.</span></div>`;
+
+    if (results) results.innerHTML = `${specialHtml}<div class="pet-breed-picker-section"><h3>${normalizedQuery ? 'Résultats' : filter === 'popular' ? 'Les plus courants' : 'Liste'}</h3><div class="pet-breed-result-list">${listHtml}</div></div>`;
+  }
+
+  function openBreedPicker() {
+    const species = document.getElementById('petSpecies')?.value || 'Chien';
+    const field = document.getElementById('petBreed');
+    const other = document.getElementById('petBreedOther');
+    if (!field || species === 'Autre') return;
+    breedPickerState = {
+      species,
+      query: '',
+      filter: 'popular',
+      selected: field.value === '__other__' ? '__other__' : field.value,
+      custom: field.value === '__other__' ? other?.value || '' : ''
+    };
+    ensureBreedPicker();
+    if (breedPickerCloseTimer) { clearTimeout(breedPickerCloseTimer); breedPickerCloseTimer = null; }
+    renderBreedPicker();
+    const backdrop = document.getElementById('petBreedPickerBackdrop');
+    backdrop.hidden = false;
+    requestAnimationFrame(() => backdrop.classList.add('open'));
+    document.body.classList.add('breed-picker-open');
+    setTimeout(() => document.getElementById('petBreedPickerSearch')?.focus(), 80);
+  }
+
+  function closeBreedPicker() {
+    const backdrop = document.getElementById('petBreedPickerBackdrop');
+    if (!backdrop || backdrop.hidden) return;
+    backdrop.classList.remove('open');
+    document.body.classList.remove('breed-picker-open');
+    if (breedPickerCloseTimer) clearTimeout(breedPickerCloseTimer);
+    breedPickerCloseTimer = setTimeout(() => {
+      if (!backdrop.classList.contains('open')) backdrop.hidden = true;
+      breedPickerCloseTimer = null;
+    }, 180);
+  }
+
+  function updateBreedPickerTrigger() {
+    const species = document.getElementById('petSpecies')?.value || 'Autre';
+    const field = document.getElementById('petBreed');
+    const other = document.getElementById('petBreedOther');
+    const trigger = document.querySelector('.pet-breed-picker-trigger');
+    const label = trigger?.querySelector('.pet-breed-picker-value');
+    if (!field || !trigger || !label) return;
+    let shown = breedFieldPlaceholder(species);
+    if (field.value === '__other__') shown = other?.value?.trim() || (species === 'Oiseau' ? 'Autre espèce' : 'Autre race');
+    else if (field.value) shown = breedDisplayName(species, catalogEntry(species, field.value)) || field.value;
+    label.textContent = shown;
+    trigger.classList.toggle('has-value', Boolean(field.value));
+  }
+
+  function chooseBreed(value) {
+    const field = document.getElementById('petBreed');
+    const other = document.getElementById('petBreedOther');
+    if (!field) return;
+    field.value = value;
+    syncPetBreedOtherInput();
+    updateBreedPickerTrigger();
+    closeBreedPicker();
+    if (value === '__other__') setTimeout(() => other?.focus(), 220);
+  }
+
+
+  function detailedAgeText(dateValue) {
+    const months = ageInMonths(dateValue);
+    if (months === null) return 'Date de naissance non renseignée';
+    const years = Math.floor(months / 12);
+    const remainingMonths = months % 12;
+    if (!years) return `${remainingMonths} mois`;
+    if (!remainingMonths) return `${years} an${years > 1 ? 's' : ''}`;
+    return `${years} an${years > 1 ? 's' : ''} et ${remainingMonths} mois`;
   }
 
   function catHumanAge(months) {
@@ -1455,32 +1750,94 @@
     return 36 + (years - 5) * yearlyRate;
   }
 
+  function rabbitHumanAge(months, lifespanYears = 9.5) {
+    if (!Number.isFinite(months)) return null;
+    if (months <= 24) return interpolateAge(months, [[0, 0], [3, 6], [6, 12], [12, 18], [18, 23], [24, 28]]);
+    const lifespanMonths = Math.max(60, lifespanYears * 12);
+    const progress = Math.max(0, (months - 24) / Math.max(12, lifespanMonths - 24));
+    return Math.min(105, 28 + progress * 54);
+  }
+
+  function birdHumanAge(months, maturityMonths = 12, lifespanYears = 15) {
+    if (!Number.isFinite(months)) return null;
+    const maturity = Math.max(2, Number(maturityMonths) || 12);
+    if (months <= maturity) return (months / maturity) * 18;
+    const lifespanMonths = Math.max(maturity + 12, Number(lifespanYears || 15) * 12);
+    const progress = Math.max(0, (months - maturity) / Math.max(12, lifespanMonths - maturity));
+    return Math.min(105, 18 + progress * 67);
+  }
+
+  function lifeStageForPet(pet, months, metadata = {}) {
+    const lifeMonths = Math.max(60, Number(metadata.lifespan || 12) * 12);
+    let stages = [];
+    if (pet.species === 'Chien') {
+      stages = [['Chiot', 12], ['Jeune adulte', 36], ['Adulte', lifeMonths * .55], ['Mature', lifeMonths * .75], ['Senior', Infinity]];
+    } else if (pet.species === 'Chat') {
+      stages = [['Chaton', 12], ['Jeune adulte', 36], ['Adulte', 84], ['Mature', 132], ['Senior', 180], ['Très âgé', Infinity]];
+    } else if (pet.species === 'Lapin') {
+      stages = [['Lapereau', 6], ['Jeune', 18], ['Adulte', lifeMonths * .52], ['Mature', lifeMonths * .75], ['Senior', Infinity]];
+    } else if (pet.species === 'Oiseau') {
+      const maturity = Math.max(2, Number(metadata.maturityMonths || 12));
+      stages = [['Oisillon', maturity * .35], ['Juvénile', maturity], ['Jeune adulte', maturity * 2], ['Adulte', lifeMonths * .55], ['Mature', lifeMonths * .78], ['Senior', Infinity]];
+    }
+    const activeIndex = Math.max(0, stages.findIndex(([, limit]) => months < limit));
+    return { label: stages[activeIndex]?.[0] || 'Âge non déterminé', stages: stages.map(([label]) => label), activeIndex };
+  }
+
   function humanAgeEstimate(pet) {
     const months = ageInMonths(pet?.birthDate);
-    if (months === null) return null;
-    if (pet?.species === 'Chat') {
-      const value = catHumanAge(months);
-      return { years: Math.max(0, Math.round(value)), detail: 'estimation pour un chat' };
-    }
-    if (pet?.species === 'Chien') {
+    if (months === null || !['Chien', 'Chat', 'Lapin', 'Oiseau'].includes(pet?.species)) return null;
+    const metadata = { ...(catalogEntry(pet.species, pet.breed) || {}) };
+    let value = null;
+    let detail = '';
+    if (pet.species === 'Chat') {
+      value = catHumanAge(months);
+      detail = 'estimation basée principalement sur son âge réel';
+    } else if (pet.species === 'Chien') {
       const latestWeight = latestByDate(data.weights.filter((item) => item.petId === pet.id));
       const size = resolvedDogSize(pet, weightValueKg(latestWeight));
-      const value = dogHumanAge(months, size);
-      return { years: Math.max(0, Math.round(value)), detail: `estimation pour un chien de gabarit ${dogSizeLabel(size)}` };
+      value = dogHumanAge(months, size);
+      metadata.lifespan = metadata.lifespan || ({ small: 14, medium: 12.5, large: 11, giant: 9.5 })[size];
+      detail = `estimation ajustée pour un chien de gabarit ${dogSizeLabel(size)}`;
+    } else if (pet.species === 'Lapin') {
+      value = rabbitHumanAge(months, metadata.lifespan || 9.5);
+      detail = metadata.size ? 'estimation ajustée selon la race et le gabarit' : 'estimation pour un lapin de compagnie';
+    } else if (pet.species === 'Oiseau') {
+      value = birdHumanAge(months, metadata.maturityMonths || 12, metadata.lifespan || 15);
+      detail = metadata.scientific ? `estimation adaptée à l’espèce ${pet.breed}` : 'estimation indicative selon un oiseau de compagnie';
     }
-    return null;
+    const stage = lifeStageForPet(pet, months, metadata);
+    return { years: Math.max(0, Math.round(value)), detail, stage, metadata };
   }
 
   function humanAgeText(pet) {
     const estimate = humanAgeEstimate(pet);
-    if (!estimate) return 'Disponible pour les chiens et les chats';
+    if (!estimate) return pet?.birthDate ? 'Disponible pour les chiens, chats, lapins et oiseaux' : 'Renseignez la date de naissance';
     return `Environ ${estimate.years} an${estimate.years > 1 ? 's' : ''} humains · ${estimate.detail}`;
   }
-
 
   function humanAgeCompactText(pet) {
     const estimate = humanAgeEstimate(pet);
     return estimate ? `≈ ${estimate.years} an${estimate.years > 1 ? 's' : ''} humains` : '';
+  }
+
+  function ageInsightCard(pet) {
+    if (!['Chien', 'Chat', 'Lapin', 'Oiseau'].includes(pet?.species)) return '';
+    const estimate = humanAgeEstimate(pet);
+    if (!estimate) {
+      return `<article class="card age-insight-card age-insight-empty"><div class="age-insight-icon" aria-hidden="true">⌛</div><div><p class="eyebrow">Âge & cycle de vie</p><h2>Ajoutez sa date de naissance</h2><p>Animoa pourra alors afficher son âge réel, son équivalent humain estimé et son stade de vie.</p></div></article>`;
+    }
+    const stageTrack = estimate.stage.stages.map((stage, index) => `<span class="life-stage-chip ${index === estimate.stage.activeIndex ? 'active' : ''}">${escapeHtml(stage)}</span>`).join('');
+    return `<article class="card age-insight-card">
+      <div class="age-insight-heading"><div><p class="eyebrow">Âge & cycle de vie</p><h2>Une estimation adaptée à ${escapeHtml(pet.name)}</h2></div><span class="age-estimate-badge">Indicatif</span></div>
+      <div class="age-insight-grid">
+        <div><span>Âge réel</span><strong>${escapeHtml(detailedAgeText(pet.birthDate))}</strong></div>
+        <div><span>Équivalent humain estimé</span><strong>Environ ${estimate.years} an${estimate.years > 1 ? 's' : ''}</strong></div>
+        <div><span>Stade de vie</span><strong>${escapeHtml(estimate.stage.label)}</strong></div>
+      </div>
+      <div class="life-stage-track" aria-label="Étapes de vie">${stageTrack}</div>
+      <p class="age-insight-note">${escapeHtml(estimate.detail)}. Cette comparaison est informative et ne remplace pas l’évaluation d’un vétérinaire.</p>
+    </article>`;
   }
 
   function currencySymbol(code = settings.currency) {
@@ -2119,11 +2476,14 @@
       <div class="page-stack">
         <div class="page-header"><div><p class="eyebrow">Profil</p><h1>${escapeHtml(pet.name)}</h1><p>Les informations essentielles de son dossier.</p></div><button type="button" class="floating-page-button" data-action="edit-pet">Modifier</button></div>
         <article class="card pet-card">${petPhotoButton(pet, 'pet-avatar')}<div><h2 class="pet-name">${escapeHtml(pet.name)}</h2><p class="pet-meta">${escapeHtml(petTypeLabel(pet))} · ${ageText(pet.birthDate)}${humanAgeCompactText(pet) ? ` · ${humanAgeCompactText(pet)}` : ''}</p></div></article>
+        ${ageInsightCard(pet)}
         <article class="card card-pad">
           <div class="profile-grid">
+            ${profileRow(pet.species === 'Oiseau' ? 'Espèce' : 'Race', pet.breed || 'Non renseignée')}
             ${profileRow('Date de naissance', formatDate(pet.birthDate))}
-            ${profileRow('Âge', ageText(pet.birthDate))}
+            ${profileRow('Âge', detailedAgeText(pet.birthDate))}
             ${profileRow('Équivalent humain', humanAgeText(pet))}
+            ${profileRow('Stade de vie', humanAgeEstimate(pet)?.stage?.label || 'Non déterminé')}
             ${profileRow('Sexe', pet.sex || 'Non renseigné')}
             ${profileRow('Poids actuel', lastWeight ? formatWeight(weightValueKg(lastWeight), 2) : 'Non renseigné')}
             ${profileRow('Couleur', pet.color || 'Non renseignée')}
@@ -2278,8 +2638,17 @@
           <div class="support-icon">🐾</div>
           <div><h2>Besoin d’un coup de patte ?</h2><p>Ouvrez une rubrique ci-dessous. Votre carnet et vos données ne seront pas modifiés.</p></div>
         </article>
+        <article class="card card-pad release-guide-card" id="releaseGuide">
+          <div class="release-guide-heading"><div><p class="eyebrow">Nouveautés</p><h2>Version ${APP_VERSION}</h2></div><span class="release-version-badge">Mise à jour</span></div>
+          <ul class="release-note-list">
+            ${RELEASE_NOTES.items.map((item) => `<li><span aria-hidden="true">✓</span><span>${escapeHtml(item)}</span></li>`).join('')}
+          </ul>
+          <p class="release-guide-note">Les équivalents humains restent des estimations indicatives. La date de naissance, la race, le gabarit ou l’espèce permettent d’affiner la présentation.</p>
+        </article>
         <section class="faq-list" aria-label="Guide Animoa">
           <details class="faq-item"><summary>Ajouter ou modifier un animal</summary><div><p>Ouvrez le menu, puis <strong>Mes animaux</strong>. Vous pouvez créer un compagnon, modifier sa fiche, changer sa photo ou sélectionner l’animal consulté.</p></div></details>
+          <details class="faq-item"><summary>Choisir une race ou une espèce</summary><div><p>Dans le profil d’un chien, d’un chat, d’un lapin ou d’un oiseau, ouvrez la liste déroulante puis choisissez la race ou l’espèce souhaitée. Les choix <strong>Race inconnue</strong>, <strong>Autre race</strong> ou <strong>Autre espèce</strong> restent disponibles.</p></div></details>
+          <details class="faq-item"><summary>Comprendre l’équivalent humain</summary><div><p>La fiche de l’animal affiche son âge réel, un équivalent humain estimé et son stade de vie. Pour les chiens et les lapins, le gabarit peut modifier l’estimation. Pour les oiseaux, l’espèce sélectionnée est importante.</p></div></details>
           <details class="faq-item"><summary>Ajouter un rendez-vous</summary><div><p>Appuyez sur le bouton central avec la patte, puis sur <strong>Rendez-vous</strong>. Indiquez la date et, si vous la connaissez, l’heure. La saisie <strong>1245</strong> devient automatiquement <strong>12:45</strong>.</p></div></details>
           <details class="faq-item"><summary>Ajouter un vaccin, un traitement ou une analyse</summary><div><p>Depuis l’ajout rapide, choisissez <strong>Santé</strong>, puis le type souhaité. Les onglets du carnet servent ensuite à filtrer les informations déjà enregistrées.</p></div></details>
           <details class="faq-item"><summary>Ajouter une photo ou un document</summary><div><p>Choisissez le fichier dans le formulaire. Pour une photo de profil ou un souvenir, Animoa ouvre le recadrage avant l’enregistrement.</p></div></details>
@@ -2457,6 +2826,7 @@
       syncHealthDateRules(false);
       syncHealthTimeField();
       syncPetWeightGuide();
+      syncPetBreedCatalog(false);
     });
   }
 
@@ -2472,6 +2842,29 @@
       modal.classList.remove('modal-centered', 'modal-sensitive');
       modalCloseTimer = null;
     }, 220);
+  }
+
+  function releaseNotesBody() {
+    return `<div class="release-notes-modal">
+      <div class="release-notes-hero"><span class="release-version-badge">Version ${APP_VERSION}</span><h3>${escapeHtml(RELEASE_NOTES.subtitle)}</h3></div>
+      <ul class="release-note-list">${RELEASE_NOTES.items.map((item) => `<li><span aria-hidden="true">✓</span><span>${escapeHtml(item)}</span></li>`).join('')}</ul>
+      <div class="release-note-actions"><button type="button" class="secondary-button" data-action="open-release-guide">Voir le guide des nouveautés</button><button type="button" class="primary-button" data-action="dismiss-release-notes">J’ai compris</button></div>
+    </div>`;
+  }
+
+  function showReleaseNotesIfNeeded() {
+    const appShell = document.querySelector('.app-shell');
+    if (!appShell || appShell.hidden || modal.classList.contains('open')) return;
+    try {
+      if (localStorage.getItem(RELEASE_SEEN_KEY) === '1') return;
+      localStorage.setItem(RELEASE_SEEN_KEY, '1');
+    } catch {}
+    openModal(RELEASE_NOTES.title, releaseNotesBody(), `Version ${APP_VERSION}`);
+  }
+
+  function openReleaseGuide() {
+    setPage('help');
+    requestAnimationFrame(() => document.getElementById('releaseGuide')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   function openAddMenu() {
@@ -2526,9 +2919,11 @@
       <div class="form-columns health-schedule-fields"><div class="form-row health-date-field"><label for="healthDate">Date</label>${dateInputControl({ id: 'healthDate', name: 'date', value: date, min, max, required: true, describedBy: 'healthDateHelp' })}<span id="healthDateHelp" class="form-help" hidden></span></div><div class="form-row health-status-field"><label for="healthStatus">État</label><select id="healthStatus" name="status"><option value="planned" ${optionSelected(status, 'planned')}>À venir</option><option value="done" ${optionSelected(status, 'done')}>Effectué</option></select></div></div>
       <div class="form-row" id="healthTimeRow" ${showTime ? '' : 'hidden'}><label id="healthTimeLabel" for="healthTime">${timeLabel}</label><input id="healthTime" name="time" type="text" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="${isAppointment ? 'HH:MM — facultatif' : 'HH:MM'}" value="${escapeHtml(validTime(item?.time) ? item.time : '')}" ${showTime ? (timeRequired ? 'required' : '') : 'disabled'} aria-describedby="healthTimeHelp" /><span id="healthTimeHelp" class="form-help">${timeHelp}</span></div>
       <div class="form-row"><label for="healthProfessional">Vétérinaire ou professionnel</label><input id="healthProfessional" name="professional" value="${escapeHtml(item?.professional || '')}" placeholder="Facultatif" /></div>
+      <div class="form-row"><label for="healthLocation">Lieu</label><input id="healthLocation" name="location" value="${escapeHtml(item?.location || '')}" placeholder="Ex. Clinique vétérinaire, adresse…" /></div>
       <div class="form-row"><label for="healthNote">Note</label><textarea id="healthNote" name="note" placeholder="Informations utiles">${escapeHtml(item?.note || '')}</textarea></div>
       ${filePicker({ fieldId: 'healthAttachment', name: 'attachment', label: 'Pièce jointe', existingRef: item?.attachment || '', existingName: item?.attachmentName || '', existingType: item?.attachmentType || '', accept: 'image/*,.pdf,.doc,.docx' })}
       <label class="checkbox-row"><input name="reminder" type="checkbox" ${item ? (item.reminder ? 'checked' : '') : 'checked'} /> Créer un rappel dans Animoa</label>
+      <label class="checkbox-row calendar-option-row" id="calendarOptionRow" ${isAppointment && status === 'planned' ? '' : 'hidden'}><input name="offerCalendar" type="checkbox" ${item ? (item.offerCalendar !== false ? 'checked' : '') : 'checked'} /> Proposer l’ajout à mon calendrier après l’enregistrement</label>
       <button class="primary-button form-submit-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer'}</button>
     </form>`;
   }
@@ -2598,9 +2993,13 @@
     const species = pet?.species || 'Chien';
     const limits = displayWeightLimits(species);
     const existingImage = pet?.image && pet.image !== placeholderImage ? pet.image : '';
-    return `<form id="petForm" class="form-grid professional-form" data-editing="${editing ? pet.id : ''}" data-weight-id="${latestWeight?.id || ''}" data-original-weight="${currentWeight ?? ''}" data-original-weight-date="${latestWeight?.date || ''}">
+    return `<form id="petForm" class="form-grid professional-form" autocomplete="off" data-editing="${editing ? pet.id : ''}" data-weight-id="${latestWeight?.id || ''}" data-original-weight="${currentWeight ?? ''}" data-original-weight-date="${latestWeight?.date || ''}">
       <div class="form-row"><label for="petName">Nom</label><input id="petName" name="name" required value="${escapeHtml(pet?.name || '')}" placeholder="Ex. Milo" /></div>
-      <div class="form-columns desktop-three"><div class="form-row"><label for="petSpecies">Espèce</label><select id="petSpecies" name="species"><option value="Chien" ${optionSelected(species, 'Chien')}>Chien</option><option value="Chat" ${optionSelected(species, 'Chat')}>Chat</option><option value="Lapin" ${optionSelected(species, 'Lapin')}>Lapin</option><option value="Oiseau" ${optionSelected(species, 'Oiseau')}>Oiseau</option><option value="Autre" ${optionSelected(species, 'Autre')}>Autre</option></select></div><div class="form-row"><label for="petBreed">Race, variété ou type</label><input id="petBreed" name="breed" value="${escapeHtml(pet?.breed || '')}" /></div><div class="form-row"><label for="petSex">Sexe</label><select id="petSex" name="sex"><option value="Non renseigné" ${optionSelected(pet?.sex || 'Non renseigné', 'Non renseigné')}>Non renseigné</option><option value="Femelle" ${optionSelected(pet?.sex, 'Femelle')}>Femelle</option><option value="Mâle" ${optionSelected(pet?.sex, 'Mâle')}>Mâle</option></select></div></div>
+      <div class="pet-profile-basics">
+        <div class="form-row"><label for="petSpecies">Espèce</label><select id="petSpecies" name="species"><option value="Chien" ${optionSelected(species, 'Chien')}>Chien</option><option value="Chat" ${optionSelected(species, 'Chat')}>Chat</option><option value="Lapin" ${optionSelected(species, 'Lapin')}>Lapin</option><option value="Oiseau" ${optionSelected(species, 'Oiseau')}>Oiseau</option><option value="Autre" ${optionSelected(species, 'Autre')}>Autre</option></select></div>
+        <div class="form-row"><label for="petSex">Sexe</label><select id="petSex" name="sex"><option value="Non renseigné" ${optionSelected(pet?.sex || 'Non renseigné', 'Non renseigné')}>Non renseigné</option><option value="Femelle" ${optionSelected(pet?.sex, 'Femelle')}>Femelle</option><option value="Mâle" ${optionSelected(pet?.sex, 'Mâle')}>Mâle</option></select></div>
+        <div class="form-row pet-breed-row"><label id="petBreedLabel" for="petBreed">${breedFieldLabel(species)}</label><div id="petBreedField">${breedSelectHtml(species, pet?.breed || '')}</div></div>
+      </div>
       <div class="form-row dog-size-row" id="dogSizeRow" ${species === 'Chien' ? '' : 'hidden'}><label for="petDogSize">Gabarit adulte du chien</label><select id="petDogSize" name="dogSize"><option value="auto" ${optionSelected(pet?.dogSize || 'auto', 'auto')}>Automatique selon le poids</option><option value="small" ${optionSelected(pet?.dogSize, 'small')}>Petit — moins de 10 kg</option><option value="medium" ${optionSelected(pet?.dogSize, 'medium')}>Moyen — 10 à 25 kg</option><option value="large" ${optionSelected(pet?.dogSize, 'large')}>Grand — 25 à 40 kg</option><option value="giant" ${optionSelected(pet?.dogSize, 'giant')}>Géant — plus de 40 kg</option></select><span class="form-help">Utilisé pour l’estimation de l’âge humain.</span></div>
       <div class="form-columns"><div class="form-row"><label for="petBirth">Date de naissance</label>${dateInputControl({ id: 'petBirth', name: 'birthDate', value: pet?.birthDate || '', max: todayIso() })}</div><div class="form-row"><label for="petColor">Couleur</label><input id="petColor" name="color" value="${escapeHtml(pet?.color || '')}" /></div></div>
       <div class="weight-profile-box"><div><strong>Poids actuel</strong><span>Ajouté à l’historique du poids.</span></div><div class="form-columns"><div class="form-row"><label for="petCurrentWeight">Poids (${settings.weightUnit})</label><input id="petCurrentWeight" name="currentWeight" type="number" min="${limits.min}" max="${limits.max}" step="${limits.step}" value="${currentWeight ?? ''}" placeholder="Facultatif" /></div><div class="form-row"><label for="petCurrentWeightDate">Date de pesée</label>${dateInputControl({ id: 'petCurrentWeightDate', name: 'currentWeightDate', value: latestWeight?.date || todayIso(), max: todayIso() })}</div></div><span id="petWeightGuide" class="form-help">Plage indicative : ${limits.min.toLocaleString(appLocale(), { maximumFractionDigits: 3 })} à ${limits.max.toLocaleString(appLocale(), { maximumFractionDigits: 1 })} ${settings.weightUnit}</span></div>
@@ -2648,18 +3047,26 @@
           time,
           status,
           professional: String(formData.get('professional') || '').trim(),
+          location: String(formData.get('location') || '').trim(),
           note: String(formData.get('note') || '').trim(),
           attachment,
           attachmentName: attachmentFile?.name || (attachment ? existing?.attachmentName || '' : ''),
           attachmentType: attachmentFile ? detectedFileType(attachmentFile) : (attachment ? existing?.attachmentType || '' : ''),
           reminder: formData.get('reminder') === 'on',
+          offerCalendar: formData.get('offerCalendar') === 'on',
+          calendarAdded: existing?.calendarAdded || false,
+          calendarUid: existing?.calendarUid || '',
           reminderRead: false
         };
-        if (existing) Object.assign(existing, record); else data.health.push({ id: uid('health'), ...record });
+        let savedRecord;
+        if (existing) { Object.assign(existing, record); savedRecord = existing; } else { savedRecord = { id: uid('health'), ...record }; data.health.push(savedRecord); }
         currentHealthFilter = record.type;
         saveData();
         if (existing && oldAttachment !== attachment) await deleteMediaIfUnused(oldAttachment);
         closeModal(); setPage('health'); showToast(existing ? 'Information de santé modifiée.' : 'Information de santé enregistrée.');
+        if (record.type === 'Rendez-vous' && record.status === 'planned' && record.offerCalendar) {
+          window.setTimeout(() => showCalendarPermission(savedRecord.id, Boolean(existing)), 260);
+        }
       }
 
       if (form.id === 'expenseForm') {
@@ -2736,7 +3143,13 @@
         validatePastOrToday(birthDate, 'La date de naissance');
         const petData = {
           id: existing?.id || uid('pet'),
-          name: requiredText(formData.get('name'), 'le nom de l’animal'), species, breed: String(formData.get('breed') || '').trim(),
+          name: requiredText(formData.get('name'), 'le nom de l’animal'), species,
+          breed: (() => {
+            const choice = String(formData.get('breedChoice') || '').trim();
+            const custom = String(formData.get('breedOther') || '').trim();
+            if (choice === '__other__') return custom || (species === 'Oiseau' ? 'Autre espèce' : 'Autre race');
+            return choice;
+          })(),
           dogSize: species === 'Chien' && ['auto', 'small', 'medium', 'large', 'giant'].includes(String(formData.get('dogSize'))) ? String(formData.get('dogSize')) : 'auto',
           birthDate, sex: formData.get('sex'), color: String(formData.get('color') || '').trim(),
           identification: String(formData.get('identification') || '').trim(), allergies: String(formData.get('allergies') || '').trim(),
@@ -2832,18 +3245,109 @@
     }
   }
 
+  function escapeIcsText(value) {
+    return String(value || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+  }
+
+  function calendarDateTime(date, time, addMinutes = 0) {
+    const safeTime = validTime(time) ? time : '12:00';
+    const d = new Date(`${date}T${safeTime}:00`);
+    if (addMinutes) d.setMinutes(d.getMinutes() + addMinutes);
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  }
+
+  function calendarEventTitle(item) {
+    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'Votre animal';
+    const detail = String(item.title || '').trim();
+    return `🐾 ${detail || 'Rendez-vous'} de ${petName} — Animoa`;
+  }
+
+  function calendarEventDescription(item) {
+    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'Votre animal';
+    const lines = [
+      `Rendez-vous pour ${petName}`,
+      item.title ? `Motif : ${item.title}` : '',
+      item.professional ? `Professionnel : ${item.professional}` : '',
+      item.note ? `Informations : ${item.note}` : '',
+      '',
+      'Pensez à apporter le carnet de santé et les documents utiles.',
+      '',
+      'Enregistré depuis Animoa — Toute sa vie, près de vous.'
+    ];
+    return lines.filter((line, index) => line || index >= lines.length - 4).join('\n');
+  }
+
+  function buildCalendarIcs(item) {
+    const uid = item.calendarUid || `${item.id}@animoa.fr`;
+    const start = calendarDateTime(item.date, item.time, 0);
+    const end = calendarDateTime(item.date, item.time, validTime(item.time) ? 60 : 30);
+    const now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+    return [
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Animoa//Calendrier//FR', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+      'BEGIN:VEVENT', `UID:${escapeIcsText(uid)}`, `DTSTAMP:${now}`, `DTSTART:${start}`, `DTEND:${end}`,
+      `SUMMARY:${escapeIcsText(calendarEventTitle(item))}`,
+      item.location ? `LOCATION:${escapeIcsText(item.location)}` : '',
+      `DESCRIPTION:${escapeIcsText(calendarEventDescription(item))}`,
+      'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', `DESCRIPTION:${escapeIcsText(`Rappel Animoa : ${item.title || 'rendez-vous'}`)}`, 'END:VALARM',
+      ...(validTime(item.time) ? ['BEGIN:VALARM', 'TRIGGER:-PT2H', 'ACTION:DISPLAY', `DESCRIPTION:${escapeIcsText(`Rappel Animoa : ${item.title || 'rendez-vous'}`)}`, 'END:VALARM'] : []),
+      'END:VEVENT', 'END:VCALENDAR'
+    ].filter(Boolean).join('\r\n');
+  }
+
+  function showCalendarPermission(recordId, updating = false) {
+    const item = data.health.find((record) => record.id === recordId);
+    if (!item) return;
+    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'votre animal';
+    openModal(updating && item.calendarAdded ? 'Mettre à jour votre calendrier ?' : 'Ajouter à votre calendrier ?', `
+      <div class="calendar-permission-card">
+        <div class="calendar-permission-icon" aria-hidden="true">📅</div>
+        <h3>${updating && item.calendarAdded ? 'Le rendez-vous a été modifié' : `Gardez le rendez-vous de ${escapeHtml(petName)} à portée de main`}</h3>
+        <p>Animoa peut préparer cet événement pour votre calendrier avec la date, l’heure, le lieu et les informations utiles.</p>
+        <div class="calendar-privacy-note"><strong>Votre vie privée est respectée</strong><span>Animoa ne consulte pas vos rendez-vous personnels et ne lit pas votre calendrier. Seul cet événement sera créé à votre demande.</span></div>
+        <div class="calendar-event-preview">
+          <strong>${escapeHtml(calendarEventTitle(item))}</strong>
+          <span>📆 ${formatDate(item.date)}${validTime(item.time) ? ` à ${escapeHtml(item.time)}` : ' — heure non renseignée'}</span>
+          ${item.location ? `<span>📍 ${escapeHtml(item.location)}</span>` : ''}
+          ${item.professional ? `<span>🩺 ${escapeHtml(item.professional)}</span>` : ''}
+        </div>
+        <div class="calendar-permission-actions"><button type="button" class="secondary-button" data-action="close-modal">Plus tard</button><button type="button" class="primary-button" data-action="add-to-calendar" data-record-id="${item.id}">${updating && item.calendarAdded ? 'Mettre à jour' : 'Ajouter au calendrier'}</button></div>
+      </div>`, 'Calendrier');
+  }
+
+  function addRecordToCalendar(recordId) {
+    const item = data.health.find((record) => record.id === recordId);
+    if (!item) return showToast('Ce rendez-vous n’existe plus.');
+    const uid = item.calendarUid || `${item.id}@animoa.fr`;
+    item.calendarUid = uid;
+    item.calendarAdded = true;
+    saveData();
+    const blob = new Blob([buildCalendarIcs(item)], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'animal';
+    link.href = url;
+    link.download = `Animoa_${petName}_${item.date}.ics`.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    document.body.appendChild(link); link.click(); link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+    closeModal(); renderPage();
+    showToast('Événement préparé. Ouvrez le fichier pour l’ajouter à votre calendrier.');
+  }
+
   function showHealthRecord(recordId) {
     const item = data.health.find((record) => record.id === recordId && record.petId === activePet()?.id);
     if (!item) return showToast('Cette information n’existe plus.');
     const status = item.status === 'planned' ? (isPlannedHealthOverdue(item) ? 'En retard' : 'À venir') : 'Effectué';
     const timeDetail = validTime(item.time) ? `<span>Heure</span><strong>${item.time}</strong>` : '';
+    const locationDetail = item.location ? `<span>Lieu</span><strong>${escapeHtml(item.location)}</strong>` : '';
+    const calendarBadge = item.type === 'Rendez-vous' && item.status === 'planned' ? `<div class="calendar-status-line ${item.calendarAdded ? 'is-synced' : ''}">📅 ${item.calendarAdded ? 'Préparé pour votre calendrier' : 'Non ajouté au calendrier'}</div>` : '';
     openModal(item.title, `
       <div class="record-detail">
         <p class="eyebrow">${escapeHtml(normalizeHealthType(item.type))}</p>
-        <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong>${timeDetail}<span>État</span><strong>${status}</strong><span>Professionnel</span><strong>${escapeHtml(item.professional || 'Non renseigné')}</strong></div>
-        <p>${escapeHtml(item.note || 'Aucune note.')}</p>
+        <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong>${timeDetail}${locationDetail}<span>État</span><strong>${status}</strong><span>Professionnel</span><strong>${escapeHtml(item.professional || 'Non renseigné')}</strong></div>
+        ${calendarBadge}<p>${escapeHtml(item.note || 'Aucune note.')}</p>
         ${item.attachment ? `<button class="attachment-preview" data-action="open-attachment" data-image-ref="${escapeHtml(item.attachment)}" data-file-type="${escapeHtml(item.attachmentType || '')}" data-file-name="${escapeHtml(item.attachmentName || 'Fichier joint')}"><span>${item.attachmentType?.startsWith('image/') ? '🖼️' : '📎'}</span><span>${escapeHtml(item.attachmentName || 'Voir le fichier ou l’image')}</span></button>` : ''}
-        <div class="record-detail-actions"><button type="button" class="secondary-button" data-action="edit-health-record" data-record-id="${item.id}">Modifier</button><button type="button" class="danger-button" data-action="request-delete-record" data-collection="health" data-record-id="${item.id}" data-label="cette information de santé" data-return-page="health">Supprimer</button></div>
+        <div class="record-detail-actions">${item.type === 'Rendez-vous' && item.status === 'planned' ? `<button type="button" class="secondary-button" data-action="show-calendar-permission" data-record-id="${item.id}">📅 ${item.calendarAdded ? 'Mettre à jour le calendrier' : 'Ajouter au calendrier'}</button>` : ''}<button type="button" class="secondary-button" data-action="edit-health-record" data-record-id="${item.id}">Modifier</button><button type="button" class="danger-button" data-action="request-delete-record" data-collection="health" data-record-id="${item.id}" data-label="cette information de santé" data-return-page="health">Supprimer</button></div>
       </div>`, 'Santé');
   }
 
@@ -2911,6 +3415,8 @@
     input.placeholder = isAppointment ? translateText('HH:MM (facultatif)') : 'HH:MM';
     if (label) label.textContent = translateText(isAppointment ? 'Heure du rendez-vous' : 'Heure prévue');
     if (help) help.textContent = translateText(isAppointment ? 'Heure facultative' : 'Format : 12:45');
+    const calendarRow = document.getElementById('calendarOptionRow');
+    if (calendarRow) calendarRow.hidden = !(isAppointment && status.value === 'planned');
   }
 
   function syncHealthDateRules(adjustValue = false) {
@@ -2940,6 +3446,36 @@
       }
       if (help) { help.textContent = ''; help.hidden = true; }
     }
+  }
+
+  function syncPetBreedOtherInput() {
+    const species = document.getElementById('petSpecies')?.value || 'Autre';
+    const field = document.getElementById('petBreed');
+    const row = document.getElementById('petBreedOtherRow');
+    const input = document.getElementById('petBreedOther');
+    if (!row || !field) return;
+    const show = field.value === '__other__';
+    row.hidden = !show;
+    if (input) {
+      input.disabled = !show;
+      if (!show) input.value = '';
+      if (show) input.placeholder = species === 'Oiseau' ? 'Nom de l’espèce' : 'Nom de la race';
+    }
+  }
+
+  function syncPetBreedCatalog(clearValue = false) {
+    const speciesField = document.getElementById('petSpecies');
+    const fieldContainer = document.getElementById('petBreedField');
+    const label = document.getElementById('petBreedLabel');
+    if (!speciesField || !fieldContainer) return;
+    const oldField = document.getElementById('petBreed');
+    const oldOther = document.getElementById('petBreedOther');
+    const previousValue = clearValue ? '' : (oldField?.value === '__other__' ? oldOther?.value || '' : oldField?.value || '');
+    const species = speciesField.value;
+    if (label) label.textContent = breedFieldLabel(species);
+    fieldContainer.innerHTML = breedSelectHtml(species, previousValue);
+    syncPetBreedOtherInput();
+    updateBreedPickerTrigger();
   }
 
   function syncPetWeightGuide() {
@@ -3092,6 +3628,14 @@
     if (action === 'close-menu') closeDrawer();
     if (action === 'open-add') openAddMenu();
     if (action === 'close-modal') closeModal();
+    if (action === 'open-breed-picker') openBreedPicker();
+    if (action === 'close-breed-picker') closeBreedPicker();
+    if (action === 'filter-breed-picker') {
+      if (breedPickerState) { breedPickerState.filter = target.dataset.filter || 'popular'; breedPickerState.query = ''; renderBreedPicker(); document.getElementById('petBreedPickerSearch')?.focus(); }
+    }
+    if (action === 'choose-breed') chooseBreed(target.dataset.breedValue || '');
+    if (action === 'dismiss-release-notes') closeModal();
+    if (action === 'open-release-guide') openReleaseGuide();
     if (action === 'remove-file-selection') {
       const input = document.getElementById(target.dataset.inputId || '');
       if (input) removeFilePickerSelection(input);
@@ -3107,6 +3651,8 @@
     if (action === 'health-scroll-left') scrollHealthTabs(-1);
     if (action === 'health-scroll-right') scrollHealthTabs(1);
     if (action === 'show-health-record') showHealthRecord(target.dataset.recordId);
+    if (action === 'show-calendar-permission') showCalendarPermission(target.dataset.recordId, false);
+    if (action === 'add-to-calendar') addRecordToCalendar(target.dataset.recordId);
     if (action === 'show-weight-record') showWeightRecord(target.dataset.recordId);
     if (action === 'show-expense-record') showExpenseRecord(target.dataset.recordId);
     if (action === 'edit-health-record') { const item = data.health.find((record) => record.id === target.dataset.recordId); if (item) openModal('Modifier une information', healthForm(item), 'Santé'); }
@@ -3205,6 +3751,11 @@
   });
 
 
+  document.addEventListener('click', (event) => {
+    if (event.target?.id === 'petBreedPickerBackdrop') closeBreedPicker();
+  });
+
+
   document.addEventListener('pointerdown', (event) => {
     if (!event.target.closest('.file-picker-button')) return;
     filePickerScrollTop = modalBody?.scrollTop || 0;
@@ -3222,7 +3773,8 @@
     }
     if (event.target.id === 'healthStatus') { syncHealthDateRules(true); syncHealthTimeField(); }
     if (event.target.id === 'healthType') syncHealthTimeField();
-    if (event.target.id === 'petSpecies') syncPetWeightGuide();
+    if (event.target.id === 'petSpecies') { syncPetWeightGuide(); syncPetBreedCatalog(true); }
+    if (event.target.id === 'petBreedOther') updateBreedPickerTrigger();
     if (event.target.id === 'supportScreenshot') {
       const file = event.target.files?.[0] || null;
       const label = document.getElementById('supportScreenshotName');
@@ -3292,6 +3844,8 @@
 
 
   document.addEventListener('input', (event) => {
+    if (event.target.id === 'petBreedPickerSearch' && breedPickerState) { breedPickerState.query = event.target.value; renderBreedPicker(); }
+    if (event.target.id === 'petBreedOther') updateBreedPickerTrigger();
     if (event.target.matches('.custom-theme-color')) {
       const customRadio = document.querySelector('input[name="paletteSetting"][value="custom"]');
       if (customRadio) customRadio.checked = true;
@@ -3333,6 +3887,8 @@
   modalBackdrop.addEventListener('click', closeModal);
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
+    const breedBackdrop = document.getElementById('petBreedPickerBackdrop');
+    if (breedBackdrop && !breedBackdrop.hidden) { closeBreedPicker(); return; }
     if (document.querySelector('.cropper-overlay')) {
       document.querySelector('.cropper-cancel')?.click();
       return;
@@ -3383,8 +3939,23 @@
     await cleanupUnusedMedia();
     renderNavigation();
     renderPage();
+    window.setTimeout(showReleaseNotesIfNeeded, 800);
+    const isLocalPreview = ['localhost', '127.0.0.1'].includes(location.hostname);
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-      navigator.serviceWorker.register('./sw.js').catch((error) => console.warn('Mode installable Animoa indisponible', error));
+      if (isLocalPreview) {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+          if ('caches' in window) {
+            const cacheKeys = await caches.keys();
+            await Promise.all(cacheKeys.map((key) => caches.delete(key)));
+          }
+        } catch (error) {
+          console.warn('Nettoyage du cache local incomplet', error);
+        }
+      } else {
+        navigator.serviceWorker.register('./sw.js?v=2.5.4').catch((error) => console.warn('Mode installable Animoa indisponible', error));
+      }
     }
   }
 

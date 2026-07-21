@@ -2779,3 +2779,302 @@ html[data-theme="dark"] .survey-choice > span { background-color: color-mix(in s
     width: 100%;
   }
 }
+
+
+/* Version 2.5.0 — âge, races et guide de mise à jour */
+.pet-breed-row .form-help { min-height: 1.2em; }
+.age-insight-card { padding: clamp(18px, 3vw, 28px); display: grid; gap: 20px; overflow: hidden; position: relative; }
+.age-insight-card::after { content: ''; position: absolute; width: 180px; height: 180px; border-radius: 50%; right: -70px; top: -90px; background: color-mix(in srgb, var(--primary) 12%, transparent); pointer-events: none; }
+.age-insight-heading, .release-guide-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; position: relative; z-index: 1; }
+.age-insight-heading h2, .release-guide-heading h2 { margin: 2px 0 0; }
+.age-estimate-badge, .release-version-badge { display: inline-flex; align-items: center; min-height: 30px; padding: 5px 10px; border-radius: 999px; background: var(--primary-light); color: var(--primary-dark); font-size: .76rem; font-weight: 800; white-space: nowrap; }
+.age-insight-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; position: relative; z-index: 1; }
+.age-insight-grid > div { padding: 15px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-soft); display: grid; gap: 7px; }
+.age-insight-grid span { color: var(--muted); font-size: .76rem; font-weight: 700; }
+.age-insight-grid strong { font-size: clamp(.95rem, 2vw, 1.15rem); line-height: 1.25; }
+.life-stage-track { display: flex; gap: 7px; overflow-x: auto; padding: 3px 1px 7px; scrollbar-width: thin; }
+.life-stage-chip { flex: 0 0 auto; padding: 7px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); background: var(--surface); font-size: .72rem; font-weight: 750; }
+.life-stage-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 28%, transparent); }
+.age-insight-note, .release-guide-note { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.55; }
+.age-insight-empty { grid-template-columns: auto 1fr; align-items: center; }
+.age-insight-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 16px; background: var(--primary-light); color: var(--primary-dark); font-size: 1.4rem; }
+.age-insight-empty h2, .age-insight-empty p { margin: 3px 0; }
+.release-guide-card, .release-notes-modal { display: grid; gap: 18px; }
+.release-note-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.release-note-list li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; line-height: 1.45; }
+.release-note-list li > span:first-child { width: 23px; height: 23px; display: grid; place-items: center; border-radius: 50%; background: var(--primary-light); color: var(--primary-dark); font-size: .75rem; font-weight: 900; }
+.release-notes-hero { display: grid; justify-items: start; gap: 10px; }
+.release-notes-hero h3 { margin: 0; font-size: 1.2rem; }
+.release-note-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+
+@media (max-width: 700px) {
+  .age-insight-grid { grid-template-columns: 1fr; }
+  .age-insight-heading, .release-guide-heading { align-items: flex-start; }
+  .release-note-actions { display: grid; grid-template-columns: 1fr; }
+  .release-note-actions button { width: 100%; }
+}
+
+
+/* Version 2.5.6 — menu déroulant natif forcé et cache local neutralisé */
+.pet-breed-native-select { display: grid; gap: 10px; width: 100%; }
+.pet-breed-native-select > select {
+  width: 100%;
+  min-height: 50px;
+  padding-right: 46px;
+  cursor: pointer;
+  appearance: auto;
+  -webkit-appearance: menulist;
+  font: inherit;
+  color: var(--text);
+  background-color: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.pet-breed-native-select > select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 16%, transparent);
+  outline: none;
+}
+.pet-breed-other-row { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-soft); }
+.pet-breed-other-row[hidden] { display: none !important; }
+.pet-breed-other-row label { font-size: .78rem; font-weight: 750; }
+.pet-breed-other-row input { width: 100%; }
+@media (max-width: 700px) {
+  #petForm .desktop-three > .pet-breed-row { grid-column: 1 / -1; }
+}
+
+
+/* 2.5.6 — le choix de race occupe toute la largeur et reste un select natif */
+#petForm .pet-breed-row {
+  grid-column: 1 / -1;
+}
+#petForm .pet-breed-native-select,
+#petForm .pet-breed-select {
+  width: 100%;
+  min-width: 0;
+}
+#petForm .pet-breed-select {
+  appearance: auto;
+  -webkit-appearance: menulist;
+  cursor: pointer;
+  background-image: none !important;
+}
+#petForm .pet-breed-select::-ms-expand {
+  display: block;
+}
+@media (max-width: 720px) {
+  #petForm .desktop-three {
+    grid-template-columns: 1fr 1fr;
+  }
+  #petForm .pet-breed-row {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* Version 2.5.6 — sélecteur professionnel avec recherche et filtres */
+#petForm .pet-profile-basics {
+  width: min(100%, 540px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: end;
+}
+#petForm .pet-profile-basics .pet-breed-row { grid-column: 1 / -1; }
+#petForm .pet-profile-basics label { text-align: center; }
+#petForm .pet-profile-basics select { text-align: center; text-align-last: center; }
+.pet-breed-picker-field { display: grid; gap: 10px; width: 100%; }
+.pet-breed-picker-trigger {
+  width: 100%; min-height: 54px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 15px;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
+  background: var(--input-bg); color: var(--muted); cursor: pointer; font: inherit;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.pet-breed-picker-trigger:hover, .pet-breed-picker-trigger:focus-visible {
+  border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent); outline: none;
+}
+.pet-breed-picker-trigger.has-value { color: var(--text); font-weight: 720; }
+.pet-breed-picker-value { grid-column: 2; text-align: center; line-height: 1.25; }
+.pet-breed-picker-chevron { grid-column: 3; justify-self: end; font-size: 1.15rem; color: var(--primary-dark); }
+.pet-breed-picker-backdrop {
+  position: fixed; inset: 0; z-index: 140; display: grid; place-items: center; padding: 18px;
+  background: rgba(24, 38, 34, .52); backdrop-filter: blur(6px); opacity: 0; transition: opacity .18s ease;
+}
+.pet-breed-picker-backdrop.open { opacity: 1; }
+.pet-breed-picker {
+  width: min(600px, 100%); max-height: min(82vh, 720px); max-height: min(82dvh, 720px);
+  display: grid; grid-template-rows: auto auto auto minmax(0, 1fr); overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent); border-radius: 24px;
+  background: var(--surface); box-shadow: 0 24px 72px rgba(20, 38, 33, .28);
+  transform: translateY(10px) scale(.985); transition: transform .18s ease;
+}
+.pet-breed-picker-backdrop.open .pet-breed-picker { transform: translateY(0) scale(1); }
+.pet-breed-picker-header {
+  display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  padding: 17px 20px 12px; border-bottom: 1px solid var(--border);
+}
+.pet-breed-picker-header h2 { margin: 2px 0 0; font-size: 1.14rem; line-height: 1.25; }
+.pet-breed-picker-header .eyebrow { font-size: .7rem; }
+.pet-breed-picker-search-wrap {
+  margin: 13px 18px 9px; min-height: 46px; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 9px;
+  padding: 0 13px; border: 1px solid var(--border); border-radius: 14px; background: var(--input-bg);
+}
+.pet-breed-picker-search-wrap:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent); }
+.pet-breed-picker-search-wrap span { color: var(--primary-dark); font-size: 1.08rem; }
+.pet-breed-picker-search-wrap input { width: 100%; min-height: 43px; padding: 0; border: 0; box-shadow: none !important; background: transparent; }
+.pet-breed-picker-filters {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(82px, 1fr)); gap: 7px;
+  overflow: visible; padding: 1px 18px 12px;
+}
+.pet-breed-filter-chip {
+  min-width: 0; min-height: 34px; padding: 6px 9px; border: 1px solid var(--border); border-radius: 999px;
+  background: var(--surface); color: var(--muted); font-size: .9rem; font-weight: 750; cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pet-breed-filter-chip.active { border-color: var(--primary); background: var(--primary); color: #fff; }
+.pet-breed-picker-results { min-height: 0; overflow-y: auto; padding: 2px 18px 18px; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.pet-breed-picker-section { display: grid; gap: 8px; }
+.pet-breed-picker-section + .pet-breed-picker-section { margin-top: 15px; }
+.pet-breed-picker-section h3 { margin: 0; color: var(--muted); font-size: .72rem; letter-spacing: .075em; text-transform: uppercase; }
+.pet-breed-quick-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.pet-breed-quick-choice {
+  min-height: 38px; padding: 7px 9px; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface-soft); color: var(--text); font-size: .92rem; font-weight: 720; cursor: pointer;
+}
+.pet-breed-quick-choice.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+.pet-breed-result-list { display: grid; gap: 6px; }
+.pet-breed-result {
+  width: 100%; min-height: 51px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border: 1px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--text); text-align: left; cursor: pointer;
+}
+.pet-breed-result:hover, .pet-breed-result:focus-visible { border-color: var(--primary); background: var(--surface-soft); outline: none; }
+.pet-breed-result.selected { border-color: var(--primary); background: var(--primary-light); }
+.pet-breed-result-copy { min-width: 0; display: grid; gap: 2px; }
+.pet-breed-result-copy strong { line-height: 1.2; font-size: .96rem; }
+.pet-breed-result-copy small { color: var(--muted); font-size: .72rem; font-style: normal; line-height: 1.2; }
+.pet-breed-result-check { flex: 0 0 auto; color: var(--primary-dark); font-size: 1.02rem; font-weight: 900; }
+.pet-breed-empty { min-height: 120px; display: grid; place-content: center; justify-items: center; gap: 6px; color: var(--muted); text-align: center; }
+body.breed-picker-open { overflow: hidden; }
+@media (max-width: 600px) {
+  #petForm .pet-profile-basics { grid-template-columns: 1fr 1fr; gap: 12px; }
+  #petForm .pet-profile-basics .pet-breed-row { grid-column: 1 / -1; }
+  .pet-breed-picker-backdrop { padding: 14px 10px; place-items: center; }
+  .pet-breed-picker { width: 100%; max-height: min(86dvh, 700px); border-radius: 22px; }
+  .pet-breed-picker-header { padding: 15px 15px 11px; }
+  .pet-breed-picker-header h2 { font-size: 1.08rem; }
+  .pet-breed-picker-search-wrap { margin: 11px 13px 8px; }
+  .pet-breed-picker-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 1px 13px 10px; }
+  .pet-breed-filter-chip { font-size: .84rem; padding-inline: 6px; }
+  .pet-breed-picker-results { padding: 1px 13px 15px; }
+  .pet-breed-quick-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pet-breed-quick-choice { font-size: .82rem; padding-inline: 5px; }
+}
+@media (max-width: 430px) {
+  .pet-breed-picker-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pet-breed-quick-grid { grid-template-columns: 1fr; }
+  .pet-breed-quick-choice { min-height: 36px; font-size: .9rem; }
+}
+@media (max-width: 390px) {
+  #petForm .pet-profile-basics { grid-template-columns: 1fr; }
+}
+
+
+/* 2.5.7 — sélecteur de races stable et champ de recherche épuré */
+.pet-breed-picker {
+  height: min(82dvh, 720px);
+  min-height: min(620px, calc(100dvh - 36px));
+}
+.pet-breed-picker-search-wrap {
+  grid-template-columns: auto minmax(0, 1fr) 32px;
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
+  box-shadow: none;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.pet-breed-picker-search-wrap:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+.pet-breed-picker-search-wrap input,
+.pet-breed-picker-search-wrap input:focus,
+.pet-breed-picker-search-wrap input:focus-visible {
+  appearance: none;
+  -webkit-appearance: none;
+  outline: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0;
+}
+.pet-breed-picker-search-wrap input::-webkit-search-decoration,
+.pet-breed-picker-search-wrap input::-webkit-search-cancel-button,
+.pet-breed-picker-search-wrap input::-webkit-search-results-button,
+.pet-breed-picker-search-wrap input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  display: none;
+}
+.pet-breed-picker-search-icon {
+  width: 18px;
+  display: grid;
+  place-items: center;
+}
+.pet-breed-picker-clear {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary-dark);
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+.pet-breed-picker-clear:hover,
+.pet-breed-picker-clear:focus-visible {
+  outline: none;
+  background: var(--primary-light);
+}
+.pet-breed-picker-clear[hidden] { display: none !important; }
+.pet-breed-picker-results {
+  scrollbar-gutter: auto;
+}
+@media (max-width: 600px) {
+  .pet-breed-picker {
+    height: min(86dvh, 700px);
+    min-height: min(610px, calc(100dvh - 28px));
+  }
+}
+@media (max-height: 680px) {
+  .pet-breed-picker { min-height: 0; height: calc(100dvh - 24px); }
+}
+
+/* Animoa 2.6.0 — intégration calendrier */
+.calendar-option-row {
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+  background: color-mix(in srgb, var(--primary) 7%, var(--surface));
+  border-radius: 16px;
+  padding: 14px 15px;
+  align-items: flex-start;
+  line-height: 1.4;
+}
+.calendar-permission-card { display: grid; gap: 15px; text-align: center; padding: 2px 0 4px; }
+.calendar-permission-icon { width: 64px; height: 64px; margin: 0 auto; display: grid; place-items: center; border-radius: 22px; font-size: 31px; background: color-mix(in srgb, var(--primary) 13%, var(--surface)); border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border)); }
+.calendar-permission-card h3 { margin: 0; font-size: 1.18rem; line-height: 1.3; }
+.calendar-permission-card > p { margin: 0; color: var(--muted); line-height: 1.55; }
+.calendar-privacy-note { display: grid; gap: 5px; text-align: left; padding: 13px 14px; border-radius: 15px; background: color-mix(in srgb, var(--primary) 7%, var(--surface)); border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border)); }
+.calendar-privacy-note strong { color: var(--text); }
+.calendar-privacy-note span { color: var(--muted); font-size: .9rem; line-height: 1.45; }
+.calendar-event-preview { display: grid; gap: 8px; text-align: left; padding: 15px; border-radius: 17px; background: var(--surface-soft); border: 1px solid var(--border); }
+.calendar-event-preview strong { font-size: .98rem; }
+.calendar-event-preview span { color: var(--muted); font-size: .91rem; }
+.calendar-permission-actions { display: grid; grid-template-columns: 1fr 1.35fr; gap: 10px; margin-top: 2px; }
+.calendar-permission-actions button { min-height: 46px; }
+.calendar-status-line { width: fit-content; margin: 4px 0 12px; padding: 7px 10px; border-radius: 999px; font-size: .84rem; font-weight: 750; color: var(--muted); background: var(--surface-soft); border: 1px solid var(--border); }
+.calendar-status-line.is-synced { color: var(--primary-dark); background: color-mix(in srgb, var(--primary) 10%, var(--surface)); border-color: color-mix(in srgb, var(--primary) 28%, var(--border)); }
+@media (max-width: 420px) {
+  .calendar-permission-actions { grid-template-columns: 1fr; }
+  .calendar-permission-actions .primary-button { order: -1; }
+}
