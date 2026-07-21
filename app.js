@@ -8,7 +8,7 @@
   const MEDIA_STORE_NAME = 'images';
   const MEDIA_PREFIX = 'media:';
   const CLOUD_PREFIX = 'cloud:';
-  const APP_VERSION = '2.6.0';
+  const APP_VERSION = '2.8.2';
   const SUPPORT_EMAIL = 'contact@animoa.fr';
   const PET_CATALOG = Object.freeze({"Chien":[{"name":"Affenpinscher","size":"small","lifespan":14,"fci":186},{"name":"Airedale Terrier","size":"medium","lifespan":12.5,"fci":7},{"name":"Akita","size":"large","lifespan":11,"fci":255},{"name":"Akita Americain","size":"large","lifespan":11,"fci":344},{"name":"American Foxhound","size":"medium","lifespan":12.5,"fci":303},{"name":"American Staffordshire Terrier","size":"medium","lifespan":12.5,"fci":286},{"name":"Anglo-Français de Petite Venerie","size":"medium","lifespan":12.5,"fci":325},{"name":"Ariegeois","size":"medium","lifespan":12.5,"fci":20},{"name":"Azawakh","size":"large","lifespan":11,"fci":307},{"name":"Bangkaew de Thailande","size":"medium","lifespan":12.5,"fci":358},{"name":"Barbet","size":"medium","lifespan":12.5,"fci":105},{"name":"Barbu Tcheque","size":"medium","lifespan":12.5,"fci":245},{"name":"Barzoi - Levrier de Chasse Russe","size":"large","lifespan":11,"fci":193},{"name":"Basenji","size":"medium","lifespan":12.5,"fci":43},{"name":"Basset Artesien Normand","size":"small","lifespan":14,"fci":34},{"name":"Basset Bleu de Gascogne","size":"small","lifespan":14,"fci":35},{"name":"Basset de Westphalie","size":"small","lifespan":14,"fci":100},{"name":"Basset des Alpes","size":"small","lifespan":14,"fci":254},{"name":"Basset Fauve de Bretagne","size":"small","lifespan":14,"fci":36},{"name":"Basset Hound","size":"small","lifespan":14,"fci":163},{"name":"Basset Suedois","size":"small","lifespan":14,"fci":130},{"name":"Beagle","size":"medium","lifespan":12.5,"fci":161},{"name":"Beagle-Harrier","size":"medium","lifespan":12.5,"fci":290},{"name":"Berger Allemand","size":"large","lifespan":11,"fci":166},{"name":"Berger Australien","size":"medium","lifespan":12.5,"fci":342},{"name":"Berger Bergamasque","size":"medium","lifespan":12.5,"fci":194},{"name":"Berger Blanc Suisse","size":"large","lifespan":11,"fci":347},{"name":"Berger d'Asie Centrale","size":"medium","lifespan":12.5,"fci":335},{"name":"Berger de Beauce","size":"medium","lifespan":12.5,"fci":44},{"name":"Berger de Bosnie-Herzegovine et de Croatie","size":"medium","lifespan":12.5,"fci":355},{"name":"Berger de Brie","size":"medium","lifespan":12.5,"fci":113},{"name":"Berger de La Maremme et des Abruzzes","size":"medium","lifespan":12.5,"fci":201},{"name":"Berger de Picardie - Berger Picard","size":"medium","lifespan":12.5,"fci":176},{"name":"Berger de Russie Meridionale","size":"giant","lifespan":9.5,"fci":326},{"name":"Berger du Caucase","size":"giant","lifespan":9.5,"fci":328},{"name":"Berger du Karst","size":"medium","lifespan":12.5,"fci":278},{"name":"Berger Finnois de Laponie","size":"medium","lifespan":12.5,"fci":284},{"name":"Berger Hollandais","size":"large","lifespan":11,"fci":223},{"name":"Berger Miniature Américain","size":"medium","lifespan":12.5,"fci":367},{"name":"Berger Polonais de Plaine","size":"medium","lifespan":12.5,"fci":251},{"name":"Bichon à Poil Frise","size":"small","lifespan":14,"fci":215},{"name":"Bichon Bolonais","size":"small","lifespan":14,"fci":196},{"name":"Bichon Havanais","size":"small","lifespan":14,"fci":250},{"name":"Bichon Maltais","size":"small","lifespan":14,"fci":65},{"name":"Billy","size":"medium","lifespan":12.5,"fci":25},{"name":"Border Collie","size":"medium","lifespan":12.5,"fci":297},{"name":"Border Terrier","size":"small","lifespan":14,"fci":10},{"name":"Bouledogue Français","size":"small","lifespan":14,"fci":101},{"name":"Bouvier Appenzellois","size":"medium","lifespan":12.5,"fci":46},{"name":"Bouvier Australien","size":"medium","lifespan":12.5,"fci":287},{"name":"Bouvier Australien Courte Queue","size":"medium","lifespan":12.5,"fci":351},{"name":"Bouvier Bernois","size":"large","lifespan":11,"fci":45},{"name":"Bouvier de L'Entlebuch","size":"medium","lifespan":12.5,"fci":47},{"name":"Bouvier des Ardennes","size":"medium","lifespan":12.5,"fci":171},{"name":"Bouvier des Flandres","size":"large","lifespan":11,"fci":191},{"name":"Boxer","size":"large","lifespan":11,"fci":144},{"name":"Brachet Allemand","size":"medium","lifespan":12.5,"fci":299},{"name":"Brachet de Styrie à Poil Dur","size":"medium","lifespan":12.5,"fci":62},{"name":"Brachet Noir & Feu (Quatre-Oeille)","size":"medium","lifespan":12.5,"fci":63},{"name":"Brachet Polonais","size":"medium","lifespan":12.5,"fci":52},{"name":"Brachet Tyrolien","size":"medium","lifespan":12.5,"fci":68},{"name":"Braque Allemand à Poil Court","size":"large","lifespan":11,"fci":119},{"name":"Braque d'Auvergne","size":"large","lifespan":11,"fci":180},{"name":"Braque de L'Ariège","size":"large","lifespan":11,"fci":177},{"name":"Braque de Weimar","size":"large","lifespan":11,"fci":99},{"name":"Braque du Bourbonnais","size":"large","lifespan":11,"fci":179},{"name":"Braque Français - Type Gascogne","size":"large","lifespan":11,"fci":133},{"name":"Braque Français - Type Pyrenees","size":"large","lifespan":11,"fci":134},{"name":"Braque Hongrois à Poil Court (Vizsla)","size":"large","lifespan":11,"fci":57},{"name":"Braque Hongrois à Poil Dur","size":"large","lifespan":11,"fci":239},{"name":"Braque Italien","size":"large","lifespan":11,"fci":202},{"name":"Braque Saint-Germain","size":"large","lifespan":11,"fci":115},{"name":"Braque Slovaque à Poil Dur","size":"large","lifespan":11,"fci":320},{"name":"Briquet Griffon Vendeen","size":"medium","lifespan":12.5,"fci":19},{"name":"Broholmer","size":"giant","lifespan":9.5,"fci":315},{"name":"Buhund Norvegien","size":"medium","lifespan":12.5,"fci":237},{"name":"Bull Terrier","size":"medium","lifespan":12.5,"fci":11},{"name":"Bull Terrier Miniature","size":"small","lifespan":14,"fci":359},{"name":"Bulldog","size":"medium","lifespan":12.5,"fci":149},{"name":"Bulldog Campeiro Brésilien","size":"medium","lifespan":12.5,"fci":374},{"name":"Bulldog Continental","size":"medium","lifespan":12.5,"fci":369},{"name":"Bullmastiff","size":"giant","lifespan":9.5,"fci":157},{"name":"Cairn Terrier","size":"small","lifespan":14,"fci":4},{"name":"Caniche","size":"medium","lifespan":12.5,"fci":172},{"name":"Carlin","size":"small","lifespan":14,"fci":253},{"name":"Cavalier King Charles Spaniel","size":"small","lifespan":14,"fci":136},{"name":"Chien à Loutre","size":"medium","lifespan":12.5,"fci":294},{"name":"Chien Berger Croate","size":"medium","lifespan":12.5,"fci":277},{"name":"Chien Chinois à Crête","size":"small","lifespan":14,"fci":288},{"name":"Chien Courant d'Estonie","size":"medium","lifespan":12.5,"fci":366},{"name":"Chien Courant d'Istrie à Poil Dur","size":"medium","lifespan":12.5,"fci":152},{"name":"Chien Courant d'Istrie à Poil Ras","size":"medium","lifespan":12.5,"fci":151},{"name":"Chien Courant de Bosnie à Poil Raide - Dit Barak","size":"medium","lifespan":12.5,"fci":155},{"name":"Chien Courant de Halden","size":"medium","lifespan":12.5,"fci":267},{"name":"Chien Courant de Hamilton","size":"medium","lifespan":12.5,"fci":132},{"name":"Chien Courant de Hygen","size":"medium","lifespan":12.5,"fci":266},{"name":"Chien Courant de La Vallee de La Save","size":"medium","lifespan":12.5,"fci":154},{"name":"Chien Courant de Montagne du Montenegro","size":"medium","lifespan":12.5,"fci":279},{"name":"Chien Courant de Schiller","size":"medium","lifespan":12.5,"fci":131},{"name":"Chien Courant de Transylvanie","size":"medium","lifespan":12.5,"fci":241},{"name":"Chien Courant des Apennins","size":"medium","lifespan":12.5,"fci":375},{"name":"Chien Courant des Tatras","size":"medium","lifespan":12.5,"fci":377},{"name":"Chien Courant du Småland","size":"medium","lifespan":12.5,"fci":129},{"name":"Chien Courant Espagnol","size":"medium","lifespan":12.5,"fci":204},{"name":"Chien Courant Finlandais","size":"medium","lifespan":12.5,"fci":51},{"name":"Chien Courant Grec","size":"medium","lifespan":12.5,"fci":214},{"name":"Chien Courant Italien  à Poil Dur","size":"medium","lifespan":12.5,"fci":198},{"name":"Chien Courant Italien à Poil Ras","size":"medium","lifespan":12.5,"fci":337},{"name":"Chien Courant Norvegien","size":"medium","lifespan":12.5,"fci":203},{"name":"Chien Courant Polonais","size":"medium","lifespan":12.5,"fci":354},{"name":"Chien Courant Serbe","size":"medium","lifespan":12.5,"fci":150},{"name":"Chien Courant Slovaque","size":"medium","lifespan":12.5,"fci":244},{"name":"Chien Courant Suisse","size":"medium","lifespan":12.5,"fci":59},{"name":"Chien Courant Tricolore Serbe","size":"medium","lifespan":12.5,"fci":229},{"name":"Chien d'Arret Allemand à Poil Dur","size":"medium","lifespan":12.5,"fci":98},{"name":"Chien d'Arret Allemand à Poil Raide","size":"medium","lifespan":12.5,"fci":232},{"name":"Chien d'Arret Danois Ancestral","size":"medium","lifespan":12.5,"fci":281},{"name":"Chien d'Arret Frison","size":"medium","lifespan":12.5,"fci":222},{"name":"Chien d'Arret Portugais","size":"medium","lifespan":12.5,"fci":187},{"name":"Chien d'Artois","size":"medium","lifespan":12.5,"fci":28},{"name":"Chien d'Eau Americain","size":"medium","lifespan":12.5,"fci":301},{"name":"Chien d'Eau Espagnol","size":"medium","lifespan":12.5,"fci":336},{"name":"Chien d'Eau Frison","size":"medium","lifespan":12.5,"fci":221},{"name":"Chien d'Eau Irlandais","size":"medium","lifespan":12.5,"fci":124},{"name":"Chien d'Eau Portugais","size":"medium","lifespan":12.5,"fci":37},{"name":"Chien d'Eau Romagnol","size":"medium","lifespan":12.5,"fci":298},{"name":"Chien d'Elan Norvegien Gris","size":"medium","lifespan":12.5,"fci":242},{"name":"Chien d'Elan Norvegien Noir","size":"medium","lifespan":12.5,"fci":268},{"name":"Chien d'Elan Suedois","size":"medium","lifespan":12.5,"fci":42},{"name":"Chien d'Ours de Carelie","size":"medium","lifespan":12.5,"fci":48},{"name":"Chien d'Oysel Allemand","size":"medium","lifespan":12.5,"fci":104},{"name":"Chien de Bali -  Kintamani","size":"medium","lifespan":12.5,"fci":362},{"name":"Chien de Berger Anglais Ancestral","size":"large","lifespan":11,"fci":16},{"name":"Chien de Berger Belge","size":"large","lifespan":11,"fci":15},{"name":"Chien de Berger Catalan","size":"medium","lifespan":12.5,"fci":87},{"name":"Chien de Berger de Bohême - Berger de Bohême","size":"medium","lifespan":12.5,"fci":364},{"name":"Chien de Berger de La Serra de Aires","size":"medium","lifespan":12.5,"fci":93},{"name":"Chien de Berger de Majorque","size":"medium","lifespan":12.5,"fci":321},{"name":"Chien de Berger des Pyrenees à Face Rase","size":"medium","lifespan":12.5,"fci":138},{"name":"Chien de Berger des Pyrenees à Poil Long","size":"medium","lifespan":12.5,"fci":141},{"name":"Chien de Berger des Shetland","size":"medium","lifespan":12.5,"fci":88},{"name":"Chien de Berger Islandais","size":"medium","lifespan":12.5,"fci":289},{"name":"Chien de Berger Kangal","size":"giant","lifespan":9.5,"fci":331},{"name":"Chien de Berger Macédonien Karaman","size":"giant","lifespan":9.5,"fci":378},{"name":"Chien de Berger Polonais des Tatras","size":"medium","lifespan":12.5,"fci":252},{"name":"Chien de Berger Roumain Corb","size":"medium","lifespan":12.5,"fci":373},{"name":"Chien de Berger Roumain de Bucovine","size":"giant","lifespan":9.5,"fci":357},{"name":"Chien de Berger Roumain de Mioritza","size":"medium","lifespan":12.5,"fci":349},{"name":"Chien de Berger Roumain des Carpathes","size":"medium","lifespan":12.5,"fci":350},{"name":"Chien de Berger Yougoslave de Charplanina","size":"medium","lifespan":12.5,"fci":41},{"name":"Chien de Canaan","size":"medium","lifespan":12.5,"fci":273},{"name":"Chien de Castro Laboreiro","size":"medium","lifespan":12.5,"fci":170},{"name":"Chien de Cour Italien","size":"medium","lifespan":12.5,"fci":343},{"name":"Chien de Ferme Dano-Suedois","size":"medium","lifespan":12.5,"fci":356},{"name":"Chien de Garenne des Canaries","size":"medium","lifespan":12.5,"fci":329},{"name":"Chien de Garenne Portugais","size":"medium","lifespan":12.5,"fci":94},{"name":"Chien de La Serra Da Estrela","size":"medium","lifespan":12.5,"fci":173},{"name":"Chien de Leonberg","size":"giant","lifespan":9.5,"fci":145},{"name":"Chien de Montagne de L'Atlas (Aïdi)","size":"medium","lifespan":12.5,"fci":247},{"name":"Chien de Montagne des Pyrenees","size":"giant","lifespan":9.5,"fci":137},{"name":"Chien de Perdrix de Drente","size":"medium","lifespan":12.5,"fci":224},{"name":"Chien de Recherche Au Sang de Hanovre","size":"medium","lifespan":12.5,"fci":213},{"name":"Chien de Rhodesie à Crete Dorsale","size":"medium","lifespan":12.5,"fci":146},{"name":"Chien de Rouge de Baviere","size":"medium","lifespan":12.5,"fci":217},{"name":"Chien de Saint Hubert","size":"medium","lifespan":12.5,"fci":84},{"name":"Chien de Taiwan","size":"medium","lifespan":12.5,"fci":348},{"name":"Chien de Terre-Neuve","size":"giant","lifespan":9.5,"fci":50},{"name":"Chien du Groenland","size":"medium","lifespan":12.5,"fci":274},{"name":"Chien du Mont Saint-Bernard - Saint-Bernard","size":"giant","lifespan":9.5,"fci":61},{"name":"Chien du Pharaon","size":"medium","lifespan":12.5,"fci":248},{"name":"Chien Esquimau Canadien","size":"medium","lifespan":12.5,"fci":211},{"name":"Chien Finnois de Laponie","size":"medium","lifespan":12.5,"fci":189},{"name":"Chien Loup Tchecoslovaque","size":"medium","lifespan":12.5,"fci":332},{"name":"Chien Noir & Feu Pour La Chasse Au Raton Laveur","size":"medium","lifespan":12.5,"fci":300},{"name":"Chien Norvegien de Macareux","size":"medium","lifespan":12.5,"fci":265},{"name":"Chien Nu du Perou","size":"medium","lifespan":12.5,"fci":310},{"name":"Chien Thailandais à Crete Dorsale","size":"medium","lifespan":12.5,"fci":338},{"name":"Chien-Loup de Saarloos","size":"large","lifespan":11,"fci":311},{"name":"Chihuahua","size":"small","lifespan":14,"fci":218},{"name":"Chow Chow","size":"medium","lifespan":12.5,"fci":205},{"name":"Cimarron Uruguayen","size":"medium","lifespan":12.5,"fci":353},{"name":"Cirneco de L'Etna","size":"medium","lifespan":12.5,"fci":199},{"name":"Clumber Spaniel","size":"medium","lifespan":12.5,"fci":109},{"name":"Cocker Américain","size":"medium","lifespan":12.5,"fci":167},{"name":"Cocker Spaniel Anglais","size":"medium","lifespan":12.5,"fci":5},{"name":"Collie à Poil Court","size":"medium","lifespan":12.5,"fci":296},{"name":"Collie à Poil Long","size":"medium","lifespan":12.5,"fci":156},{"name":"Collie Barbu","size":"medium","lifespan":12.5,"fci":271},{"name":"Coton de Tulear","size":"small","lifespan":14,"fci":283},{"name":"Dalmatien","size":"large","lifespan":11,"fci":153},{"name":"Dandie Dinmont Terrier","size":"small","lifespan":14,"fci":168},{"name":"Deerhound","size":"medium","lifespan":12.5,"fci":164},{"name":"Deutsch Langhaar","size":"medium","lifespan":12.5,"fci":117},{"name":"Dobermann","size":"large","lifespan":11,"fci":143},{"name":"Dogue Allemand","size":"giant","lifespan":9.5,"fci":235},{"name":"Dogue Argentin","size":"large","lifespan":11,"fci":292},{"name":"Dogue de Bordeaux","size":"giant","lifespan":9.5,"fci":116},{"name":"Dogue de Majorque","size":"medium","lifespan":12.5,"fci":249},{"name":"Dogue du Tibet","size":"large","lifespan":11,"fci":230},{"name":"English Foxhound","size":"medium","lifespan":12.5,"fci":159},{"name":"English Springer Spaniel","size":"medium","lifespan":12.5,"fci":125},{"name":"Epagneul Bleu de Picardie","size":"medium","lifespan":12.5,"fci":106},{"name":"Epagneul Breton","size":"medium","lifespan":12.5,"fci":95},{"name":"Epagneul de Pont-Audemer","size":"medium","lifespan":12.5,"fci":114},{"name":"Epagneul Français","size":"medium","lifespan":12.5,"fci":175},{"name":"Epagneul Japonais","size":"small","lifespan":14,"fci":206},{"name":"Epagneul King Charles","size":"small","lifespan":14,"fci":128},{"name":"Epagneul Nain Continental","size":"small","lifespan":14,"fci":77},{"name":"Epagneul Picard","size":"medium","lifespan":12.5,"fci":108},{"name":"Epagneul Tibetain","size":"small","lifespan":14,"fci":231},{"name":"Eurasier","size":"large","lifespan":11,"fci":291},{"name":"Field Spaniel","size":"medium","lifespan":12.5,"fci":123},{"name":"Fila Brasileiro","size":"giant","lifespan":9.5,"fci":225},{"name":"Fila de Saint Miguel","size":"medium","lifespan":12.5,"fci":340},{"name":"Fox Terrier à Poil Lisse","size":"small","lifespan":14,"fci":12},{"name":"Fox-Terrier à Poil Dur","size":"medium","lifespan":12.5,"fci":169},{"name":"Français Blanc et Noir","size":"medium","lifespan":12.5,"fci":220},{"name":"Français Blanc et Orange","size":"medium","lifespan":12.5,"fci":316},{"name":"Français Tricolore","size":"medium","lifespan":12.5,"fci":219},{"name":"Gascon Saintongeois","size":"medium","lifespan":12.5,"fci":21},{"name":"Golden Retriever","size":"large","lifespan":11,"fci":111},{"name":"Grand Anglo-Français Blanc & Orange","size":"medium","lifespan":12.5,"fci":324},{"name":"Grand Anglo-Français Blanc et Noir","size":"medium","lifespan":12.5,"fci":323},{"name":"Grand Anglo-Français Tricolore","size":"medium","lifespan":12.5,"fci":322},{"name":"Grand Basset Griffon Vendeen","size":"medium","lifespan":12.5,"fci":33},{"name":"Grand Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":22},{"name":"Grand Bouvier Suisse","size":"large","lifespan":11,"fci":58},{"name":"Grand Epagneul de Münster","size":"medium","lifespan":12.5,"fci":118},{"name":"Grand Griffon Vendeen","size":"medium","lifespan":12.5,"fci":282},{"name":"Griffon à Poil Dur Korthals","size":"medium","lifespan":12.5,"fci":107},{"name":"Griffon Belge","size":"small","lifespan":14,"fci":81},{"name":"Griffon Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":32},{"name":"Griffon Bruxellois","size":"small","lifespan":14,"fci":80},{"name":"Griffon Fauve de Bretagne","size":"medium","lifespan":12.5,"fci":66},{"name":"Griffon Nivernais","size":"medium","lifespan":12.5,"fci":17},{"name":"Harrier","size":"medium","lifespan":12.5,"fci":295},{"name":"Hokkaido","size":"medium","lifespan":12.5,"fci":261},{"name":"Hovawart","size":"large","lifespan":11,"fci":190},{"name":"Husky de Sibérie","size":"large","lifespan":11,"fci":270},{"name":"Jindo Coreen","size":"medium","lifespan":12.5,"fci":334},{"name":"Kai","size":"medium","lifespan":12.5,"fci":317},{"name":"Kazakh Tazy","size":"large","lifespan":11,"fci":372},{"name":"Kelpie Australien","size":"medium","lifespan":12.5,"fci":293},{"name":"Kishu","size":"medium","lifespan":12.5,"fci":318},{"name":"Komondor","size":"giant","lifespan":9.5,"fci":53},{"name":"Kromfohrländer","size":"medium","lifespan":12.5,"fci":192},{"name":"Kuvasz","size":"giant","lifespan":9.5,"fci":54},{"name":"Laïka de Iakoutie","size":"medium","lifespan":12.5,"fci":365},{"name":"Laika de Siberie Occidentale","size":"medium","lifespan":12.5,"fci":306},{"name":"Laika de Siberie Orientale","size":"medium","lifespan":12.5,"fci":305},{"name":"Laika Russo-Europeen","size":"medium","lifespan":12.5,"fci":304},{"name":"Lakeland Terrier","size":"small","lifespan":14,"fci":70},{"name":"Lancashire Heeler","size":"medium","lifespan":12.5,"fci":360},{"name":"Landseer (Type Continental-Europeen)","size":"giant","lifespan":9.5,"fci":226},{"name":"Lapphund Suedois","size":"medium","lifespan":12.5,"fci":135},{"name":"Levrette d'Italie","size":"medium","lifespan":12.5,"fci":200},{"name":"Levrier Afghan","size":"large","lifespan":11,"fci":228},{"name":"Levrier Anglais","size":"medium","lifespan":12.5,"fci":158},{"name":"Levrier Espagnol","size":"medium","lifespan":12.5,"fci":285},{"name":"Levrier Hongrois","size":"medium","lifespan":12.5,"fci":240},{"name":"Levrier Irlandais","size":"giant","lifespan":9.5,"fci":160},{"name":"Levrier Polonais","size":"medium","lifespan":12.5,"fci":333},{"name":"Lhasa Apso","size":"small","lifespan":14,"fci":227},{"name":"Malamute de L'Alaska","size":"large","lifespan":11,"fci":243},{"name":"Mastiff","size":"giant","lifespan":9.5,"fci":264},{"name":"Matin des Pyrenees","size":"giant","lifespan":9.5,"fci":92},{"name":"Matin Espagnol","size":"giant","lifespan":9.5,"fci":91},{"name":"Matin Napolitain","size":"giant","lifespan":9.5,"fci":197},{"name":"Mâtin Transmontano","size":"giant","lifespan":9.5,"fci":368},{"name":"Mudi","size":"medium","lifespan":12.5,"fci":238},{"name":"Nederlandse Kooikerhondje","size":"medium","lifespan":12.5,"fci":314},{"name":"Norfolk Terrier","size":"small","lifespan":14,"fci":272},{"name":"Norwich Terrier","size":"small","lifespan":14,"fci":72},{"name":"Pekinois","size":"small","lifespan":14,"fci":207},{"name":"Perdiguero de Burgos","size":"medium","lifespan":12.5,"fci":90},{"name":"Petit Basset Griffon Vendeen","size":"small","lifespan":14,"fci":67},{"name":"Petit Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":31},{"name":"Petit Brabançon","size":"small","lifespan":14,"fci":82},{"name":"Petit Chien Courant Suisse","size":"medium","lifespan":12.5,"fci":60},{"name":"Petit Chien Lion","size":"small","lifespan":14,"fci":233},{"name":"Petit Chien Russe","size":"medium","lifespan":12.5,"fci":352},{"name":"Petit Epagneul de Münster","size":"medium","lifespan":12.5,"fci":102},{"name":"Pinscher Allemand","size":"medium","lifespan":12.5,"fci":184},{"name":"Pinscher Autrichien","size":"medium","lifespan":12.5,"fci":64},{"name":"Pinscher Nain","size":"small","lifespan":14,"fci":185},{"name":"Pisteur Brésilien","size":"medium","lifespan":12.5,"fci":275},{"name":"Podenco d'Ibiza","size":"medium","lifespan":12.5,"fci":89},{"name":"Pointer Anglais","size":"large","lifespan":11,"fci":1},{"name":"Poitevin","size":"medium","lifespan":12.5,"fci":24},{"name":"Porcelaine","size":"medium","lifespan":12.5,"fci":30},{"name":"Presa Canario","size":"giant","lifespan":9.5,"fci":346},{"name":"Pudelpointer","size":"large","lifespan":11,"fci":216},{"name":"Puli","size":"medium","lifespan":12.5,"fci":55},{"name":"Pumi","size":"medium","lifespan":12.5,"fci":56},{"name":"Rafeiro de L'Alentejo","size":"medium","lifespan":12.5,"fci":96},{"name":"Ratier de Prague","size":"small","lifespan":14,"fci":363},{"name":"Ratier Valencien","size":"small","lifespan":14,"fci":370},{"name":"Retriever à Poil Boucle","size":"large","lifespan":11,"fci":110},{"name":"Retriever à Poil Plat","size":"large","lifespan":11,"fci":121},{"name":"Retriever de La Baie de Chesapeake","size":"large","lifespan":11,"fci":263},{"name":"Retriever de La Nouvelle Ecosse","size":"large","lifespan":11,"fci":312},{"name":"Retriever du Labrador","size":"large","lifespan":11,"fci":122},{"name":"Rottweiler","size":"large","lifespan":11,"fci":147},{"name":"Sabueso Fino Colombiano","size":"medium","lifespan":12.5,"fci":376},{"name":"Saluki","size":"large","lifespan":11,"fci":269},{"name":"Samoyede","size":"large","lifespan":11,"fci":212},{"name":"Schapendoes Neerlandais","size":"medium","lifespan":12.5,"fci":313},{"name":"Schipperke","size":"small","lifespan":14,"fci":83},{"name":"Schnauzer","size":"medium","lifespan":12.5,"fci":182},{"name":"Schnauzer Geant","size":"medium","lifespan":12.5,"fci":181},{"name":"Schnauzer Nain","size":"medium","lifespan":12.5,"fci":183},{"name":"Sealyham Terrier","size":"small","lifespan":14,"fci":74},{"name":"Segugio Maremmano","size":"medium","lifespan":12.5,"fci":361},{"name":"Setter Anglais","size":"large","lifespan":11,"fci":2},{"name":"Setter Gordon","size":"large","lifespan":11,"fci":6},{"name":"Setter Irlandais Rouge","size":"large","lifespan":11,"fci":120},{"name":"Setter Irlandais Rouge et Blanc","size":"large","lifespan":11,"fci":330},{"name":"Shar Pei","size":"medium","lifespan":12.5,"fci":309},{"name":"Shiba","size":"medium","lifespan":12.5,"fci":257},{"name":"Shih Tzu","size":"small","lifespan":14,"fci":208},{"name":"Shikoku","size":"medium","lifespan":12.5,"fci":319},{"name":"Skye Terrier","size":"small","lifespan":14,"fci":75},{"name":"Sloughi","size":"large","lifespan":11,"fci":188},{"name":"Smous des Pays-Bas","size":"medium","lifespan":12.5,"fci":308},{"name":"Spinone","size":"medium","lifespan":12.5,"fci":165},{"name":"Spitz Allemand","size":"medium","lifespan":12.5,"fci":97},{"name":"Spitz de Norrbotten","size":"medium","lifespan":12.5,"fci":276},{"name":"Spitz Finlandais","size":"medium","lifespan":12.5,"fci":49},{"name":"Spitz Japonais","size":"medium","lifespan":12.5,"fci":262},{"name":"Staffordshire Bull Terrier","size":"medium","lifespan":12.5,"fci":76},{"name":"Sussex Spaniel","size":"medium","lifespan":12.5,"fci":127},{"name":"Tchouvatch Slovaque","size":"medium","lifespan":12.5,"fci":142},{"name":"Teckel","size":"small","lifespan":14,"fci":148},{"name":"Terrier Andalou","size":"small","lifespan":14,"fci":371},{"name":"Terrier Anglais d'Agrement (Noir et Feu)","size":"medium","lifespan":12.5,"fci":13},{"name":"Terrier Australien","size":"small","lifespan":14,"fci":8},{"name":"Terrier Australien à Poil Soyeux","size":"small","lifespan":14,"fci":236},{"name":"Terrier Bresilien","size":"small","lifespan":14,"fci":341},{"name":"Terrier de Bedlington","size":"small","lifespan":14,"fci":9},{"name":"Terrier de Boston","size":"medium","lifespan":12.5,"fci":140},{"name":"Terrier de Chasse Allemand","size":"medium","lifespan":12.5,"fci":103},{"name":"Terrier de Manchester","size":"medium","lifespan":12.5,"fci":71},{"name":"Terrier du Reverend Russell","size":"medium","lifespan":12.5,"fci":339},{"name":"Terrier du Yorkshire","size":"small","lifespan":14,"fci":86},{"name":"Terrier Ecossais","size":"medium","lifespan":12.5,"fci":73},{"name":"Terrier Irlandais","size":"medium","lifespan":12.5,"fci":139},{"name":"Terrier Irlandais à Poil Doux","size":"medium","lifespan":12.5,"fci":40},{"name":"Terrier Irlandais Glen Of Imaal","size":"medium","lifespan":12.5,"fci":302},{"name":"Terrier Jack Russell","size":"small","lifespan":14,"fci":345},{"name":"Terrier Japonais","size":"small","lifespan":14,"fci":259},{"name":"Terrier Kerry Blue","size":"medium","lifespan":12.5,"fci":3},{"name":"Terrier Noir Russe","size":"medium","lifespan":12.5,"fci":327},{"name":"Terrier Tcheque","size":"medium","lifespan":12.5,"fci":246},{"name":"Terrier Tibetain","size":"small","lifespan":14,"fci":209},{"name":"Tosa","size":"giant","lifespan":9.5,"fci":260},{"name":"Vallhund Suedois - Spitz des Visigoths","size":"medium","lifespan":12.5,"fci":14},{"name":"Volpino Italien","size":"medium","lifespan":12.5,"fci":195},{"name":"Welsh Corgi (Cardigan)","size":"medium","lifespan":12.5,"fci":38},{"name":"Welsh Corgi (Pembroke)","size":"medium","lifespan":12.5,"fci":39},{"name":"Welsh Springer Spaniel","size":"medium","lifespan":12.5,"fci":126},{"name":"Welsh Terrier","size":"small","lifespan":14,"fci":78},{"name":"West Highland White Terrier","size":"small","lifespan":14,"fci":85},{"name":"Whippet","size":"medium","lifespan":12.5,"fci":162},{"name":"Xoloitzcuintle","size":"medium","lifespan":12.5,"fci":234},{"name":"Croisé","size":"medium","lifespan":12.5,"fci":null},{"name":"Race inconnue","size":"medium","lifespan":12.5,"fci":null},{"name":"Autre race","size":"medium","lifespan":12.5,"fci":null}],"Chat":[{"name":"Exotic Shorthair","lifespan":15},{"name":"Persan","lifespan":15},{"name":"Ragdoll","lifespan":15},{"name":"Sacré de Birmanie","lifespan":15},{"name":"Turc de Van","lifespan":15},{"name":"American Curl à poil long","lifespan":15},{"name":"American Curl à poil court","lifespan":15},{"name":"LaPerm à poil long","lifespan":15},{"name":"LaPerm à poil court","lifespan":15},{"name":"Maine Coon","lifespan":15},{"name":"Neva Masquerade","lifespan":15},{"name":"Chat des forêts norvégiennes","lifespan":15},{"name":"Sibérien","lifespan":15},{"name":"Angora turc","lifespan":15},{"name":"Bengal","lifespan":15},{"name":"British Longhair","lifespan":15},{"name":"Burmilla","lifespan":15},{"name":"British Shorthair","lifespan":15},{"name":"Burmese","lifespan":15},{"name":"Chartreux","lifespan":15},{"name":"Cymric","lifespan":15},{"name":"Européen","lifespan":15},{"name":"Bobtail des Kouriles à poil long","lifespan":15},{"name":"Bobtail des Kouriles à poil court","lifespan":15},{"name":"Korat","lifespan":15},{"name":"Manx","lifespan":15},{"name":"Mau égyptien","lifespan":15},{"name":"Ocicat","lifespan":15},{"name":"Singapura","lifespan":15},{"name":"Snowshoe","lifespan":15},{"name":"Sokoke","lifespan":15},{"name":"Selkirk Rex à poil long","lifespan":15},{"name":"Selkirk Rex à poil court","lifespan":15},{"name":"Abyssin","lifespan":15},{"name":"Balinais","lifespan":15},{"name":"Cornish Rex","lifespan":15},{"name":"Devon Rex","lifespan":15},{"name":"Donskoy","lifespan":15},{"name":"German Rex","lifespan":15},{"name":"Bobtail japonais à poil court","lifespan":15},{"name":"Oriental à poil long","lifespan":15},{"name":"Oriental à poil court","lifespan":15},{"name":"Peterbald","lifespan":15},{"name":"Bleu russe","lifespan":15},{"name":"Siamois","lifespan":15},{"name":"Somali","lifespan":15},{"name":"Sphynx","lifespan":15},{"name":"Thaï","lifespan":15},{"name":"Bombay","lifespan":15},{"name":"Lykoi","lifespan":15},{"name":"Chat domestique à poil long","lifespan":15},{"name":"Chat domestique à poil court","lifespan":15},{"name":"Croisé","lifespan":15},{"name":"Race inconnue","lifespan":15},{"name":"Autre race","lifespan":15}],"Lapin":[{"name":"Alaska","size":"medium","lifespan":9.5},{"name":"Angora français","size":"medium","lifespan":9.5},{"name":"Argenté anglais","size":"small","lifespan":10.5},{"name":"Argenté de Champagne","size":"medium","lifespan":9.5},{"name":"Argenté de Saint-Hubert","size":"medium","lifespan":9.5},{"name":"Barbu de Gand","size":"medium","lifespan":9.5},{"name":"Bélier anglais","size":"large","lifespan":8.5},{"name":"Bélier de Meissen","size":"large","lifespan":8.5},{"name":"Bélier français","size":"giant","lifespan":7.5},{"name":"Blanc de Hotot","size":"medium","lifespan":9.5},{"name":"Blanc de Vendée","size":"medium","lifespan":9.5},{"name":"Brun marron de Lorraine","size":"small","lifespan":10.5},{"name":"Californien","size":"medium","lifespan":9.5},{"name":"Chamois de Thuringe","size":"medium","lifespan":9.5},{"name":"Chinchilla","size":"small","lifespan":10.5},{"name":"Fauve de Bourgogne","size":"medium","lifespan":9.5},{"name":"Feh de Marbourg","size":"small","lifespan":10.5},{"name":"Géant blanc du Bouscat","size":"giant","lifespan":7.5},{"name":"Géant des Flandres","size":"giant","lifespan":7.5},{"name":"Géant papillon français","size":"giant","lifespan":7.5},{"name":"Grand argenté clair","size":"large","lifespan":8.5},{"name":"Grand chinchilla","size":"large","lifespan":8.5},{"name":"Grand russe","size":"large","lifespan":8.5},{"name":"Havane français","size":"small","lifespan":10.5},{"name":"Hermine","size":"dwarf","lifespan":11},{"name":"Hollandais","size":"small","lifespan":10.5},{"name":"Japonais","size":"medium","lifespan":9.5},{"name":"Lapin chèvre","size":"medium","lifespan":9.5},{"name":"Lièvre belge","size":"large","lifespan":8.5},{"name":"Lynx","size":"small","lifespan":10.5},{"name":"Nain angora","size":"dwarf","lifespan":11},{"name":"Nain bélier","size":"dwarf","lifespan":11},{"name":"Nain bélier angora","size":"dwarf","lifespan":11},{"name":"Nain bélier Rex","size":"dwarf","lifespan":11},{"name":"Nain bélier Satin","size":"dwarf","lifespan":11},{"name":"Nain bélier tête de lion","size":"dwarf","lifespan":11},{"name":"Nain de couleur","size":"dwarf","lifespan":11},{"name":"Nain lièvre","size":"dwarf","lifespan":11},{"name":"Nain papillon","size":"dwarf","lifespan":11},{"name":"Nain renard","size":"dwarf","lifespan":11},{"name":"Nain Rex","size":"dwarf","lifespan":11},{"name":"Nain Satin","size":"dwarf","lifespan":11},{"name":"Nain tête de lion","size":"dwarf","lifespan":11},{"name":"Néo-Zélandais","size":"large","lifespan":8.5},{"name":"Normand","size":"medium","lifespan":9.5},{"name":"Papillon anglais","size":"small","lifespan":10.5},{"name":"Papillon rhénan","size":"medium","lifespan":9.5},{"name":"Perl Feh","size":"small","lifespan":10.5},{"name":"Petit bélier","size":"small","lifespan":10.5},{"name":"Petit Rex","size":"small","lifespan":10.5},{"name":"Renard suisse","size":"medium","lifespan":9.5},{"name":"Rex","size":"medium","lifespan":9.5},{"name":"Russe","size":"small","lifespan":10.5},{"name":"Sablé des Vosges","size":"small","lifespan":10.5},{"name":"Satin","size":"medium","lifespan":9.5},{"name":"Vienne bleu","size":"large","lifespan":8.5},{"name":"Croisé","size":"medium","lifespan":9.5},{"name":"Race inconnue","size":"medium","lifespan":9.5},{"name":"Autre race","size":"medium","lifespan":9.5}],"Oiseau":[{"name":"Amazone à ailes orange","scientific":"Amazona amazonica","lifespan":45,"maturityMonths":48},{"name":"Amazone à front bleu","scientific":"Amazona aestiva","lifespan":50,"maturityMonths":48},{"name":"Amazone à front jaune","scientific":"Amazona ochrocephala","lifespan":50,"maturityMonths":48},{"name":"Ara bleu et jaune","scientific":"Ara ararauna","lifespan":55,"maturityMonths":60},{"name":"Ara chloroptère","scientific":"Ara chloropterus","lifespan":55,"maturityMonths":60},{"name":"Ara hyacinthe","scientific":"Anodorhynchus hyacinthinus","lifespan":55,"maturityMonths":72},{"name":"Ara militaire","scientific":"Ara militaris","lifespan":50,"maturityMonths":60},{"name":"Ara noble","scientific":"Diopsittaca nobilis","lifespan":30,"maturityMonths":30},{"name":"Ara rouge","scientific":"Ara macao","lifespan":55,"maturityMonths":60},{"name":"Bengali rouge","scientific":"Amandava amandava","lifespan":8,"maturityMonths":7},{"name":"Cacatoès à huppe jaune","scientific":"Cacatua galerita","lifespan":55,"maturityMonths":60},{"name":"Cacatoès blanc","scientific":"Cacatua alba","lifespan":55,"maturityMonths":60},{"name":"Cacatoès de Goffin","scientific":"Cacatua goffiniana","lifespan":40,"maturityMonths":36},{"name":"Cacatoès de Leadbeater","scientific":"Lophochroa leadbeateri","lifespan":50,"maturityMonths":60},{"name":"Cacatoès rosalbin","scientific":"Eolophus roseicapilla","lifespan":45,"maturityMonths":48},{"name":"Caille du Japon","scientific":"Coturnix japonica","lifespan":5,"maturityMonths":2},{"name":"Caïque à tête noire","scientific":"Pionites melanocephalus","lifespan":30,"maturityMonths":30},{"name":"Calopsitte élégante","scientific":"Nymphicus hollandicus","lifespan":18,"maturityMonths":12},{"name":"Canari domestique","scientific":"Serinus canaria domestica","lifespan":12,"maturityMonths":10},{"name":"Colombe diamant","scientific":"Geopelia cuneata","lifespan":12,"maturityMonths":8},{"name":"Conure à joues vertes","scientific":"Pyrrhura molinae","lifespan":25,"maturityMonths":18},{"name":"Conure jandaya","scientific":"Aratinga jandaya","lifespan":30,"maturityMonths":24},{"name":"Conure mitrée","scientific":"Psittacara mitratus","lifespan":30,"maturityMonths":30},{"name":"Conure nanday","scientific":"Aratinga nenday","lifespan":30,"maturityMonths":24},{"name":"Conure soleil","scientific":"Aratinga solstitialis","lifespan":30,"maturityMonths":24},{"name":"Cordon-bleu à joues rouges","scientific":"Uraeginthus bengalus","lifespan":8,"maturityMonths":7},{"name":"Diamant de Gould","scientific":"Erythrura gouldiae","lifespan":8,"maturityMonths":8},{"name":"Diamant mandarin","scientific":"Taeniopygia guttata","lifespan":8,"maturityMonths":6},{"name":"Inséparable de Fischer","scientific":"Agapornis fischeri","lifespan":18,"maturityMonths":10},{"name":"Inséparable masqué","scientific":"Agapornis personatus","lifespan":18,"maturityMonths":10},{"name":"Inséparable rosegorge","scientific":"Agapornis roseicollis","lifespan":18,"maturityMonths":10},{"name":"Lori rouge","scientific":"Eos bornea","lifespan":25,"maturityMonths":24},{"name":"Loriquet arc-en-ciel","scientific":"Trichoglossus moluccanus","lifespan":20,"maturityMonths":24},{"name":"Moineau du Japon","scientific":"Lonchura striata domestica","lifespan":8,"maturityMonths":7},{"name":"Padda de Java","scientific":"Lonchura oryzivora","lifespan":10,"maturityMonths":8},{"name":"Perroquet de Jardine","scientific":"Poicephalus gulielmi","lifespan":30,"maturityMonths":30},{"name":"Perroquet de Meyer","scientific":"Poicephalus meyeri","lifespan":25,"maturityMonths":24},{"name":"Perroquet Eclectus","scientific":"Eclectus roratus","lifespan":40,"maturityMonths":36},{"name":"Perroquet gris du Gabon","scientific":"Psittacus erithacus","lifespan":45,"maturityMonths":48},{"name":"Perruche à collier","scientific":"Psittacula krameri","lifespan":25,"maturityMonths":24},{"name":"Perruche à croupion rouge","scientific":"Psephotus haematonotus","lifespan":15,"maturityMonths":12},{"name":"Perruche à moustaches","scientific":"Psittacula alexandri","lifespan":25,"maturityMonths":24},{"name":"Perruche à tête prune","scientific":"Psittacula cyanocephala","lifespan":20,"maturityMonths":24},{"name":"Perruche alexandre","scientific":"Psittacula eupatria","lifespan":30,"maturityMonths":30},{"name":"Perruche Catherine","scientific":"Bolborhynchus lineola","lifespan":15,"maturityMonths":12},{"name":"Perruche de Bourke","scientific":"Neopsephotus bourkii","lifespan":12,"maturityMonths":10},{"name":"Perruche de Derby","scientific":"Psittacula derbiana","lifespan":25,"maturityMonths":30},{"name":"Perruche de Pennant","scientific":"Platycercus elegans","lifespan":20,"maturityMonths":18},{"name":"Perruche moine","scientific":"Myiopsitta monachus","lifespan":25,"maturityMonths":18},{"name":"Perruche omnicolore","scientific":"Platycercus eximius","lifespan":18,"maturityMonths":18},{"name":"Perruche ondulée","scientific":"Melopsittacus undulatus","lifespan":12,"maturityMonths":8},{"name":"Perruche splendide","scientific":"Neophema splendida","lifespan":12,"maturityMonths":10},{"name":"Perruche turquoisine","scientific":"Neophema pulchella","lifespan":12,"maturityMonths":10},{"name":"Pigeon domestique","scientific":"Columba livia domestica","lifespan":15,"maturityMonths":8},{"name":"Pionus à tête bleue","scientific":"Pionus menstruus","lifespan":30,"maturityMonths":30},{"name":"Poule domestique","scientific":"Gallus gallus domesticus","lifespan":10,"maturityMonths":6},{"name":"Toui céleste","scientific":"Forpus coelestis","lifespan":18,"maturityMonths":12},{"name":"Toui du Mexique","scientific":"Forpus cyanopygius","lifespan":18,"maturityMonths":12},{"name":"Tourterelle rieuse","scientific":"Streptopelia risoria","lifespan":15,"maturityMonths":8},{"name":"Youyou du Sénégal","scientific":"Poicephalus senegalus","lifespan":25,"maturityMonths":24},{"name":"Espèce inconnue","scientific":"","lifespan":15,"maturityMonths":12},{"name":"Autre espèce","scientific":"","lifespan":15,"maturityMonths":12}]});
   const BREED_PICKER_POPULAR = Object.freeze({
@@ -23,12 +23,12 @@
   const RELEASE_SEEN_KEY = `animoa_release_seen_${APP_VERSION}`;
   const RELEASE_NOTES = Object.freeze({
     title: 'Animoa a été mis à jour',
-    subtitle: 'Vos rendez-vous peuvent maintenant rejoindre votre calendrier.',
+    subtitle: 'Vos rendez-vous peuvent maintenant se synchroniser automatiquement.',
     items: [
-      'Animoa propose d’ajouter les rendez-vous à votre calendrier après leur enregistrement.',
-      'Le nom de l’animal, la date, l’heure, le professionnel, le lieu et les notes sont repris automatiquement.',
-      'Animoa ne consulte pas vos rendez-vous personnels : seul un événement Animoa est créé à votre demande.',
-      'Un badge indique les rendez-vous déjà préparés pour votre calendrier.'
+      'Un assistant de bienvenue explique clairement les accès utiles dès la première connexion.',
+      'Google Agenda peut créer un calendrier Animoa séparé, sans consulter vos événements personnels.',
+      'Les rendez-vous ajoutés, modifiés ou supprimés dans Animoa sont synchronisés automatiquement lorsque la connexion est active.',
+      'Les titres, descriptions, lieux et rappels du calendrier ont été entièrement améliorés.'
     ]
   });
 
@@ -126,6 +126,12 @@
   const previewObjectUrls = new WeakMap();
   let photoViewerScale = 1;
   let settingsPreviewActive = false;
+  let onboardingStep = 0;
+  let onboardingOverlay = null;
+  let googleCalendarTokenClient = null;
+  let googleCalendarAccessToken = '';
+  let googleCalendarTokenExpiresAt = 0;
+  let googleCalendarRequestPending = null;
 
   const mainContent = document.getElementById('mainContent');
   const mobileNav = document.getElementById('mobileNav');
@@ -648,13 +654,20 @@
   }
 
   function normalizeSettings(value = {}) {
+    const calendarProvider = value.calendarProvider === 'google' ? 'google' : '';
     return {
       currency: SUPPORTED_CURRENCIES.has(value.currency) ? value.currency : 'EUR',
       weightUnit: SUPPORTED_WEIGHT_UNITS.has(value.weightUnit) ? value.weightUnit : 'kg',
       language: SUPPORTED_LANGUAGES.has(value.language) ? value.language : (window.AnimoaI18n?.getLanguage?.() || 'fr'),
       theme: SUPPORTED_THEMES.has(value.theme) ? value.theme : 'system',
       palette: SUPPORTED_PALETTES.has(value.palette) ? value.palette : 'animoa',
-      customColors: normalizeCustomColors(value.customColors)
+      customColors: normalizeCustomColors(value.customColors),
+      onboardingCompleted: Boolean(value.onboardingCompleted),
+      calendarProvider,
+      calendarConnected: Boolean(calendarProvider === 'google' && value.calendarConnected),
+      calendarId: calendarProvider === 'google' ? String(value.calendarId || '') : '',
+      calendarAutoSync: value.calendarAutoSync !== false,
+      calendarConnectedAt: calendarProvider === 'google' ? String(value.calendarConnectedAt || '') : ''
     };
   }
 
@@ -1389,7 +1402,7 @@
       <input id="${id}" class="date-text-input" name="${name}" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="JJ/MM/AAAA" value="${escapeHtml(frenchValue)}" ${required ? 'required' : ''} ${helpId ? `aria-describedby="${helpId}"` : ''} data-min-date="${escapeHtml(min)}" data-max-date="${escapeHtml(max)}" />
       <label class="date-picker-button" title="Ouvrir le calendrier" aria-label="Ouvrir le calendrier pour ce champ">
         <svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 11h18"></path></svg>
-        <input id="${id}Picker" class="date-picker-native" type="date" value="${escapeHtml(value)}" ${min ? `min="${escapeHtml(min)}"` : ''} ${max ? `max="${escapeHtml(max)}"` : ''} tabindex="-1" aria-hidden="true" />
+        <input id="${id}Picker" class="date-picker-native" type="date" value="${escapeHtml(value)}" ${min ? `min="${escapeHtml(min)}"` : ''} ${max ? `max="${escapeHtml(max)}"` : ''} tabindex="-1" aria-label="Sélectionner une date" />
       </label>
     </div>${help ? `<span id="${helpId}" class="form-help">${help}</span>` : ''}`;
   }
@@ -2587,6 +2600,113 @@
     applyVisualPreferences(preview);
   }
 
+  function calendarSettingsCardHtml() {
+    const configured = googleCalendarConfigured();
+    const connected = googleCalendarConnected();
+    const statusLabel = connected ? 'Google Agenda connecté' : configured ? 'Non connecté' : 'Configuration technique requise';
+    const statusClass = connected ? 'is-connected' : configured ? '' : 'needs-config';
+    return `<article class="card card-pad settings-section calendar-settings-card">
+      <div class="calendar-settings-heading">
+        <div class="calendar-settings-icon" aria-hidden="true">📅</div>
+        <div><p class="eyebrow">Calendrier</p><h2>Rendez-vous automatiques</h2><p>Google Agenda utilise un calendrier séparé nommé « Animoa ». Vos événements personnels ne sont ni consultés ni modifiés.</p></div>
+        <span class="calendar-connection-status ${statusClass}">${statusLabel}</span>
+      </div>
+      ${connected ? `
+        <label class="settings-toggle-row"><span><strong>Synchronisation automatique</strong><small>Ajouter, modifier et supprimer les rendez-vous Animoa dans Google Agenda.</small></span><input type="checkbox" id="calendarAutoSyncSetting" ${settings.calendarAutoSync ? 'checked' : ''} data-action="toggle-calendar-auto-sync" /></label>
+        <div class="calendar-settings-actions"><button type="button" class="secondary-button" data-action="reconnect-google-calendar">Reconnecter</button><button type="button" class="text-button danger-text-button" data-action="request-disconnect-google-calendar">Désactiver la synchronisation</button></div>
+        <p class="calendar-settings-footnote">La désactivation n’efface pas les événements déjà présents dans votre agenda.</p>` : `
+        <div class="calendar-settings-explanation">
+          <span aria-hidden="true">✓</span><p><strong>Ajout direct après l’enregistrement</strong><br />Aucun fichier à ouvrir lorsque la connexion est active.</p>
+          <span aria-hidden="true">✓</span><p><strong>Mises à jour automatiques</strong><br />La date, l’heure, le lieu et les notes restent cohérents.</p>
+          <span aria-hidden="true">✓</span><p><strong>Accès limité</strong><br />Animoa gère uniquement le calendrier qu’il a créé.</p>
+        </div>
+        ${configured
+          ? '<button type="button" class="primary-button" data-action="connect-google-calendar">Connecter Google Agenda</button>'
+          : '<div class="calendar-setup-warning">Le client Google Agenda n’est pas encore renseigné dans <strong>supabase-config.js</strong>. Le fichier calendrier manuel reste disponible en attendant.</div>'}`}
+    </article>`;
+  }
+
+  function ensureOnboardingOverlay() {
+    if (onboardingOverlay) return onboardingOverlay;
+    onboardingOverlay = document.createElement('div');
+    onboardingOverlay.id = 'animoaOnboarding';
+    onboardingOverlay.className = 'onboarding-overlay';
+    onboardingOverlay.hidden = true;
+    onboardingOverlay.setAttribute('role', 'dialog');
+    onboardingOverlay.setAttribute('aria-modal', 'true');
+    onboardingOverlay.setAttribute('aria-labelledby', 'onboardingTitle');
+    document.body.appendChild(onboardingOverlay);
+    return onboardingOverlay;
+  }
+
+  function onboardingProgressHtml() {
+    return `<div class="onboarding-progress" aria-label="Étape ${onboardingStep + 1} sur 4">${[0, 1, 2, 3].map((step) => `<span class="${step <= onboardingStep ? 'active' : ''}" aria-hidden="true"></span>`).join('')}</div>`;
+  }
+
+  function renderOnboarding() {
+    if (!onboardingOverlay || onboardingOverlay.hidden) return;
+    const connected = googleCalendarConnected();
+    const configured = googleCalendarConfigured();
+    const steps = [
+      `<div class="onboarding-hero">
+        <img src="assets/animoa-logo-official.png" alt="Animoa" width="1200" height="361" />
+        <span class="onboarding-icon" aria-hidden="true">🐾</span>
+        <p class="eyebrow">Bienvenue</p>
+        <h1 id="onboardingTitle">Préparons Animoa ensemble</h1>
+        <p>Quelques explications simples permettent d’activer uniquement les accès vraiment utiles. Chaque choix pourra être modifié plus tard dans les paramètres.</p>
+      </div>
+      <div class="onboarding-actions"><button type="button" class="primary-button" data-action="onboarding-next">Commencer</button><button type="button" class="text-button" data-action="onboarding-skip">Configurer plus tard</button></div>`,
+
+      `<div class="onboarding-step-heading"><span class="onboarding-icon" aria-hidden="true">📅</span><p class="eyebrow">Rendez-vous</p><h1 id="onboardingTitle">Connecter votre calendrier</h1><p>Animoa peut ajouter directement les rendez-vous de vos animaux, puis les mettre à jour s’ils changent.</p></div>
+      <div class="onboarding-permission-card ${connected ? 'is-approved' : ''}">
+        <div><strong>${connected ? 'Google Agenda est connecté' : 'Pourquoi cette autorisation ?'}</strong><span>${connected ? 'Les prochains rendez-vous seront synchronisés automatiquement.' : 'Elle permet de créer un calendrier séparé « Animoa » et de gérer uniquement les événements enregistrés par l’application.'}</span></div>
+        <ul><li>Vos rendez-vous personnels ne sont pas lus.</li><li>Votre agenda principal n’est pas modifié.</li><li>Vous pouvez désactiver la synchronisation à tout moment.</li></ul>
+        ${connected
+          ? '<div class="onboarding-approved-label">✓ Autorisation accordée</div>'
+          : configured
+            ? '<button type="button" class="primary-button" data-action="connect-google-calendar-onboarding">Autoriser Google Agenda</button>'
+            : '<div class="calendar-setup-warning">La connexion automatique doit encore être activée dans la configuration Google d’Animoa. Vous pouvez continuer et l’activer plus tard.</div>'}
+      </div>
+      <div class="onboarding-actions split"><button type="button" class="secondary-button" data-action="onboarding-back">Retour</button><button type="button" class="primary-button" data-action="onboarding-next">${connected ? 'Continuer' : 'Plus tard'}</button></div>`,
+
+      `<div class="onboarding-step-heading"><span class="onboarding-icon" aria-hidden="true">🛡️</span><p class="eyebrow">Vie privée</p><h1 id="onboardingTitle">Aucune permission inutile</h1><p>Animoa demande les accès au moment où ils deviennent utiles, avec une explication claire.</p></div>
+      <div class="onboarding-access-list">
+        <article><span aria-hidden="true">🔔</span><div><strong>Rappels</strong><p>Les rappels dans Animoa et les e-mails fonctionnent sans lire les notifications de votre téléphone.</p></div><b>Aucun accès</b></article>
+        <article><span aria-hidden="true">📷</span><div><strong>Photos et documents</strong><p>Le sélecteur de fichiers s’ouvre uniquement lorsque vous choisissez d’ajouter une photo ou un document.</p></div><b>À votre demande</b></article>
+        <article><span aria-hidden="true">📍</span><div><strong>Itinéraires</strong><p>Animoa utilise l’adresse saisie pour ouvrir votre application de navigation. Votre position n’est pas enregistrée.</p></div><b>Sans suivi</b></article>
+      </div>
+      <div class="onboarding-actions split"><button type="button" class="secondary-button" data-action="onboarding-back">Retour</button><button type="button" class="primary-button" data-action="onboarding-next">Continuer</button></div>`,
+
+      `<div class="onboarding-hero onboarding-finish">
+        <span class="onboarding-icon" aria-hidden="true">✓</span>
+        <p class="eyebrow">Tout est prêt</p>
+        <h1 id="onboardingTitle">Bienvenue dans Animoa</h1>
+        <p>Vous pouvez maintenant organiser la santé et les souvenirs de vos animaux. Les autorisations restent accessibles dans les paramètres.</p>
+        <div class="onboarding-summary"><span>📅</span><strong>Calendrier</strong><em>${connected ? 'Connecté' : 'À connecter plus tard'}</em><span>🛡️</span><strong>Vie privée</strong><em>Accès limités</em></div>
+      </div>
+      <div class="onboarding-actions"><button type="button" class="primary-button" data-action="complete-onboarding">Ouvrir Animoa</button></div>`
+    ];
+    onboardingOverlay.innerHTML = `<section class="onboarding-card">${onboardingProgressHtml()}<div class="onboarding-content">${steps[onboardingStep]}</div></section>`;
+  }
+
+  function openOnboarding(step = 0) {
+    const overlay = ensureOnboardingOverlay();
+    onboardingStep = Math.max(0, Math.min(3, Number(step) || 0));
+    overlay.hidden = false;
+    document.body.classList.add('onboarding-open');
+    renderOnboarding();
+  }
+
+  function closeOnboarding({ completed = false } = {}) {
+    if (completed) {
+      settings = normalizeSettings({ ...settings, onboardingCompleted: true });
+      saveSettings();
+    }
+    if (onboardingOverlay) onboardingOverlay.hidden = true;
+    document.body.classList.remove('onboarding-open');
+    if (completed) window.setTimeout(showReleaseNotesIfNeeded, 650);
+  }
+
   function renderSettings() {
     const user = window.AnimoaAuth?.getUser?.();
     const cloudEnabled = window.AnimoaCloud?.available?.();
@@ -2611,6 +2731,7 @@
             <div class="button-row"><button type="button" class="primary-button" data-action="save-settings">Enregistrer les préférences</button></div>
           </div>
         </article>
+        ${calendarSettingsCardHtml()}
         <article class="card card-pad account-card">
           <img src="assets/animoa-icon-official.png" alt="" class="account-logo" width="331" height="378" decoding="async" />
           <div class="account-copy"><p class="eyebrow">Compte</p><h2>${escapeHtml(user?.email || (window.AnimoaAuth?.isLocalPreview?.() ? 'Mode local de prévisualisation' : 'Animoa'))}</h2><p>${cloudEnabled ? 'Les données de ce compte sont synchronisées avec Supabase.' : 'Les données restent uniquement dans ce navigateur.'}</p><span class="account-sync ${syncState}">${cloudEnabled ? 'Synchronisation sécurisée activée' : 'Mode local de prévisualisation'}</span></div>
@@ -2687,10 +2808,11 @@
       <div class="page-stack legal-page">
         <div class="page-header"><div><p class="eyebrow">Informations</p><h1>Politique de confidentialité</h1><p>Comment Animoa utilise et protège les données du compte.</p></div></div>
         <article class="card card-pad legal-card">
-          <p class="legal-updated">Mise à jour : 19 juillet 2026 · Version bêta</p>
+          <p class="legal-updated">Mise à jour : 21 juillet 2026 · Version bêta</p>
           <h2>Données utilisées</h2><p>Animoa enregistre les informations nécessaires au compte et au carnet : adresse e-mail, profils des animaux, rendez-vous, informations de santé, poids, dépenses, souvenirs, photos, documents et préférences.</p>
           <h2>Pourquoi ces données sont utilisées</h2><p>Elles servent uniquement à fournir le carnet Animoa, synchroniser les informations, envoyer les rappels demandés, sécuriser le compte et répondre aux messages adressés au support.</p>
-          <h2>Services techniques</h2><p>Le fonctionnement peut s’appuyer sur Supabase pour le compte et les données, Vercel pour l’hébergement de l’application, Brevo pour les e-mails automatiques et Infomaniak pour la boîte de contact.</p>
+          <h2>Connexion au calendrier</h2><p>Lorsque vous l’autorisez, Animoa crée un calendrier Google séparé nommé « Animoa » et utilise l’accès uniquement pour créer, mettre à jour ou supprimer les événements enregistrés depuis l’application. Animoa ne consulte pas le contenu de vos calendriers personnels. Le jeton d’accès Google reste temporaire dans la session du navigateur et n’est pas enregistré dans le carnet Animoa.</p>
+          <h2>Services techniques</h2><p>Le fonctionnement peut s’appuyer sur Supabase pour le compte et les données, Vercel pour l’hébergement de l’application, Google Agenda pour la synchronisation facultative des rendez-vous, Brevo pour les e-mails automatiques et Infomaniak pour la boîte de contact.</p>
           <h2>Conservation et suppression</h2><p>Les données sont conservées tant que le compte est utilisé. Elles peuvent être effacées depuis les paramètres ou sur demande. La suppression d’un compte et de ses données peut être demandée à <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>.</p>
           <h2>Vos droits</h2><p>Vous pouvez demander l’accès, la correction, l’export ou la suppression des données associées à votre compte en écrivant à l’adresse de contact. Animoa ne vend pas les données personnelles à des annonceurs.</p>
           <div class="legal-contact-box"><strong>Contact confidentialité</strong><a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a></div>
@@ -2707,7 +2829,7 @@
           <h2>Service</h2><p><strong>Animoa</strong> est un carnet de vie numérique destiné au suivi quotidien des animaux. Baseline : « Toute sa vie, près de vous. »</p>
           <h2>Éditeur et contact</h2><p>Le service est actuellement proposé en bêta privée. Contact général : <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>. Les informations complètes d’identification de l’éditeur seront publiées avant l’ouverture commerciale au public.</p>
           <h2>Hébergement technique</h2><p>L’interface de l’application est hébergée via Vercel. Les comptes, données et fichiers peuvent être hébergés via Supabase.</p>
-          <h2>Responsabilité</h2><p>Animoa aide à organiser les informations d’un animal, mais ne remplace jamais l’avis, le diagnostic ou les soins d’un vétérinaire. En cas d’urgence, contacte directement un professionnel.</p>
+          <h2>Responsabilité</h2><p>Animoa aide à organiser les informations d’un animal, mais ne remplace jamais l’avis, le diagnostic ou les soins d’un vétérinaire. En cas d’urgence, contactez directement un professionnel.</p>
           <h2>Propriété</h2><p>Le nom, le logo, l’interface et les contenus propres à Animoa ne doivent pas être reproduits sans autorisation.</p>
           <div class="legal-contact-box"><strong>Version de l’application</strong><span>${APP_VERSION}</span></div>
         </article>
@@ -2806,6 +2928,7 @@
   }
 
   function openModal(title, body, eyebrow = 'Ajouter', options = {}) {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     clearTimeout(modalCloseTimer);
     modalCloseTimer = null;
     // Règle globale Animoa : toutes les fenêtres s'ouvrent au centre de l'écran.
@@ -2831,6 +2954,7 @@
   }
 
   function closeModal() {
+    if (modal.contains(document.activeElement) && document.activeElement instanceof HTMLElement) document.activeElement.blur();
     modalBody?.querySelectorAll('.file-picker-input').forEach(releaseFilePreviewUrl);
     clearTimeout(modalCloseTimer);
     modal.classList.remove('open');
@@ -2854,7 +2978,7 @@
 
   function showReleaseNotesIfNeeded() {
     const appShell = document.querySelector('.app-shell');
-    if (!appShell || appShell.hidden || modal.classList.contains('open')) return;
+    if (!appShell || appShell.hidden || modal.classList.contains('open') || (onboardingOverlay && !onboardingOverlay.hidden)) return;
     try {
       if (localStorage.getItem(RELEASE_SEEN_KEY) === '1') return;
       localStorage.setItem(RELEASE_SEEN_KEY, '1');
@@ -2901,6 +3025,14 @@
     return value === expected ? 'selected' : '';
   }
 
+  function healthSuggestionOptions(field) {
+    const values = [...new Set(data.health
+      .map((item) => String(item?.[field] || '').trim())
+      .filter(Boolean))]
+      .sort((first, second) => first.localeCompare(second, appLocale(), { sensitivity: 'base' }));
+    return values.map((value) => `<option value="${escapeHtml(value)}"></option>`).join('');
+  }
+
   function healthForm(item = null, initialType = 'Vaccin') {
     const editing = Boolean(item);
     const status = item?.status || 'planned';
@@ -2918,12 +3050,12 @@
       <div class="form-row"><label for="healthTitle">Titre</label><input id="healthTitle" name="title" required value="${escapeHtml(item?.title || '')}" placeholder="Ex. Rappel annuel" /></div>
       <div class="form-columns health-schedule-fields"><div class="form-row health-date-field"><label for="healthDate">Date</label>${dateInputControl({ id: 'healthDate', name: 'date', value: date, min, max, required: true, describedBy: 'healthDateHelp' })}<span id="healthDateHelp" class="form-help" hidden></span></div><div class="form-row health-status-field"><label for="healthStatus">État</label><select id="healthStatus" name="status"><option value="planned" ${optionSelected(status, 'planned')}>À venir</option><option value="done" ${optionSelected(status, 'done')}>Effectué</option></select></div></div>
       <div class="form-row" id="healthTimeRow" ${showTime ? '' : 'hidden'}><label id="healthTimeLabel" for="healthTime">${timeLabel}</label><input id="healthTime" name="time" type="text" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="${isAppointment ? 'HH:MM — facultatif' : 'HH:MM'}" value="${escapeHtml(validTime(item?.time) ? item.time : '')}" ${showTime ? (timeRequired ? 'required' : '') : 'disabled'} aria-describedby="healthTimeHelp" /><span id="healthTimeHelp" class="form-help">${timeHelp}</span></div>
-      <div class="form-row"><label for="healthProfessional">Vétérinaire ou professionnel</label><input id="healthProfessional" name="professional" value="${escapeHtml(item?.professional || '')}" placeholder="Facultatif" /></div>
-      <div class="form-row"><label for="healthLocation">Lieu</label><input id="healthLocation" name="location" value="${escapeHtml(item?.location || '')}" placeholder="Ex. Clinique vétérinaire, adresse…" /></div>
+      <div class="form-row"><label for="healthProfessional">Vétérinaire ou professionnel</label><input id="healthProfessional" name="professional" list="healthProfessionalSuggestions" value="${escapeHtml(item?.professional || '')}" placeholder="Facultatif" /><datalist id="healthProfessionalSuggestions">${healthSuggestionOptions('professional')}</datalist><span class="form-help">Les professionnels déjà saisis sont proposés automatiquement.</span></div>
+      <div class="form-row"><label for="healthLocation">Lieu ou adresse</label><input id="healthLocation" name="location" list="healthLocationSuggestions" value="${escapeHtml(item?.location || '')}" placeholder="Ex. Clinique vétérinaire, 10 rue…" /><datalist id="healthLocationSuggestions">${healthSuggestionOptions('location')}</datalist><span class="form-help">Une adresse complète permet d’ouvrir directement l’itinéraire.</span></div>
       <div class="form-row"><label for="healthNote">Note</label><textarea id="healthNote" name="note" placeholder="Informations utiles">${escapeHtml(item?.note || '')}</textarea></div>
       ${filePicker({ fieldId: 'healthAttachment', name: 'attachment', label: 'Pièce jointe', existingRef: item?.attachment || '', existingName: item?.attachmentName || '', existingType: item?.attachmentType || '', accept: 'image/*,.pdf,.doc,.docx' })}
       <label class="checkbox-row"><input name="reminder" type="checkbox" ${item ? (item.reminder ? 'checked' : '') : 'checked'} /> Créer un rappel dans Animoa</label>
-      <label class="checkbox-row calendar-option-row" id="calendarOptionRow" ${isAppointment && status === 'planned' ? '' : 'hidden'}><input name="offerCalendar" type="checkbox" ${item ? (item.offerCalendar !== false ? 'checked' : '') : 'checked'} /> Proposer l’ajout à mon calendrier après l’enregistrement</label>
+      <label class="checkbox-row calendar-option-row" id="calendarOptionRow" ${isAppointment && status === 'planned' ? '' : 'hidden'}><input name="offerCalendar" type="checkbox" ${item ? (item.offerCalendar !== false ? 'checked' : '') : 'checked'} /> ${googleCalendarConnected() && settings.calendarAutoSync ? 'Synchroniser automatiquement avec Google Agenda' : 'Ajouter ce rendez-vous à mon calendrier'}</label>
       <button class="primary-button form-submit-button" type="submit">${editing ? 'Enregistrer les modifications' : 'Enregistrer'}</button>
     </form>`;
   }
@@ -3016,6 +3148,22 @@
     const formData = new FormData(form);
     const snapshot = clone(data);
     const createdMediaRefs = [];
+    let calendarTokenPromise = null;
+    if (form.id === 'healthForm' && googleCalendarConnected() && settings.calendarAutoSync) {
+      const existingRecord = data.health.find((item) => item.id === form.dataset.editing);
+      const nextType = normalizeHealthType(formData.get('type'));
+      const nextStatus = String(formData.get('status') || '');
+      const nextOfferCalendar = formData.get('offerCalendar') === 'on';
+      const needsCalendarAccess = Boolean(
+        existingRecord?.calendarEventId ||
+        (nextType === 'Rendez-vous' && nextStatus === 'planned' && nextOfferCalendar)
+      );
+      if (needsCalendarAccess) {
+        calendarTokenPromise = requestGoogleCalendarToken({ interactive: false })
+          .then((accessToken) => ({ accessToken }))
+          .catch((error) => ({ error }));
+      }
+    }
     const submitButton = form.querySelector('[type="submit"]');
     const originalLabel = submitButton?.textContent;
     if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Enregistrement…'; }
@@ -3056,6 +3204,11 @@
           offerCalendar: formData.get('offerCalendar') === 'on',
           calendarAdded: existing?.calendarAdded || false,
           calendarUid: existing?.calendarUid || '',
+          calendarProvider: existing?.calendarProvider || '',
+          calendarEventId: existing?.calendarEventId || '',
+          calendarHtmlLink: existing?.calendarHtmlLink || '',
+          calendarSyncedAt: existing?.calendarSyncedAt || '',
+          calendarSyncError: existing?.calendarSyncError || '',
           reminderRead: false
         };
         let savedRecord;
@@ -3063,10 +3216,46 @@
         currentHealthFilter = record.type;
         saveData();
         if (existing && oldAttachment !== attachment) await deleteMediaIfUnused(oldAttachment);
-        closeModal(); setPage('health'); showToast(existing ? 'Information de santé modifiée.' : 'Information de santé enregistrée.');
-        if (record.type === 'Rendez-vous' && record.status === 'planned' && record.offerCalendar) {
-          window.setTimeout(() => showCalendarPermission(savedRecord.id, Boolean(existing)), 260);
+
+        const shouldBeInCalendar = record.type === 'Rendez-vous' && record.status === 'planned' && record.offerCalendar;
+        const shouldRemoveFromCalendar = Boolean(savedRecord.calendarEventId) && !shouldBeInCalendar;
+        let confirmation = existing ? 'Information de santé modifiée.' : 'Information de santé enregistrée.';
+
+        if (googleCalendarConnected() && settings.calendarAutoSync && (shouldBeInCalendar || shouldRemoveFromCalendar)) {
+          const tokenResult = await (calendarTokenPromise || requestGoogleCalendarToken({ interactive: false })
+            .then((accessToken) => ({ accessToken }))
+            .catch((error) => ({ error })));
+          if (tokenResult.accessToken) {
+            try {
+              if (shouldRemoveFromCalendar) {
+                await removeRecordFromGoogleCalendar(savedRecord, tokenResult.accessToken);
+                saveData();
+                confirmation += ' Le rendez-vous a aussi été retiré de Google Agenda.';
+              } else {
+                await syncRecordWithGoogleCalendar(savedRecord, tokenResult.accessToken);
+                confirmation += ' Le rendez-vous a été synchronisé avec Google Agenda.';
+              }
+            } catch (error) {
+              savedRecord.calendarAdded = false;
+              savedRecord.calendarSyncError = error.message || 'Synchronisation impossible.';
+              saveData();
+              confirmation += ' Le calendrier n’a pas pu être mis à jour.';
+              window.setTimeout(() => showCalendarPermission(savedRecord.id, true), 420);
+            }
+          } else {
+            savedRecord.calendarAdded = false;
+            savedRecord.calendarSyncError = tokenResult.error?.message || 'Autorisation Google Agenda nécessaire.';
+            saveData();
+            confirmation += ' Google Agenda doit être reconnecté.';
+            window.setTimeout(() => showCalendarPermission(savedRecord.id, true), 420);
+          }
+        } else if (shouldBeInCalendar) {
+          window.setTimeout(() => showCalendarPermission(savedRecord.id, Boolean(existing)), 320);
         }
+
+        closeModal();
+        setPage('health');
+        showToast(confirmation);
       }
 
       if (form.id === 'expenseForm') {
@@ -3245,6 +3434,260 @@
     }
   }
 
+  function googleCalendarClientId() {
+    return String(window.ANIMOA_CONFIG?.googleCalendarClientId || '').trim();
+  }
+
+  function googleCalendarConfigured() {
+    const clientId = googleCalendarClientId();
+    return Boolean(clientId && clientId.endsWith('.apps.googleusercontent.com') && !clientId.includes('REMPLACER_'));
+  }
+
+  function googleCalendarConnected() {
+    return Boolean(settings.calendarProvider === 'google' && settings.calendarConnected && settings.calendarId);
+  }
+
+  function calendarTimeZone() {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Paris'; }
+    catch { return 'Europe/Paris'; }
+  }
+
+  async function waitForGoogleIdentity(timeoutMs = 7000) {
+    if (window.google?.accounts?.oauth2?.initCodeClient) return;
+    const startedAt = Date.now();
+    while (Date.now() - startedAt < timeoutMs) {
+      await new Promise((resolve) => setTimeout(resolve, 80));
+      if (window.google?.accounts?.oauth2?.initCodeClient) return;
+    }
+    throw new Error('Le service de connexion Google n’est pas disponible. Vérifiez votre connexion internet puis réessayez.');
+  }
+
+  async function invokeGoogleCalendar(action, payload = {}) {
+    const client = window.AnimoaAuth?.getClient?.();
+    if (!client || window.AnimoaAuth?.isLocalPreview?.()) {
+      throw new Error('Connectez-vous à votre compte Animoa pour utiliser Google Agenda.');
+    }
+
+    let { data: sessionData, error: sessionError } = await client.auth.getSession();
+    if (sessionError) throw new Error('Votre session Animoa n’est pas disponible. Reconnectez-vous puis réessayez.');
+
+    let session = sessionData?.session || null;
+    if (!session?.access_token) {
+      const refreshed = await client.auth.refreshSession();
+      if (refreshed.error) throw new Error('Votre session Animoa a expiré. Reconnectez-vous puis réessayez.');
+      session = refreshed.data?.session || null;
+    }
+    if (!session?.access_token) throw new Error('Votre session Animoa a expiré. Reconnectez-vous puis réessayez.');
+
+    const config = window.ANIMOA_CONFIG || {};
+    const endpoint = `${String(config.supabaseUrl || '').replace(/\/$/, '')}/functions/v1/google-calendar-connect`;
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+        'apikey': String(config.supabaseAnonKey || '')
+      },
+      body: JSON.stringify({ action, ...payload })
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(result?.error || result?.message || `Le service Google Agenda a répondu avec l’erreur ${response.status}.`);
+    }
+    if (!result?.ok) throw new Error(result?.error || 'Google Agenda n’a pas pu terminer cette opération.');
+    return result;
+  }
+
+  function initialiseGoogleCalendarTokenClient() {
+    if (googleCalendarTokenClient) return googleCalendarTokenClient;
+    if (!googleCalendarConfigured()) throw new Error('La connexion Google Agenda doit encore être activée dans la configuration Animoa.');
+    googleCalendarTokenClient = window.google.accounts.oauth2.initCodeClient({
+      client_id: googleCalendarClientId(),
+      scope: 'openid email https://www.googleapis.com/auth/calendar.app.created',
+      ux_mode: 'popup',
+      select_account: true,
+      callback: () => {},
+      error_callback: () => {}
+    });
+    return googleCalendarTokenClient;
+  }
+
+  async function requestGoogleCalendarToken({ interactive = false } = {}) {
+    if (!interactive && googleCalendarConnected()) return 'server';
+    if (googleCalendarRequestPending) return googleCalendarRequestPending;
+    googleCalendarRequestPending = (async () => {
+      await waitForGoogleIdentity();
+      const client = initialiseGoogleCalendarTokenClient();
+      return new Promise((resolve, reject) => {
+        let settled = false;
+        const finish = (callback, value) => { if (!settled) { settled = true; callback(value); } };
+        const timeout = setTimeout(() => finish(reject, new Error('La demande Google Agenda a expiré. Réessayez depuis les paramètres.')), 90_000);
+        client.callback = async (response) => {
+          clearTimeout(timeout);
+          if (response?.error || !response?.code) {
+            finish(reject, new Error(response?.error_description || 'Autorisation Google Agenda refusée.'));
+            return;
+          }
+          try {
+            const result = await invokeGoogleCalendar('connect', {
+              code: response.code,
+              redirectUri: location.origin
+            });
+            settings = normalizeSettings({
+              ...settings,
+              calendarProvider: 'google',
+              calendarConnected: true,
+              calendarId: result.calendarId || '',
+              calendarAutoSync: true,
+              calendarConnectedAt: new Date().toISOString()
+            });
+            saveSettings();
+            finish(resolve, 'server');
+          } catch (error) { finish(reject, error); }
+        };
+        client.error_callback = (error) => {
+          clearTimeout(timeout);
+          const code = String(error?.type || error?.error || '');
+          finish(reject, new Error(code === 'popup_closed' ? 'La fenêtre Google a été fermée avant la fin de l’autorisation.' : 'La connexion à Google Agenda n’a pas pu être terminée.'));
+        };
+        try { client.requestCode(); } catch (error) { clearTimeout(timeout); finish(reject, error); }
+      });
+    })().finally(() => { googleCalendarRequestPending = null; });
+    return googleCalendarRequestPending;
+  }
+
+  async function connectGoogleCalendar({ quiet = false } = {}) {
+    if (!googleCalendarConfigured()) {
+      if (!quiet) showToast('La connexion Google Agenda doit encore être configurée pour Animoa.');
+      return false;
+    }
+    try {
+      await requestGoogleCalendarToken({ interactive: true });
+      if (!quiet) showToast('Google Agenda est connecté. Les prochains rendez-vous seront synchronisés automatiquement.');
+      renderOnboarding();
+      if (currentPage === 'settings') renderPage();
+      return true;
+    } catch (error) {
+      if (!quiet) showToast(error.message || 'Connexion à Google Agenda impossible.');
+      return false;
+    }
+  }
+
+  async function disconnectGoogleCalendar() {
+    try { await invokeGoogleCalendar('disconnect'); } catch (error) { console.warn('Déconnexion Google Agenda', error); }
+    settings = normalizeSettings({ ...settings, calendarProvider: '', calendarConnected: false, calendarId: '', calendarConnectedAt: '' });
+    saveSettings();
+    renderPage();
+    showToast('La synchronisation automatique a été désactivée. Les événements déjà créés restent dans votre calendrier.');
+  }
+
+  function normaliseCalendarLocation(value) {
+    return String(value || '')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .replace(/^(\d+)(?=[A-Za-zÀ-ÖØ-öø-ÿ])/u, '$1 ')
+      .replace(/(\d{5})(?=[A-Za-zÀ-ÖØ-öø-ÿ])/gu, '$1 ');
+  }
+
+  function calendarDateTimeParts(date, time, addMinutes = 0) {
+    const safeTime = validTime(time) ? time : '12:00';
+    const value = new Date(`${date}T${safeTime}:00`);
+    if (addMinutes) value.setMinutes(value.getMinutes() + addMinutes);
+    const pad = (number) => String(number).padStart(2, '0');
+    return `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}T${pad(value.getHours())}:${pad(value.getMinutes())}:00`;
+  }
+
+  function calendarEventTitle(item) {
+    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'Votre animal';
+    const detail = String(item.title || '').trim() || 'Rendez-vous';
+    return `${detail} • ${petName}`;
+  }
+
+  function calendarEventDescription(item) {
+    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'Votre animal';
+    const blocks = [
+      `🐾 ANIMAL\n${petName}`,
+      `🩺 MOTIF\n${String(item.title || 'Rendez-vous').trim()}`,
+      item.professional ? `👩‍⚕️ PROFESSIONNEL\n${String(item.professional).trim()}` : '',
+      item.note ? `📝 NOTES\n${String(item.note).trim()}` : '',
+      !validTime(item.time) ? '🕒 HORAIRE\nHeure à confirmer — affichage provisoire à 12 h' : '',
+      'Pensez à apporter le carnet de santé et les documents utiles.',
+      'Enregistré depuis Animoa — Toute sa vie, près de vous.'
+    ];
+    return blocks.filter(Boolean).join('\n\n');
+  }
+
+  function googleCalendarEventPayload(item) {
+    const timeZone = calendarTimeZone();
+    return {
+      summary: calendarEventTitle(item),
+      description: calendarEventDescription(item),
+      location: normaliseCalendarLocation(item.location),
+      start: { dateTime: calendarDateTimeParts(item.date, item.time, 0), timeZone },
+      end: { dateTime: calendarDateTimeParts(item.date, item.time, validTime(item.time) ? 60 : 30), timeZone },
+      visibility: 'private',
+      transparency: 'opaque',
+      reminders: {
+        useDefault: false,
+        overrides: [
+          { method: 'popup', minutes: 1440 },
+          ...(validTime(item.time) ? [{ method: 'popup', minutes: 120 }] : [])
+        ]
+      },
+      extendedProperties: {
+        private: {
+          animoaRecordId: String(item.id),
+          animoaUserId: String(currentUserId() || 'local'),
+          animoaSource: 'animoa.fr'
+        }
+      },
+      source: { title: 'Animoa', url: String(window.ANIMOA_CONFIG?.appUrl || 'https://animoa.fr') }
+    };
+  }
+
+  async function insertGoogleCalendarEvent(item) {
+    const result = await invokeGoogleCalendar('sync', {
+      sourceId: String(item.id),
+      eventId: item.calendarEventId || '',
+      event: googleCalendarEventPayload(item)
+    });
+    item.calendarProvider = 'google';
+    item.calendarEventId = result.eventId || '';
+    item.calendarHtmlLink = result.htmlLink || '';
+    item.calendarAdded = Boolean(result.eventId);
+    item.calendarSyncedAt = new Date().toISOString();
+    item.calendarSyncError = '';
+    return result;
+  }
+
+  async function syncRecordWithGoogleCalendar(item) {
+    try {
+      const event = await insertGoogleCalendarEvent(item);
+      saveData();
+      return event;
+    } catch (error) {
+      item.calendarAdded = false;
+      item.calendarSyncError = error.message || 'Synchronisation impossible.';
+      saveData();
+      throw error;
+    }
+  }
+
+  async function removeRecordFromGoogleCalendar(item) {
+    if (!item?.calendarEventId) return true;
+    await invokeGoogleCalendar('delete', {
+      sourceId: String(item.id),
+      eventId: item.calendarEventId
+    });
+    item.calendarEventId = '';
+    item.calendarHtmlLink = '';
+    item.calendarAdded = false;
+    item.calendarSyncedAt = new Date().toISOString();
+    item.calendarSyncError = '';
+    return true;
+  }
+
   function escapeIcsText(value) {
     return String(value || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
   }
@@ -3257,27 +3700,6 @@
     return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
   }
 
-  function calendarEventTitle(item) {
-    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'Votre animal';
-    const detail = String(item.title || '').trim();
-    return `🐾 ${detail || 'Rendez-vous'} de ${petName} — Animoa`;
-  }
-
-  function calendarEventDescription(item) {
-    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'Votre animal';
-    const lines = [
-      `Rendez-vous pour ${petName}`,
-      item.title ? `Motif : ${item.title}` : '',
-      item.professional ? `Professionnel : ${item.professional}` : '',
-      item.note ? `Informations : ${item.note}` : '',
-      '',
-      'Pensez à apporter le carnet de santé et les documents utiles.',
-      '',
-      'Enregistré depuis Animoa — Toute sa vie, près de vous.'
-    ];
-    return lines.filter((line, index) => line || index >= lines.length - 4).join('\n');
-  }
-
   function buildCalendarIcs(item) {
     const uid = item.calendarUid || `${item.id}@animoa.fr`;
     const start = calendarDateTime(item.date, item.time, 0);
@@ -3287,7 +3709,7 @@
       'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Animoa//Calendrier//FR', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
       'BEGIN:VEVENT', `UID:${escapeIcsText(uid)}`, `DTSTAMP:${now}`, `DTSTART:${start}`, `DTEND:${end}`,
       `SUMMARY:${escapeIcsText(calendarEventTitle(item))}`,
-      item.location ? `LOCATION:${escapeIcsText(item.location)}` : '',
+      item.location ? `LOCATION:${escapeIcsText(normaliseCalendarLocation(item.location))}` : '',
       `DESCRIPTION:${escapeIcsText(calendarEventDescription(item))}`,
       'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', `DESCRIPTION:${escapeIcsText(`Rappel Animoa : ${item.title || 'rendez-vous'}`)}`, 'END:VALARM',
       ...(validTime(item.time) ? ['BEGIN:VALARM', 'TRIGGER:-PT2H', 'ACTION:DISPLAY', `DESCRIPTION:${escapeIcsText(`Rappel Animoa : ${item.title || 'rendez-vous'}`)}`, 'END:VALARM'] : []),
@@ -3295,32 +3717,10 @@
     ].filter(Boolean).join('\r\n');
   }
 
-  function showCalendarPermission(recordId, updating = false) {
-    const item = data.health.find((record) => record.id === recordId);
-    if (!item) return;
-    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'votre animal';
-    openModal(updating && item.calendarAdded ? 'Mettre à jour votre calendrier ?' : 'Ajouter à votre calendrier ?', `
-      <div class="calendar-permission-card">
-        <div class="calendar-permission-icon" aria-hidden="true">📅</div>
-        <h3>${updating && item.calendarAdded ? 'Le rendez-vous a été modifié' : `Gardez le rendez-vous de ${escapeHtml(petName)} à portée de main`}</h3>
-        <p>Animoa peut préparer cet événement pour votre calendrier avec la date, l’heure, le lieu et les informations utiles.</p>
-        <div class="calendar-privacy-note"><strong>Votre vie privée est respectée</strong><span>Animoa ne consulte pas vos rendez-vous personnels et ne lit pas votre calendrier. Seul cet événement sera créé à votre demande.</span></div>
-        <div class="calendar-event-preview">
-          <strong>${escapeHtml(calendarEventTitle(item))}</strong>
-          <span>📆 ${formatDate(item.date)}${validTime(item.time) ? ` à ${escapeHtml(item.time)}` : ' — heure non renseignée'}</span>
-          ${item.location ? `<span>📍 ${escapeHtml(item.location)}</span>` : ''}
-          ${item.professional ? `<span>🩺 ${escapeHtml(item.professional)}</span>` : ''}
-        </div>
-        <div class="calendar-permission-actions"><button type="button" class="secondary-button" data-action="close-modal">Plus tard</button><button type="button" class="primary-button" data-action="add-to-calendar" data-record-id="${item.id}">${updating && item.calendarAdded ? 'Mettre à jour' : 'Ajouter au calendrier'}</button></div>
-      </div>`, 'Calendrier');
-  }
-
-  function addRecordToCalendar(recordId) {
+  function downloadRecordIcs(recordId) {
     const item = data.health.find((record) => record.id === recordId);
     if (!item) return showToast('Ce rendez-vous n’existe plus.');
-    const uid = item.calendarUid || `${item.id}@animoa.fr`;
-    item.calendarUid = uid;
-    item.calendarAdded = true;
+    item.calendarUid = item.calendarUid || `${item.id}@animoa.fr`;
     saveData();
     const blob = new Blob([buildCalendarIcs(item)], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -3328,10 +3728,62 @@
     const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'animal';
     link.href = url;
     link.download = `Animoa_${petName}_${item.date}.ics`.replace(/[^a-zA-Z0-9_.-]/g, '_');
-    document.body.appendChild(link); link.click(); link.remove();
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1500);
-    closeModal(); renderPage();
-    showToast('Événement préparé. Ouvrez le fichier pour l’ajouter à votre calendrier.');
+    closeModal();
+    showToast('Fichier calendrier téléchargé. Ouvrez-le pour confirmer l’ajout.');
+  }
+
+  function showCalendarPermission(recordId, updating = false) {
+    const item = data.health.find((record) => record.id === recordId);
+    if (!item) return;
+    const petName = data.pets.find((pet) => pet.id === item.petId)?.name || 'votre animal';
+    const connected = googleCalendarConnected();
+    const canConnect = googleCalendarConfigured();
+    const title = item.calendarEventId || updating ? 'Synchroniser votre calendrier ?' : 'Ajouter à votre calendrier ?';
+    openModal(title, `
+      <div class="calendar-permission-card">
+        <div class="calendar-permission-icon" aria-hidden="true">📅</div>
+        <h3>${connected ? `Synchronisez le rendez-vous de ${escapeHtml(petName)}` : 'Choisissez votre mode d’ajout'}</h3>
+        <p>${connected ? 'Animoa peut créer ou mettre à jour directement cet événement dans votre calendrier Animoa.' : 'La connexion Google Agenda permet un ajout automatique. Le fichier calendrier reste disponible pour les autres agendas.'}</p>
+        <div class="calendar-privacy-note"><strong>Votre vie privée est respectée</strong><span>Animoa utilise un calendrier séparé nommé « Animoa ». Vos rendez-vous personnels ne sont ni consultés ni modifiés.</span></div>
+        <div class="calendar-event-preview">
+          <strong>${escapeHtml(calendarEventTitle(item))}</strong>
+          <span>📆 ${formatDate(item.date)}${validTime(item.time) ? ` à ${escapeHtml(item.time)}` : ' — heure à confirmer'}</span>
+          ${item.location ? `<span>📍 ${escapeHtml(normaliseCalendarLocation(item.location))}</span>` : ''}
+          ${item.professional ? `<span>🩺 ${escapeHtml(item.professional)}</span>` : ''}
+        </div>
+        <div class="calendar-permission-actions calendar-permission-actions-stacked">
+          ${connected
+            ? `<button type="button" class="primary-button" data-action="add-to-calendar" data-record-id="${item.id}">${item.calendarEventId ? 'Mettre à jour maintenant' : 'Synchroniser maintenant'}</button>`
+            : canConnect
+              ? `<button type="button" class="primary-button" data-action="connect-calendar-and-sync" data-record-id="${item.id}">Connecter Google Agenda</button>`
+              : '<div class="calendar-setup-warning">La connexion automatique Google Agenda doit encore être activée dans la configuration Animoa.</div>'}
+          <button type="button" class="secondary-button" data-action="download-calendar-ics" data-record-id="${item.id}">Utiliser un fichier calendrier</button>
+          <button type="button" class="text-button" data-action="close-modal">Plus tard</button>
+        </div>
+      </div>`, 'Calendrier');
+  }
+
+  async function addRecordToCalendar(recordId) {
+    const item = data.health.find((record) => record.id === recordId);
+    if (!item) return showToast('Ce rendez-vous n’existe plus.');
+    if (!googleCalendarConnected()) {
+      showCalendarPermission(recordId, false);
+      return;
+    }
+    try {
+      const accessToken = await requestGoogleCalendarToken({ interactive: false });
+      await syncRecordWithGoogleCalendar(item, accessToken);
+      closeModal();
+      renderPage();
+      showToast('Rendez-vous synchronisé avec Google Agenda.');
+    } catch (error) {
+      showToast(`${error.message || 'Synchronisation impossible.'} Vous pouvez utiliser le fichier calendrier.`);
+      showCalendarPermission(recordId, true);
+    }
   }
 
   function showHealthRecord(recordId) {
@@ -3340,14 +3792,20 @@
     const status = item.status === 'planned' ? (isPlannedHealthOverdue(item) ? 'En retard' : 'À venir') : 'Effectué';
     const timeDetail = validTime(item.time) ? `<span>Heure</span><strong>${item.time}</strong>` : '';
     const locationDetail = item.location ? `<span>Lieu</span><strong>${escapeHtml(item.location)}</strong>` : '';
-    const calendarBadge = item.type === 'Rendez-vous' && item.status === 'planned' ? `<div class="calendar-status-line ${item.calendarAdded ? 'is-synced' : ''}">📅 ${item.calendarAdded ? 'Préparé pour votre calendrier' : 'Non ajouté au calendrier'}</div>` : '';
+    const isCalendarAppointment = item.type === 'Rendez-vous' && item.status === 'planned';
+    const calendarSynced = Boolean(item.calendarAdded && item.calendarEventId);
+    const calendarBadge = isCalendarAppointment
+      ? `<div class="calendar-status-line ${calendarSynced ? 'is-synced' : item.calendarSyncError ? 'has-error' : ''}">📅 ${calendarSynced ? 'Synchronisé avec Google Agenda' : item.calendarSyncError ? 'Synchronisation à reprendre' : 'Non synchronisé'}</div>`
+      : '';
+    const mapButton = item.location ? `<button type="button" class="secondary-button" data-action="open-map" data-location="${escapeHtml(item.location)}">📍 Itinéraire</button>` : '';
+    const calendarOpenButton = calendarSynced && item.calendarHtmlLink ? `<button type="button" class="secondary-button" data-action="open-calendar-event" data-calendar-url="${escapeHtml(item.calendarHtmlLink)}">Ouvrir dans Google Agenda</button>` : '';
     openModal(item.title, `
       <div class="record-detail">
         <p class="eyebrow">${escapeHtml(normalizeHealthType(item.type))}</p>
         <div class="detail-grid"><span>Date</span><strong>${formatDate(item.date)}</strong>${timeDetail}${locationDetail}<span>État</span><strong>${status}</strong><span>Professionnel</span><strong>${escapeHtml(item.professional || 'Non renseigné')}</strong></div>
         ${calendarBadge}<p>${escapeHtml(item.note || 'Aucune note.')}</p>
         ${item.attachment ? `<button class="attachment-preview" data-action="open-attachment" data-image-ref="${escapeHtml(item.attachment)}" data-file-type="${escapeHtml(item.attachmentType || '')}" data-file-name="${escapeHtml(item.attachmentName || 'Fichier joint')}"><span>${item.attachmentType?.startsWith('image/') ? '🖼️' : '📎'}</span><span>${escapeHtml(item.attachmentName || 'Voir le fichier ou l’image')}</span></button>` : ''}
-        <div class="record-detail-actions">${item.type === 'Rendez-vous' && item.status === 'planned' ? `<button type="button" class="secondary-button" data-action="show-calendar-permission" data-record-id="${item.id}">📅 ${item.calendarAdded ? 'Mettre à jour le calendrier' : 'Ajouter au calendrier'}</button>` : ''}<button type="button" class="secondary-button" data-action="edit-health-record" data-record-id="${item.id}">Modifier</button><button type="button" class="danger-button" data-action="request-delete-record" data-collection="health" data-record-id="${item.id}" data-label="cette information de santé" data-return-page="health">Supprimer</button></div>
+        <div class="record-detail-actions">${mapButton}${calendarOpenButton}${isCalendarAppointment ? `<button type="button" class="secondary-button" data-action="show-calendar-permission" data-record-id="${item.id}">📅 ${calendarSynced ? 'Mettre à jour le calendrier' : 'Ajouter au calendrier'}</button>` : ''}<button type="button" class="secondary-button" data-action="edit-health-record" data-record-id="${item.id}">Modifier</button><button type="button" class="danger-button" data-action="request-delete-record" data-collection="health" data-record-id="${item.id}" data-label="cette information de santé" data-return-page="health">Supprimer</button></div>
       </div>`, 'Santé');
   }
 
@@ -3384,14 +3842,27 @@
     const item = data[collection].find((record) => record.id === recordId);
     if (!item) return showToast('Cet élément n’existe plus.');
     const snapshot = clone(data);
+    let calendarWarning = '';
+    const calendarTokenPromise = collection === 'health' && item.calendarEventId && googleCalendarConnected()
+      ? requestGoogleCalendarToken({ interactive: false }).catch((error) => ({ calendarError: error }))
+      : null;
     try {
+      if (calendarTokenPromise) {
+        const tokenResult = await calendarTokenPromise;
+        if (typeof tokenResult === 'string') {
+          try { await removeRecordFromGoogleCalendar(item, tokenResult); }
+          catch { calendarWarning = ' L’événement Google Agenda n’a pas pu être supprimé.'; }
+        } else {
+          calendarWarning = ' L’événement Google Agenda devra être supprimé manuellement.';
+        }
+      }
       data[collection] = data[collection].filter((record) => record.id !== recordId);
       saveData();
       const mediaToDelete = [item.image, item.attachment].filter(Boolean);
       for (const ref of mediaToDelete) if (!allImageRefsFrom(data).has(ref)) await deleteMediaRef(ref);
       closeModal();
       setPage(returnPage || currentPage);
-      showToast('Élément supprimé.');
+      showToast(`Élément supprimé.${calendarWarning}`);
     } catch (error) {
       data = snapshot;
       showToast(error.message || 'Suppression impossible.');
@@ -3590,7 +4061,7 @@
     const mediaRefsToDelete = [...allImageRefsFrom(data)];
     try {
       data = normalizeData(clone(defaultData));
-      settings = normalizeSettings({ currency: settings.currency, weightUnit: settings.weightUnit, language: settings.language, theme: settings.theme, palette: settings.palette });
+      settings = normalizeSettings({ ...settings });
       saveData();
       saveSettings();
       await clearMediaStore(mediaRefsToDelete);
@@ -3606,7 +4077,7 @@
   }
 
   document.addEventListener('click', async (event) => {
-    const target = event.target.closest('button, [data-page], [data-add]');
+    const target = event.target.closest('button, [data-action], [data-page], [data-add]');
     if (!target) return;
 
     const page = target.dataset.page;
@@ -3652,7 +4123,37 @@
     if (action === 'health-scroll-right') scrollHealthTabs(1);
     if (action === 'show-health-record') showHealthRecord(target.dataset.recordId);
     if (action === 'show-calendar-permission') showCalendarPermission(target.dataset.recordId, false);
-    if (action === 'add-to-calendar') addRecordToCalendar(target.dataset.recordId);
+    if (action === 'add-to-calendar') await addRecordToCalendar(target.dataset.recordId);
+    if (action === 'download-calendar-ics') downloadRecordIcs(target.dataset.recordId);
+    if (action === 'connect-calendar-and-sync') {
+      const connected = await connectGoogleCalendar({ quiet: false });
+      if (connected) await addRecordToCalendar(target.dataset.recordId);
+    }
+    if (action === 'connect-google-calendar' || action === 'reconnect-google-calendar') await connectGoogleCalendar({ quiet: false });
+    if (action === 'connect-google-calendar-onboarding') await connectGoogleCalendar({ quiet: false });
+    if (action === 'request-disconnect-google-calendar') {
+      openModal('Désactiver la synchronisation ?', `<div class="delete-confirmation"><div class="delete-warning-icon calendar-warning-icon">📅</div><p><strong>Les nouveaux rendez-vous ne seront plus ajoutés automatiquement.</strong></p><p>Les événements déjà présents dans Google Agenda ne seront pas supprimés.</p><div class="delete-actions"><button type="button" class="secondary-button" data-action="close-modal">Annuler</button><button type="button" class="danger-button" data-action="disconnect-google-calendar">Désactiver</button></div></div>`, 'Calendrier');
+    }
+    if (action === 'disconnect-google-calendar') { closeModal(); disconnectGoogleCalendar(); }
+    if (action === 'toggle-calendar-auto-sync') {
+      settings = normalizeSettings({ ...settings, calendarAutoSync: Boolean(target.checked) });
+      saveSettings();
+      showToast(settings.calendarAutoSync ? 'Synchronisation automatique activée.' : 'Synchronisation automatique désactivée.');
+    }
+    if (action === 'open-map') {
+      const locationValue = String(target.dataset.location || '').trim();
+      if (locationValue) window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationValue)}`, '_blank', 'noopener,noreferrer');
+    }
+    if (action === 'open-calendar-event') {
+      try {
+        const calendarUrl = new URL(target.dataset.calendarUrl || '');
+        if (calendarUrl.protocol === 'https:' && /(^|\.)google\.com$/.test(calendarUrl.hostname)) window.open(calendarUrl.href, '_blank', 'noopener,noreferrer');
+      } catch { showToast('Lien Google Agenda invalide.'); }
+    }
+    if (action === 'onboarding-next') { onboardingStep = Math.min(3, onboardingStep + 1); renderOnboarding(); }
+    if (action === 'onboarding-back') { onboardingStep = Math.max(0, onboardingStep - 1); renderOnboarding(); }
+    if (action === 'onboarding-skip') closeOnboarding({ completed: true });
+    if (action === 'complete-onboarding') closeOnboarding({ completed: true });
     if (action === 'show-weight-record') showWeightRecord(target.dataset.recordId);
     if (action === 'show-expense-record') showExpenseRecord(target.dataset.recordId);
     if (action === 'edit-health-record') { const item = data.health.find((record) => record.id === target.dataset.recordId); if (item) openModal('Modifier une information', healthForm(item), 'Santé'); }
@@ -3939,7 +4440,11 @@
     await cleanupUnusedMedia();
     renderNavigation();
     renderPage();
-    window.setTimeout(showReleaseNotesIfNeeded, 800);
+    if (googleCalendarConfigured()) {
+      waitForGoogleIdentity().then(initialiseGoogleCalendarTokenClient).catch((error) => console.warn('Google Agenda indisponible', error));
+    }
+    if (!settings.onboardingCompleted) window.setTimeout(() => openOnboarding(0), 420);
+    else window.setTimeout(showReleaseNotesIfNeeded, 800);
     const isLocalPreview = ['localhost', '127.0.0.1'].includes(location.hostname);
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       if (isLocalPreview) {
@@ -3954,7 +4459,7 @@
           console.warn('Nettoyage du cache local incomplet', error);
         }
       } else {
-        navigator.serviceWorker.register('./sw.js?v=2.5.4').catch((error) => console.warn('Mode installable Animoa indisponible', error));
+        navigator.serviceWorker.register('./sw.js?v=2.8.2').catch((error) => console.warn('Mode installable Animoa indisponible', error));
       }
     }
   }
