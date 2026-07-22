@@ -89,7 +89,7 @@
           <span class="access-badge">Accès actuellement sur invitation</span>
           <h1>Toute la vie de votre animal, <span>dans votre téléphone.</span></h1>
           <p class="hero-lead">Rendez-vous, traitements, poids et documents réunis au même endroit.</p>
-          <a class="button button-primary" href="#" data-public-action="signup">Demander un accès</a>
+          <a class="button button-primary" href="#" data-public-action="request-access">Demander un accès</a>
         </div>
 
         <div class="phone-stage" aria-label="Aperçu de l’application Animoa">
@@ -199,7 +199,7 @@
         <span aria-hidden="true">·</span>
         <button type="button" data-page="legal">Mentions légales</button>
         <span aria-hidden="true">·</span>
-        <span id="drawerAppVersion">Version 3.1.0</span>
+        <span id="drawerAppVersion">Version 3.2.0</span>
       </div>
     </div>
   </aside>
@@ -217,6 +217,32 @@
     <div id="modalBody" class="modal-body"></div>
   </section>
 
+
+  <div id="accessRequestBackdrop" class="access-request-backdrop" hidden></div>
+  <section id="accessRequestModal" class="access-request-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="accessRequestTitle" hidden>
+    <div class="access-request-handle"></div>
+    <div class="access-request-header">
+      <div><p>Accès sur invitation</p><h2 id="accessRequestTitle">Demande d’accès à Animoa</h2></div>
+      <button type="button" class="access-request-close" data-access-close aria-label="Fermer">✕</button>
+    </div>
+    <form id="accessRequestForm" class="access-request-form">
+      <label>Prénom *<input name="first_name" maxlength="80" autocomplete="given-name" required></label>
+      <label>Adresse e-mail *<input name="email" type="email" maxlength="180" autocomplete="email" required></label>
+      <label>Quels animaux avez-vous ? *<input name="animals" maxlength="180" placeholder="Ex. : un chien et deux chats" required></label>
+      <label>Combien d’animaux souhaitez-vous suivre ? *<input name="animal_count" type="number" min="1" max="99" inputmode="numeric" required></label>
+      <label>Pourquoi souhaitez-vous essayer Animoa ? *<textarea name="reason" rows="4" maxlength="800" required></textarea></label>
+      <label class="access-request-consent"><input name="contact_consent" type="checkbox" required><span>J’accepte d’être recontacté au sujet de ma demande.</span></label>
+      <div id="accessRequestError" class="access-request-error" role="alert"></div>
+      <button class="access-request-submit" type="submit">Envoyer ma demande</button>
+    </form>
+    <div id="accessRequestSuccess" class="access-request-success" hidden>
+      <div class="access-request-success-icon">✓</div>
+      <h3>Votre demande a bien été envoyée.</h3>
+      <p>Elle sera étudiée prochainement. Si elle est acceptée, vous recevrez les instructions d’accès par e-mail.</p>
+      <button type="button" class="access-request-submit" data-access-close>Fermer</button>
+    </div>
+  </section>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -225,6 +251,7 @@
   <script src="i18n.js?v=3.0.0"></script>
   <script src="auth.js?v=3.0.0"></script>
   <script src="cloud.js?v=3.0.0"></script>
-  <script src="app.js?v=3.1.0"></script>
+  <script src="access-request.js?v=3.2.0"></script>
+  <script src="app.js?v=3.2.0"></script>
 </body>
 </html>
