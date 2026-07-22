@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.0.1-home';
+const CACHE_NAME = 'animoa-v3.3.0-admin-access';
 
 const CORE = [
   '/',
@@ -9,6 +9,7 @@ const CORE = [
   '/supabase-config.js',
   '/i18n.js',
   '/auth.js',
+  '/access-request.js',
   '/questionnaire.js',
   '/cloud.js',
   '/app.js',
@@ -33,6 +34,7 @@ const ALWAYS_REFRESH = new Set([
   '/supabase-config.js',
   '/i18n.js',
   '/auth.js',
+  '/access-request.js',
   '/questionnaire.js',
   '/cloud.js',
   '/app.js',
