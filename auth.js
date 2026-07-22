@@ -197,7 +197,7 @@
       <form id="authForm" class="auth-form" data-mode="${signup ? 'signup' : 'login'}">
         <label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required placeholder="nom@exemple.fr" /></label>
         <label><span>${c('password')}</span><input name="password" type="password" autocomplete="${signup ? 'new-password' : 'current-password'}" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label>
-        ${signup ? `<label><span>${c('invitationCode')}</span><input name="invitationCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required placeholder="ANIMOA-••••" /><small>${c('invitationHelp')}</small></label>` : ''}
+        ${signup ? `<label><span>${c('invitationCode')}</span><input name="invitationCode" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" required placeholder="ANIMOA-••••" /><small>${c('invitationHelp')}</small></label>` : ''}
         <button class="primary-button auth-submit" type="submit">${signup ? c('signup') : c('login')}</button>
       </form>
       ${!signup ? `<button type="button" class="auth-text-button" data-auth-action="forgot">${c('forgot')}</button>` : ''}

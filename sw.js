@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.3.0-admin-access';
+const CACHE_NAME = 'animoa-v3.3.4-auth-access-email';
 
 const CORE = [
   '/',
