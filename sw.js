@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.5.0-open-registration';
+const CACHE_NAME = 'animoa-v3.5.1-account-deletion';
 
 const CORE = [
   '/',

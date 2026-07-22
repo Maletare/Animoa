@@ -3786,3 +3786,48 @@ html[data-theme="dark"] .admin-heading .secondary-button{
 .status-inscrit{background:#ddf6ec;color:#17704f}
 
 .admin-accordion[data-admin-entry="users"] .admin-actions-mobile{grid-template-columns:1fr}
+
+
+/* Animoa 3.5.1 — suppression définitive du compte */
+.account-deletion-zone {
+  border-width: 1px;
+  border-color: color-mix(in srgb, var(--danger) 42%, var(--border));
+  background: color-mix(in srgb, var(--surface) 91%, var(--danger) 9%);
+}
+.account-delete-button { white-space: nowrap; }
+.account-delete-confirmation { display: grid; gap: 10px; }
+.account-delete-confirmation > p { margin: 0; }
+.account-delete-email {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface-soft);
+  overflow-wrap: anywhere;
+}
+.account-delete-field {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+  text-align: left;
+  color: var(--text);
+  font-size: .82rem;
+  font-weight: 720;
+}
+.account-delete-field input {
+  width: 100%;
+  min-height: 48px;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: .08em;
+  font-weight: 850;
+}
+.account-delete-error {
+  min-height: 1.2em;
+  margin: 0 !important;
+  color: var(--danger) !important;
+  font-size: .78rem;
+  font-weight: 720;
+}
+@media (max-width: 560px) {
+  .account-delete-button { width: 100%; white-space: normal; }
+}

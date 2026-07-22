@@ -481,13 +481,27 @@
     if (error) throw error;
   }
 
+  async function clearDeletedAccountSession() {
+    currentUser = null;
+    if (client) {
+      try { await client.auth.signOut({ scope: 'local' }); }
+      catch (error) { console.warn('Nettoyage de la session locale incomplet', error); }
+    }
+    try {
+      Object.keys(localStorage)
+        .filter((key) => /^sb-.+-auth-token$/.test(key))
+        .forEach((key) => localStorage.removeItem(key));
+    } catch {}
+  }
+
   window.AnimoaAuth = {
     ready: () => readyPromise,
     getClient: () => client,
     getUser: () => currentUser,
     isConfigured,
     isLocalPreview: () => localPreview,
-    signOut
+    signOut,
+    clearDeletedAccountSession
   };
 
   initialise().catch((error) => {
