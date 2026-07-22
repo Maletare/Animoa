@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.3.5-function-error-details';
+const CACHE_NAME = 'animoa-v3.3.6-admin-visual-polish';
 
 const CORE = [
   '/',
