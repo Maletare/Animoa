@@ -27,12 +27,28 @@
     event.preventDefault(); errorBox.textContent='';
     const button=form.querySelector('button[type="submit"]');
     const data=Object.fromEntries(new FormData(form).entries());
+    if (String(data.website || '').trim()) {
+      form.reset(); form.hidden=true; success.hidden=false;
+      return;
+    }
     if (Date.now()-openedAt < 1200) return;
+    const firstName=String(data.first_name||'').trim();
+    const email=String(data.email||'').trim().toLowerCase();
+    const animals=String(data.animals||'').trim();
+    const animalCount=Number(data.animal_count||0);
+    const reason=String(data.reason||'').trim();
+    const contactConsent=data.contact_consent==='on';
+    if (!firstName || firstName.length > 80) return void (errorBox.textContent='Indiquez un prénom valide.');
+    if (!/^\S+@\S+\.\S+$/.test(email) || email.length > 180) return void (errorBox.textContent='Indiquez une adresse e-mail valide.');
+    if (!animals || animals.length > 180) return void (errorBox.textContent='Précisez les animaux concernés.');
+    if (!Number.isInteger(animalCount) || animalCount < 1 || animalCount > 99) return void (errorBox.textContent='Indiquez un nombre d’animaux valide.');
+    if (!reason || reason.length > 800) return void (errorBox.textContent='Précisez brièvement votre demande.');
+    if (!contactConsent) return void (errorBox.textContent='Votre accord est nécessaire pour pouvoir vous recontacter.');
     button.disabled=true; button.textContent='Envoi en cours…';
     try {
       const client=window.AnimoaAuth?.getClient?.();
       if (!client) throw new Error('Le service est momentanément indisponible.');
-      const payload={first_name:String(data.first_name||'').trim(),email:String(data.email||'').trim().toLowerCase(),animals:String(data.animals||'').trim(),animal_count:Number(data.animal_count||0),reason:String(data.reason||'').trim(),contact_consent:data.contact_consent==='on'};
+      const payload={first_name:firstName,email,animals,animal_count:animalCount,reason,contact_consent:contactConsent};
       const {error}=await client.from('animoa_access_requests').insert(payload);
       if (error) throw error;
       form.reset(); form.hidden=true; success.hidden=false;

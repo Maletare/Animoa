@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="theme-color" content="#23b9ad" />
   <meta name="description" content="Donnez votre avis pour aider à améliorer Animoa." />
   <title>Donner mon avis — Animoa</title>
   <link rel="icon" href="assets/animoa-icon-64.png" type="image/png" />
-  <link rel="stylesheet" href="styles.css?v=3.0.0" />
+  <link rel="stylesheet" href="styles.css?v=3.4.0" />
 </head>
 <body class="landing-visible">
   <main id="landingPage" class="landing-page questionnaire-page">
@@ -101,7 +102,7 @@
           <h3>Merci ! Vos réponses ont bien été enregistrées.</h3>
           <p>Votre avis nous aidera à améliorer Animoa et à mieux répondre aux besoins des propriétaires d’animaux.</p>
           <div class="survey-success-actions">
-            <button class="primary-button" type="button" onclick="location.href='index.html#inscription'">Découvrir Animoa</button>
+            <button class="primary-button" type="button" data-survey-action="discover">Découvrir Animoa</button>
             <a class="secondary-button survey-return-link" href="index.html">Revenir à la présentation</a>
           </div>
           <button class="survey-restart-link" type="button" data-survey-action="restart">Envoyer une autre réponse</button>
@@ -109,8 +110,8 @@
       </div>
     </section>
   </main>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js?v=3.0.0"></script>
-  <script src="questionnaire.js?v=3.0.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
+  <script src="supabase-config.js?v=3.4.0"></script>
+  <script src="questionnaire.js?v=3.4.0"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.3.6-admin-visual-polish';
+const CACHE_NAME = 'animoa-v3.4.0-security-phase1';
 
 const CORE = [
   '/',

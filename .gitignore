@@ -10,3 +10,12 @@ Thumbs.db
 *.log
 *.zip
 index-test.html
+.supabase/
+supabase/.temp/
+.vercel/
+*.pem
+*.key
+*.p12
+*.pfx
+*service-role*
+*service_role*

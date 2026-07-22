@@ -1,0 +1,2 @@
+[functions.send-access-email]
+verify_jwt = false

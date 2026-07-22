@@ -187,6 +187,7 @@
       renderStep({ focus: true });
     }
     if (action === 'restart') resetForm();
+    if (action === 'discover') window.location.assign('index.html#inscription');
   });
 
   form.addEventListener('submit', async (event) => {

@@ -1,0 +1,5 @@
+Contact: mailto:contact@animoa.fr
+Preferred-Languages: fr, en
+Canonical: https://animoa.fr/.well-known/security.txt
+Policy: https://animoa.fr/
+Expires: 2027-07-22T23:59:59Z
