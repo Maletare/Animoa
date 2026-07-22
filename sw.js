@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.0.0-push';
+const CACHE_NAME = 'animoa-v3.0.1-home';
 
 const CORE = [
   '/',

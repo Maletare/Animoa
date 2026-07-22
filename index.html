@@ -28,8 +28,8 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <link rel="manifest" href="site.webmanifest" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <link rel="stylesheet" href="styles.css?v=3.0.0" />
-  <link rel="stylesheet" href="landing-compact.css?v=3.0.0" />
+  <link rel="stylesheet" href="styles.css?v=3.1.0" />
+  <link rel="stylesheet" href="landing-compact.css?v=3.1.0" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -76,126 +76,74 @@
 </head>
 <body>
   <main id="landingPage" class="landing-page compact-landing">
-    <header class="site-header">
-      <a class="brand" href="#accueil" aria-label="Accueil Animoa">
-        <img src="assets/animoa-wordmark-official.png" alt="Animoa" />
-      </a>
-      <a class="login-link" href="#" data-public-action="login">Se connecter</a>
-    </header>
+    <div class="landing-wrap">
+      <header class="site-header">
+        <a class="brand" href="#accueil" aria-label="Accueil Animoa">
+          <img src="assets/animoa-wordmark-official.png" alt="Animoa" />
+        </a>
+        <a class="login-link" href="#" data-public-action="login">Se connecter</a>
+      </header>
+
       <section class="hero" id="accueil">
         <div class="hero-copy">
-          <p class="eyebrow">Le carnet de vie de votre animal</p>
-          <h1>Tout ce qui compte pour lui, toujours à portée de main.</h1>
-          <p class="hero-lead">Rendez-vous, poids et documents : Animoa rassemble l’essentiel dans un carnet simple à consulter, partout.</p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#" data-public-action="signup">Découvrir Animoa</a>
-            <span class="test-note">Accès actuellement sur invitation</span>
-          </div>
+          <span class="access-badge">Accès actuellement sur invitation</span>
+          <h1>Toute la vie de votre animal, <span>dans votre téléphone.</span></h1>
+          <p class="hero-lead">Rendez-vous, traitements, poids et documents réunis au même endroit.</p>
+          <a class="button button-primary" href="#" data-public-action="signup">Demander un accès</a>
         </div>
 
-        <div class="phone-stage" aria-label="Aperçu d’Animoa">
-          <div class="glow glow-one"></div>
-          <div class="glow glow-two"></div>
-          <div class="phone-card">
-            <div class="phone-topbar">
-              <div class="mini-brand">
-                <img src="assets/animoa-icon-official.png" alt="" />
-                <div><strong>Milo</strong><span>Mon carnet Animoa</span></div>
+        <div class="phone-stage" aria-label="Aperçu de l’application Animoa">
+          <div class="phone-glow"></div>
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <div class="phone-topbar">
+                <img src="assets/animoa-wordmark-official.png" alt="Animoa" />
+                <span class="avatar" aria-hidden="true"></span>
               </div>
-              <span class="avatar">M</span>
-            </div>
-
-            <div class="welcome-card">
-              <span class="small-label">Prochain rendez-vous</span>
-              <div class="welcome-row">
-                <div class="calendar-icon">24</div>
-                <div><strong>Visite vétérinaire</strong><span>Jeudi · 10 h 30</span></div>
+              <div class="pet-summary">
+                <div class="pet-avatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M7 9 4.5 5.7 3 10l2 2"/><path d="M17 9l2.5-3.3L21 10l-2 2"/><path d="M6 10c0-4 12-4 12 0v3c0 4-3 7-6 7s-6-3-6-7v-3Z"/><path d="M9 13h.01M15 13h.01"/><path d="M10 16c1.2.9 2.8.9 4 0"/></svg>
+                </div>
+                <div><h2>Milo</h2><p>Golden Retriever · 4 ans</p></div>
+              </div>
+              <div class="phone-grid">
+                <article class="phone-card phone-card-wide">
+                  <div><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M8 3v3M16 3v3M4 9h16"/><rect x="4" y="5" width="16" height="15" rx="2"/></svg></span><small>Prochain rendez-vous</small><strong>Vaccin annuel</strong></div>
+                  <span class="date-pill">12 août</span>
+                </article>
+                <article class="phone-card"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M5 20h14"/><path d="M7 20 5 8h14l-2 12"/><path d="M9 8a3 3 0 0 1 6 0"/></svg></span><small>Dernier poids</small><strong>28,4 kg</strong></article>
+                <article class="phone-card"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg></span><small>Documents</small><strong>8 fichiers</strong></article>
+                <article class="phone-card"><span class="ui-icon"><svg viewBox="0 0 24 24"><path d="M10 5 5 10a4 4 0 0 0 6 6l5-5a4 4 0 0 0-6-6Z"/><path d="m8 12 4 4"/></svg></span><small>Traitement</small><strong>Ce soir, 19 h</strong></article>
+                <article class="phone-card"><span class="ui-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M8 5 9.5 3h5L16 5"/></svg></span><small>Souvenirs</small><strong>24 photos</strong></article>
               </div>
             </div>
-
-            <div class="quick-grid">
-              <div class="quick-card"><span class="quick-icon">⚖️</span><strong>12,4 kg</strong><small>Dernier poids</small></div>
-              <div class="quick-card"><span class="quick-icon">📎</span><strong>8 fichiers</strong><small>Documents</small></div>
-            </div>
-
-            <div class="activity-card">
-              <div><span class="activity-dot"></span><strong>Vaccin annuel</strong></div>
-              <span>À venir</span>
-            </div>
           </div>
         </div>
       </section>
 
-      <section class="benefits" aria-labelledby="benefits-title">
-        <div class="section-heading">
-          <p class="eyebrow">Utile dans la vraie vie</p>
-          <h2 id="benefits-title">Trois gestes simples, un quotidien mieux organisé.</h2>
-        </div>
-
-        <div class="benefit-grid">
-          <article class="benefit-card">
-            <div class="benefit-icon">📅</div>
-            <h3>Ne manquez plus un rendez-vous</h3>
-            <p>Retrouvez les prochaines visites et les soins à prévoir au même endroit.</p>
-            <div class="benefit-example"><span>Prochaine visite</span><strong>24 septembre</strong></div>
-          </article>
-
-          <article class="benefit-card">
-            <div class="benefit-icon">⚖️</div>
-            <h3>Suivez son poids en un coup d’œil</h3>
-            <p>Visualisez facilement son évolution sans rechercher vos anciennes notes.</p>
-            <div class="weight-chart" aria-label="Exemple de courbe de poids">
-              <span style="height:34%"></span><span style="height:45%"></span><span style="height:52%"></span><span style="height:60%"></span><span style="height:67%"></span>
-            </div>
-          </article>
-
-          <article class="benefit-card">
-            <div class="benefit-icon">📎</div>
-            <h3>Gardez ses documents avec vous</h3>
-            <p>Ordonnances, analyses et justificatifs restent accessibles, même chez le vétérinaire.</p>
-            <div class="document-list"><span>Ordonnance.pdf</span><span>Analyse_sang.pdf</span></div>
-          </article>
-        </div>
+      <section class="feature-grid" aria-label="Principales fonctionnalités">
+        <article class="feature-card"><span class="feature-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span><div><h2>Rappels utiles</h2><p>Rendez-vous, vaccins et traitements à venir.</p></div></article>
+        <article class="feature-card"><span class="feature-icon"><svg viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span><div><h2>Suivi clair</h2><p>Poids, santé et historique pour chaque animal.</p></div></article>
+        <article class="feature-card"><span class="feature-icon"><svg viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></svg></span><div><h2>Documents accessibles</h2><p>Ordonnances et fichiers toujours avec vous.</p></div></article>
       </section>
 
-      <section class="story-section">
-        <div class="story-card">
-          <div class="story-copy">
-            <p class="eyebrow">Un seul carnet</p>
-            <h2>Moins de recherches, plus de sérénité.</h2>
-            <p>Les informations importantes de votre animal sont réunies dans une application pensée pour être rapide, claire et agréable à utiliser.</p>
-          </div>
-          <div class="story-points" aria-label="Points forts d’Animoa">
-            <div><span>✓</span><p><strong>Clair</strong><small>Chaque information à sa place</small></p></div>
-            <div><span>✓</span><p><strong>Pratique</strong><small>Accessible sur téléphone et ordinateur</small></p></div>
-            <div><span>✓</span><p><strong>Personnel</strong><small>Un carnet pour chacun de vos animaux</small></p></div>
-          </div>
-        </div>
+      <section class="privacy-strip">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <p>Vos informations restent privées et accessibles uniquement depuis votre compte.</p>
       </section>
 
-      <section class="survey-teaser" aria-labelledby="survey-title">
-        <div>
-          <p class="eyebrow">Votre expérience compte</p>
-          <h2 id="survey-title">Aidez-nous à améliorer Animoa.</h2>
-          <p>Quelques questions rapides pour mieux comprendre vos besoins.</p>
-        </div>
-        <a class="button button-secondary" href="questionnaire.html">Donner mon avis</a>
+      <section class="survey-teaser">
+        <div><h2>Votre avis peut faire évoluer Animoa.</h2><p>5 questions, moins d’une minute.</p></div>
+        <a href="questionnaire.html">Donner mon avis</a>
       </section>
 
-      <section class="final-cta">
-        <img src="assets/animoa-icon-official.png" alt="" />
-        <div>
-          <h2>Toute sa vie, près de vous.</h2>
-          <p>Découvrez une manière plus simple de suivre l’essentiel.</p>
-        </div>
-        <a class="button button-primary" href="#" data-public-action="signup">Découvrir Animoa</a>
-      </section>
-    <footer class="site-footer">
-      <img src="assets/animoa-wordmark-official.png" alt="Animoa" />
-      <p>© 2026 Animoa</p>
-      
-    </footer>
+      <footer class="site-footer">
+        <p>© 2026 Animoa</p>
+        <div><span>Confidentialité</span><span>·</span><span>Mentions légales</span></div>
+      </footer>
+    </div>
   </main>
+
 
   <main id="authShell" class="auth-shell" hidden aria-live="polite"></main>
 
@@ -250,7 +198,7 @@
         <span aria-hidden="true">·</span>
         <button type="button" data-page="legal">Mentions légales</button>
         <span aria-hidden="true">·</span>
-        <span id="drawerAppVersion">Version 3.0.0</span>
+        <span id="drawerAppVersion">Version 3.0.1</span>
       </div>
     </div>
   </aside>
