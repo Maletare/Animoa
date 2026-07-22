@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v2.9.6-public-page';
+const CACHE_NAME = 'animoa-v3.0.0-push';
 
 const CORE = [
   '/',
@@ -101,4 +101,44 @@ self.addEventListener('fetch', (event) => {
       return response;
     })
   );
+});
+
+
+self.addEventListener('push', (event) => {
+  let payload = {};
+  try { payload = event.data ? event.data.json() : {}; } catch { payload = { body: event.data?.text?.() || '' }; }
+  const title = payload.title || 'Animoa 🐾';
+  const options = {
+    body: payload.body || 'Un rappel important vous attend dans Animoa.',
+    icon: payload.icon || '/assets/animoa-icon-192.png',
+    badge: payload.badge || '/assets/animoa-icon-64.png',
+    tag: payload.tag || 'animoa-notification',
+    renotify: Boolean(payload.renotify),
+    requireInteraction: Boolean(payload.requireInteraction),
+    data: { url: payload.url || '/', recordId: payload.recordId || '', kind: payload.kind || '' },
+    actions: Array.isArray(payload.actions) ? payload.actions.slice(0, 2) : []
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const destination = new URL(event.notification.data?.url || '/', self.location.origin).href;
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of windows) {
+      if ('focus' in client) {
+        await client.navigate(destination);
+        return client.focus();
+      }
+    }
+    return self.clients.openWindow(destination);
+  })());
+});
+
+self.addEventListener('pushsubscriptionchange', (event) => {
+  event.waitUntil((async () => {
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    clients.forEach((client) => client.postMessage({ type: 'ANIMOA_PUSH_SUBSCRIPTION_CHANGED' }));
+  })());
 });

@@ -356,7 +356,7 @@ body.landing-visible {
 html { scroll-behavior: auto; }
 #landingPage.compact-landing .button { transition: none; }
 }
-/* Correctif contraste page publique 2.9.6 : les couleurs des titres restent lisibles,
+/* Correctif contraste page publique 3.0.0 : les couleurs des titres restent lisibles,
    indépendamment du thème précédemment choisi dans l'application. */
 #landingPage.compact-landing {
   color: var(--ink);
