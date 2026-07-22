@@ -3445,3 +3445,30 @@ body.onboarding-open {
 
 /* Animoa 3.0 — notifications téléphone */
 .push-status-badge{display:inline-flex;align-items:center;max-width:220px;padding:7px 11px;border-radius:999px;background:var(--surface-soft);color:var(--muted);font-size:.76rem;font-weight:800;text-align:center}.push-status-badge.is-active{background:var(--primary-light);color:var(--primary-dark)}.push-explanation{margin:12px 0 16px;color:var(--muted);line-height:1.55}.push-device-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}.danger-text-button{border:0;background:transparent;color:var(--danger,#b83c4b);font-weight:800;padding:10px 4px}.quiet-hours-box{display:grid;grid-template-columns:minmax(180px,1fr) auto auto auto;align-items:end;gap:10px;margin-top:18px;padding:15px;border-radius:18px;background:var(--surface-soft);border:1px solid var(--border)}.quiet-hours-box>div{display:grid;gap:3px}.quiet-hours-box small{color:var(--muted)}.quiet-hours-box label{display:grid;gap:5px;font-size:.78rem;font-weight:800}.quiet-hours-box input{min-width:105px}.compact-button{padding:10px 12px}@media(max-width:720px){.notification-settings-card .card-title-row{align-items:flex-start;flex-direction:column}.push-status-badge{max-width:none}.quiet-hours-box{grid-template-columns:1fr 1fr}.quiet-hours-box>div{grid-column:1/-1}.quiet-hours-box .compact-button{grid-column:1/-1}.push-device-actions>*{flex:1 1 180px}}
+
+
+/* Administration privée */
+.admin-drawer-link{color:var(--primary-strong,#177f76);font-weight:800}
+.admin-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.admin-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.admin-stats .card{padding:18px;display:grid;gap:7px}
+.admin-stats span{color:var(--text-muted);font-size:.82rem}
+.admin-stats strong{font-size:1.65rem;color:var(--primary-strong)}
+.admin-section{margin-top:28px}
+.admin-response-list{display:grid;gap:14px}
+.admin-response-card{padding:20px}
+.admin-response-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:15px}
+.admin-response-heading h3{margin:3px 0 0;font-size:1rem}
+.admin-status{padding:6px 9px;border-radius:999px;background:var(--surface-soft);font-size:.72rem;font-weight:800;text-transform:capitalize}
+.status-nouveau{background:#fff1d6;color:#865d00}.status-a_etudier{background:#e8f0ff;color:#315b9f}.status-prevu{background:#eee8ff;color:#6244a3}.status-traite{background:#ddf6ec;color:#17704f}
+.admin-answer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.admin-answer{padding:11px 12px;border-radius:13px;background:var(--surface-soft);min-width:0}
+.admin-answer span{display:block;color:var(--text-muted);font-size:.72rem;margin-bottom:4px;text-transform:capitalize}
+.admin-answer strong{display:block;font-size:.88rem;overflow-wrap:anywhere}
+.admin-private-note{margin-top:12px;padding:12px;border-left:3px solid var(--primary);background:var(--surface-soft);border-radius:10px}
+.admin-private-note p{margin:5px 0 0}
+.admin-response-actions{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid var(--border)}
+.admin-response-actions select{width:auto;min-width:130px}
+.admin-message{text-align:center;color:var(--text-muted)}
+.admin-error{color:#9b2c2c;background:#fff0f0}
+@media(max-width:760px){.admin-heading{align-items:stretch;flex-direction:column}.admin-stats{grid-template-columns:1fr 1fr}.admin-answer-grid{grid-template-columns:1fr}.admin-response-actions{justify-content:space-between}.admin-response-card{padding:15px}}
