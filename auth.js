@@ -28,10 +28,6 @@
       email: 'Adresse e-mail',
       password: 'Mot de passe',
       passwordHelp: '8 caractères minimum',
-      invitationCode: 'Code d’invitation',
-      invitationHelp: 'Animoa est actuellement accessible uniquement sur invitation.',
-      invitationRequired: 'Indiquez le code d’invitation.',
-      invitationInvalid: 'Le code d’invitation est incorrect.',
       forgot: 'Mot de passe oublié ?',
       noAccount: 'Pas encore de compte ?',
       alreadyAccount: 'Déjà un compte ?',
@@ -56,9 +52,8 @@
       emailRequired: 'Indiquez une adresse e-mail valide.',
       accountCreated: 'Compte créé. Vérifiez maintenant votre boîte e-mail.',
       googleContinue: 'Continuer avec Google',
-      googleExistingOnly: 'Google est disponible pour les comptes Animoa déjà créés. Pour une première inscription, utilisez le code d’invitation.',
+      googleExistingOnly: 'Connexion ou création de compte en quelques secondes.',
       googleUnavailable: 'La connexion Google n’est pas encore activée. Utilisez votre adresse e-mail pour le moment.',
-      googleNewAccountBlocked: 'Ce compte Google n’est pas encore inscrit. Créez d’abord votre compte Animoa avec le code d’invitation, puis utilisez Google avec la même adresse e-mail.',
       or: 'ou',
       terms: 'En continuant, vous accédez à votre carnet Animoa personnel et sécurisé.',
       backPublic: 'Retour à la présentation'
@@ -74,10 +69,6 @@
       email: 'Email address',
       password: 'Password',
       passwordHelp: 'At least 8 characters',
-      invitationCode: 'Invitation code',
-      invitationHelp: 'Animoa is currently available by invitation only.',
-      invitationRequired: 'Enter the invitation code.',
-      invitationInvalid: 'The invitation code is incorrect.',
       forgot: 'Forgot your password?',
       noAccount: 'Don’t have an account yet?',
       alreadyAccount: 'Already have an account?',
@@ -102,9 +93,8 @@
       emailRequired: 'Enter a valid email address.',
       accountCreated: 'Account created. Now check your email.',
       googleContinue: 'Continue with Google',
-      googleExistingOnly: 'Google is available for existing Animoa accounts. For a first sign-up, use the invitation code.',
+      googleExistingOnly: 'Sign in or create your account in a few seconds.',
       googleUnavailable: 'Google sign-in is not enabled yet. Use your email address for now.',
-      googleNewAccountBlocked: 'This Google account is not registered yet. First create your Animoa account with the invitation code, then use Google with the same email address.',
       or: 'or',
       terms: 'By continuing, you access your personal and secure Animoa journal.',
       backPublic: 'Back to the presentation'
@@ -193,11 +183,10 @@
         <button type="button" class="${signup ? 'active' : ''}" data-auth-action="show-signup">${c('signup')}</button>
       </div>
       ${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}
-      ${!signup ? `<button class="google-auth-button" type="button" data-auth-action="google"><span class="google-auth-icon" aria-hidden="true">G</span><span>${c('googleContinue')}</span></button><p class="google-auth-help">${c('googleExistingOnly')}</p><div class="auth-divider" aria-hidden="true"><span>${c('or')}</span></div>` : ''}
+      <button class="google-auth-button" type="button" data-auth-action="google"><span class="google-auth-icon" aria-hidden="true">G</span><span>${c('googleContinue')}</span></button><p class="google-auth-help">${c('googleExistingOnly')}</p><div class="auth-divider" aria-hidden="true"><span>${c('or')}</span></div>
       <form id="authForm" class="auth-form" data-mode="${signup ? 'signup' : 'login'}">
         <label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required placeholder="nom@exemple.fr" /></label>
         <label><span>${c('password')}</span><input name="password" type="password" autocomplete="${signup ? 'new-password' : 'current-password'}" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label>
-        ${signup ? `<label><span>${c('invitationCode')}</span><input name="invitationCode" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" required placeholder="ANIMOA-••••" /><small>${c('invitationHelp')}</small></label>` : ''}
         <button class="primary-button auth-submit" type="submit">${signup ? c('signup') : c('login')}</button>
       </form>
       ${!signup ? `<button type="button" class="auth-text-button" data-auth-action="forgot">${c('forgot')}</button>` : ''}
@@ -244,7 +233,6 @@
     const message = String(error?.message || '').toLowerCase();
     if (message.includes('invalid login') || message.includes('invalid credentials')) return c('invalid');
     if (message.includes('password') && message.includes('characters')) return c('passwordLength');
-    if (message.includes('code d’invitation') || message.includes("code d'invitation") || message.includes('invitation code')) return c('invitationInvalid');
     if (message.includes('provider') && (message.includes('enabled') || message.includes('unsupported'))) return c('googleUnavailable');
     return error?.message || c('genericError');
   }
@@ -268,7 +256,7 @@
         button.innerHTML = original;
       }
       const message = normaliseError(error);
-      renderLogin('login', message === c('invitationInvalid') ? c('googleNewAccountBlocked') : message);
+      renderLogin('login', message);
     }
   }
 
@@ -281,7 +269,36 @@
     const nextSearch = searchParams.toString();
     history.replaceState({}, document.title, `${location.pathname}${nextSearch ? `?${nextSearch}` : ''}`);
     const message = normaliseError({ message: String(raw).replace(/\+/g, ' ') });
-    return message === c('invitationInvalid') ? c('googleNewAccountBlocked') : message;
+    return message;
+  }
+
+  function currentProfilePayload() {
+    if (!currentUser) return null;
+    const metadata = currentUser.user_metadata || {};
+    const identityProvider = currentUser.app_metadata?.provider || currentUser.identities?.[0]?.provider || 'email';
+    const displayName = String(
+      metadata.full_name || metadata.name || metadata.given_name || metadata.preferred_username || ''
+    ).trim();
+    return {
+      user_id: currentUser.id,
+      email: String(currentUser.email || '').trim().toLowerCase(),
+      display_name: displayName || null,
+      provider: identityProvider,
+      last_seen_at: new Date().toISOString()
+    };
+  }
+
+  async function syncCurrentUserProfile() {
+    if (!client || !currentUser || localPreview) return;
+    const payload = currentProfilePayload();
+    if (!payload?.email) return;
+    const { error } = await client
+      .from('animoa_profiles')
+      .upsert(payload, { onConflict: 'user_id' });
+    if (error) {
+      // Le compte reste utilisable si le script SQL des profils n'a pas encore été appliqué.
+      console.warn('Profil utilisateur Animoa non synchronisé', error);
+    }
   }
 
   function resolveAppReady() {
@@ -291,6 +308,7 @@
       return;
     }
     showApp();
+    syncCurrentUserProfile().catch((error) => console.warn('Synchronisation du profil impossible', error));
     if (!readyResolved) {
       readyResolved = true;
       readyUserId = nextUserId;
@@ -389,10 +407,8 @@
       const values = new FormData(form);
       const email = String(values.get('email') || '').trim();
       const password = String(values.get('password') || '');
-      const invitationCode = String(values.get('invitationCode') || '').trim();
       if (!email.includes('@')) return renderLogin(form.dataset.mode, c('emailRequired'));
       if (password.length < 8) return renderLogin(form.dataset.mode, c('passwordLength'));
-      if (form.dataset.mode === 'signup' && !invitationCode) return renderLogin(form.dataset.mode, c('invitationRequired'));
       setBusy(form, true);
       try {
         if (form.dataset.mode === 'signup') {
@@ -402,7 +418,7 @@
             password,
             options: {
               emailRedirectTo: redirectTo,
-              data: { language: lang(), invitation_code: invitationCode }
+              data: { language: lang() }
             }
           });
           if (error) throw error;

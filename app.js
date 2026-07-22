@@ -23,12 +23,12 @@
   const RELEASE_SEEN_KEY = `animoa_release_seen_${APP_VERSION}`;
   const RELEASE_NOTES = Object.freeze({
     title: 'Animoa a été mis à jour',
-    subtitle: 'La gestion du compte et des données est plus complète.',
+    subtitle: 'La création de compte est maintenant plus simple et immédiate.',
     items: [
-      'Le carnet peut être effacé sans supprimer le compte.',
-      'Un utilisateur peut désormais supprimer définitivement son compte depuis les paramètres.',
-      'Les animaux, informations, documents, rappels et données associés sont supprimés avec le compte.',
-      'Le compte administrateur principal reste protégé contre une suppression accidentelle.'
+      'Vous pouvez désormais créer votre compte directement avec Google ou votre adresse e-mail.',
+      'Le code d’invitation et la validation manuelle ont été supprimés.',
+      'Les nouveaux comptes apparaissent dans Administration > Inscrits.',
+      'Les données personnelles restent protégées par les règles Supabase.'
     ]
   });
 
@@ -202,8 +202,8 @@
   let isAdminUser = false;
   let adminResponses = [];
   let adminFeedback = [];
-  let adminAccessRequests = [];
-  let adminActiveTab = 'access';
+  let adminUsers = [];
+  let adminActiveTab = 'users';
   let adminStatusFilter = 'all';
   let adminLoading = false;
   let adminError = '';
@@ -2076,7 +2076,7 @@
       animals: 'Animaux', current_method: 'Organisation actuelle', useful_features: 'Fonctionnalités souhaitées',
       testing_interest: 'Souhaite tester Animoa', email: 'Adresse e-mail', desired_use: 'Réponse libre',
       rating: 'Note', comment: 'Commentaire', liked: 'Points appréciés', missing: 'Fonctionnalités manquantes',
-      issue: 'Problème rencontré', first_name: 'Prénom', animals: 'Animaux', animal_count: 'Nombre d’animaux', reason: 'Motif de la demande', contact_consent: 'Accord pour être recontacté', status: 'Statut', private_note: 'Note privée'
+      issue: 'Problème rencontré', first_name: 'Prénom', status: 'Statut', private_note: 'Note privée', display_name: 'Nom', provider: 'Mode d’inscription', last_seen_at: 'Dernière connexion', created_at: 'Date d’inscription'
     })[key] || key.replaceAll('_', ' ');
   }
 
@@ -2088,17 +2088,19 @@
     adminError = '';
     if (currentPage === 'admin') renderPage();
     try {
+      const usersResult = await client.from('animoa_profiles').select('*').order('created_at', { ascending: false });
+      if (usersResult.error) throw usersResult.error;
+      adminUsers = usersResult.data || [];
+
       const surveyResult = await client.from('animoa_survey_responses').select('*').order('created_at', { ascending: false });
       if (surveyResult.error) throw surveyResult.error;
       adminResponses = surveyResult.data || [];
+
       const feedbackResult = await client.from('animoa_feedback').select('*').order('created_at', { ascending: false });
       if (feedbackResult.error && !/does not exist|relation .* does not exist/i.test(feedbackResult.error.message || '')) throw feedbackResult.error;
       adminFeedback = feedbackResult.error ? [] : (feedbackResult.data || []);
-      const accessResult = await client.from('animoa_access_requests').select('*').order('created_at', { ascending: false });
-      if (accessResult.error && !/does not exist|relation .* does not exist/i.test(accessResult.error.message || '')) throw accessResult.error;
-      adminAccessRequests = accessResult.error ? [] : (accessResult.data || []);
     } catch (error) {
-      adminError = error.message || 'Impossible de charger les retours.';
+      adminError = error.message || 'Impossible de charger les informations administratives.';
     } finally {
       adminLoading = false;
       if (currentPage === 'admin') renderPage();
@@ -2106,165 +2108,110 @@
   }
 
   function adminPersonTitle(item, source) {
-    if (source === 'access') return item.first_name || item.email || 'Nouvelle demande';
+    if (source === 'users') return item.display_name || item.email || 'Utilisateur Animoa';
     return item.email || (source === 'feedback' ? 'Avis anonyme' : 'Questionnaire anonyme');
   }
 
   function adminStatusLabel(value) {
-    return ({ nouveau:'Nouveau', a_recontacter:'À recontacter', accepte:'Acceptée', refuse:'Refusée', a_etudier:'À étudier', prevu:'Prévu', traite:'Traité' })[value] || value;
+    return ({ nouveau:'Nouveau', a_etudier:'À étudier', prevu:'Prévu', traite:'Traité' })[value] || value;
   }
 
-  function adminStatusOptions(source, status) {
-    const values = source === 'access' ? ['nouveau','a_recontacter','accepte','refuse'] : ['nouveau','a_etudier','prevu','traite'];
-    return values.map((value) => `<option value="${value}" ${status === value ? 'selected' : ''}>${adminStatusLabel(value)}</option>`).join('');
+  function adminStatusOptions(status) {
+    return ['nouveau','a_etudier','prevu','traite']
+      .map((value) => `<option value="${value}" ${status === value ? 'selected' : ''}>${adminStatusLabel(value)}</option>`)
+      .join('');
   }
 
-  function renderAdminResponseCard(item, source = 'survey') {
-    const ignored = new Set(['id','created_at','updated_at','user_id','status','private_note']);
-    const details = Object.entries(item).filter(([key]) => !ignored.has(key)).map(([key,value]) => `<div class="admin-answer"><span>${escapeHtml(surveyFieldLabel(key))}</span><strong>${escapeHtml(readableSurveyValue(value))}</strong></div>`).join('');
-    const status=item.status||'nouveau';
-    const meta = source === 'access' ? `${readableSurveyValue(item.animals)} · ${adminDate(item.created_at)}` : adminDate(item.created_at);
-    return `<details class="admin-accordion" data-admin-entry="${source}">
-      <summary class="admin-accordion-summary"><span class="admin-summary-main"><span class="admin-summary-title">${escapeHtml(adminPersonTitle(item,source))}</span><span class="admin-summary-meta">${escapeHtml(meta)}</span></span><span class="admin-summary-side"><span class="admin-status status-${escapeHtml(status)}">${escapeHtml(adminStatusLabel(status))}</span><span class="admin-chevron">⌄</span></span></summary>
-      <div class="admin-accordion-body"><div class="admin-answer-grid">${details || '<p class="muted">Aucune réponse détaillée.</p>'}</div>
-      <div class="admin-note-editor"><label for="admin-note-${escapeHtml(source)}-${escapeHtml(item.id)}">Note privée</label><textarea id="admin-note-${escapeHtml(source)}-${escapeHtml(item.id)}" data-admin-note-source="${source}" data-admin-note-id="${escapeHtml(item.id)}" placeholder="Visible uniquement par vous">${escapeHtml(item.private_note || '')}</textarea></div>
-      ${source === 'access' && item.email ? `<div class="admin-invite-box" data-admin-invite-panel="${escapeHtml(item.id)}"><div class="admin-invite-heading"><strong>Envoyer l’accès</strong><span>Le message sera envoyé automatiquement à ${escapeHtml(item.email)}.</span></div><p class="admin-required-note">Le champ marqué d’un <strong>*</strong> est obligatoire.</p><label for="admin-invite-${escapeHtml(item.id)}">Code d’invitation <span class="required-field-marker">*</span></label><input id="admin-invite-${escapeHtml(item.id)}" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" data-admin-invite-id="${escapeHtml(item.id)}" placeholder="Saisissez le code exact"><div class="admin-invite-actions"><button type="button" class="primary-button admin-email-button" data-action="admin-accept-email" data-admin-id="${escapeHtml(item.id)}">Accepter et envoyer l’accès</button><button type="button" class="secondary-button admin-copy-message-button" data-action="admin-copy-invite" data-admin-id="${escapeHtml(item.id)}">Copier le message</button></div><small class="admin-invite-security">Le code respecte les majuscules et minuscules et n’est pas enregistré dans Animoa.</small></div>` : ''}
-      <div class="admin-actions-mobile"><label class="admin-status-field"><span>Statut</span><select aria-label="Statut" data-admin-status-source="${source}" data-admin-id="${escapeHtml(item.id)}">${adminStatusOptions(source,status)}</select></label><button type="button" class="secondary-button admin-save-button" data-action="admin-save-note" data-admin-source="${source}" data-admin-id="${escapeHtml(item.id)}">Enregistrer la note</button>${item.email ? `<button type="button" class="secondary-button admin-copy-email-button" data-action="admin-copy-email" data-email="${escapeHtml(item.email)}">Copier l’e-mail</button>` : ''}<button type="button" class="text-button danger-text-button admin-delete-button" data-action="admin-delete-response" data-admin-source="${source}" data-admin-id="${escapeHtml(item.id)}">Supprimer cette entrée</button></div></div>
+  function adminProviderLabel(value) {
+    const provider = String(value || 'email').toLowerCase();
+    if (provider === 'google') return 'Google';
+    return 'E-mail';
+  }
+
+  function renderAdminUserCard(item) {
+    const title = adminPersonTitle(item, 'users');
+    const provider = adminProviderLabel(item.provider);
+    return `<details class="admin-accordion" data-admin-entry="users">
+      <summary class="admin-accordion-summary"><span class="admin-summary-main"><span class="admin-summary-title">${escapeHtml(title)}</span><span class="admin-summary-meta">${escapeHtml(provider)} · ${escapeHtml(adminDate(item.created_at))}</span></span><span class="admin-summary-side"><span class="admin-status status-inscrit">Inscrit</span><span class="admin-chevron">⌄</span></span></summary>
+      <div class="admin-accordion-body"><div class="admin-answer-grid">
+        <div class="admin-answer"><span>Adresse e-mail</span><strong>${escapeHtml(item.email || '—')}</strong></div>
+        <div class="admin-answer"><span>Nom</span><strong>${escapeHtml(item.display_name || 'Non renseigné')}</strong></div>
+        <div class="admin-answer"><span>Mode d’inscription</span><strong>${escapeHtml(provider)}</strong></div>
+        <div class="admin-answer"><span>Date d’inscription</span><strong>${escapeHtml(adminDate(item.created_at))}</strong></div>
+        <div class="admin-answer"><span>Dernière connexion</span><strong>${escapeHtml(adminDate(item.last_seen_at))}</strong></div>
+      </div>
+      <div class="admin-actions-mobile">${item.email ? `<button type="button" class="secondary-button admin-copy-email-button" data-action="admin-copy-email" data-email="${escapeHtml(item.email)}">Copier l’e-mail</button>` : ''}</div></div>
     </details>`;
   }
 
-  function adminFilteredItems(items) { return adminStatusFilter === 'all' ? items : items.filter((item) => (item.status || 'nouveau') === adminStatusFilter); }
+  function renderAdminResponseCard(item, source = 'survey') {
+    if (source === 'users') return renderAdminUserCard(item);
+    const ignored = new Set(['id','created_at','updated_at','user_id','status','private_note']);
+    const details = Object.entries(item).filter(([key]) => !ignored.has(key)).map(([key,value]) => `<div class="admin-answer"><span>${escapeHtml(surveyFieldLabel(key))}</span><strong>${escapeHtml(readableSurveyValue(value))}</strong></div>`).join('');
+    const status=item.status||'nouveau';
+    return `<details class="admin-accordion" data-admin-entry="${source}">
+      <summary class="admin-accordion-summary"><span class="admin-summary-main"><span class="admin-summary-title">${escapeHtml(adminPersonTitle(item,source))}</span><span class="admin-summary-meta">${escapeHtml(adminDate(item.created_at))}</span></span><span class="admin-summary-side"><span class="admin-status status-${escapeHtml(status)}">${escapeHtml(adminStatusLabel(status))}</span><span class="admin-chevron">⌄</span></span></summary>
+      <div class="admin-accordion-body"><div class="admin-answer-grid">${details || '<p class="muted">Aucune réponse détaillée.</p>'}</div>
+      <div class="admin-note-editor"><label for="admin-note-${escapeHtml(source)}-${escapeHtml(item.id)}">Note privée</label><textarea id="admin-note-${escapeHtml(source)}-${escapeHtml(item.id)}" data-admin-note-source="${source}" data-admin-note-id="${escapeHtml(item.id)}" placeholder="Visible uniquement par vous">${escapeHtml(item.private_note || '')}</textarea></div>
+      <div class="admin-actions-mobile"><label class="admin-status-field"><span>Statut</span><select aria-label="Statut" data-admin-status-source="${source}" data-admin-id="${escapeHtml(item.id)}">${adminStatusOptions(status)}</select></label><button type="button" class="secondary-button admin-save-button" data-action="admin-save-note" data-admin-source="${source}" data-admin-id="${escapeHtml(item.id)}">Enregistrer la note</button>${item.email ? `<button type="button" class="secondary-button admin-copy-email-button" data-action="admin-copy-email" data-email="${escapeHtml(item.email)}">Copier l’e-mail</button>` : ''}<button type="button" class="text-button danger-text-button admin-delete-button" data-action="admin-delete-response" data-admin-source="${source}" data-admin-id="${escapeHtml(item.id)}">Supprimer cette entrée</button></div></div>
+    </details>`;
+  }
+
+  function adminFilteredItems(items) {
+    return adminStatusFilter === 'all' ? items : items.filter((item) => (item.status || 'nouveau') === adminStatusFilter);
+  }
 
   function renderAdminPanel() {
     const configs={
-      access:{title:'Demandes d’accès',items:adminAccessRequests,empty:'Aucune demande d’accès pour le moment.',filters:['all','nouveau','a_recontacter','accepte','refuse']},
-      survey:{title:'Questionnaires',items:adminResponses,empty:'Aucune réponse au questionnaire pour le moment.',filters:['all','nouveau','a_etudier','prevu','traite']},
-      feedback:{title:'Avis utilisateurs',items:adminFeedback,empty:'Aucun avis enregistré pour le moment.',filters:['all','nouveau','a_etudier','prevu','traite']}
+      users:{items:adminUsers,empty:'Aucun compte inscrit pour le moment.',filters:[]},
+      survey:{items:adminResponses,empty:'Aucune réponse au questionnaire pour le moment.',filters:['all','nouveau','a_etudier','prevu','traite']},
+      feedback:{items:adminFeedback,empty:'Aucun avis enregistré pour le moment.',filters:['all','nouveau','a_etudier','prevu','traite']}
     };
-    const c=configs[adminActiveTab]; const visible=adminFilteredItems(c.items);
-    return `<section class="admin-section"><div class="admin-tabs"><button class="admin-tab ${adminActiveTab==='access'?'active':''}" data-action="admin-tab" data-admin-tab="access">Demandes (${adminAccessRequests.length})</button><button class="admin-tab ${adminActiveTab==='survey'?'active':''}" data-action="admin-tab" data-admin-tab="survey">Questionnaires (${adminResponses.length})</button><button class="admin-tab ${adminActiveTab==='feedback'?'active':''}" data-action="admin-tab" data-admin-tab="feedback">Avis (${adminFeedback.length})</button></div><div class="admin-filter-row">${c.filters.map(v=>`<button class="admin-filter ${adminStatusFilter===v?'active':''}" data-action="admin-filter" data-admin-filter="${v}">${v==='all'?'Tous':adminStatusLabel(v)}</button>`).join('')}</div><div class="admin-response-list">${visible.length?visible.map(item=>renderAdminResponseCard(item,adminActiveTab)).join(''):`<div class="card admin-empty">${c.empty}</div>`}</div></section>`;
+    const current=configs[adminActiveTab] || configs.users;
+    const visible=adminActiveTab === 'users' ? current.items : adminFilteredItems(current.items);
+    const filters = current.filters.length ? `<div class="admin-filter-row">${current.filters.map(v=>`<button class="admin-filter ${adminStatusFilter===v?'active':''}" data-action="admin-filter" data-admin-filter="${v}">${v==='all'?'Tous':adminStatusLabel(v)}</button>`).join('')}</div>` : '';
+    return `<section class="admin-section"><div class="admin-tabs"><button class="admin-tab ${adminActiveTab==='users'?'active':''}" data-action="admin-tab" data-admin-tab="users">Inscrits (${adminUsers.length})</button><button class="admin-tab ${adminActiveTab==='survey'?'active':''}" data-action="admin-tab" data-admin-tab="survey">Questionnaires (${adminResponses.length})</button><button class="admin-tab ${adminActiveTab==='feedback'?'active':''}" data-action="admin-tab" data-admin-tab="feedback">Avis (${adminFeedback.length})</button></div>${filters}<div class="admin-response-list">${visible.length?visible.map(item=>renderAdminResponseCard(item,adminActiveTab)).join(''):`<div class="card admin-empty">${current.empty}</div>`}</div></section>`;
   }
 
   function renderAdmin() {
     if (!isAdminUser) return `<section class="page-heading"><p class="eyebrow">Accès refusé</p><h1>Administration</h1><p>Cette rubrique est réservée à l’administrateur Animoa.</p></section>`;
-    const newAccess=adminAccessRequests.filter(i=>(i.status||'nouveau')==='nouveau').length;
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const recentUsers = adminUsers.filter((item) => new Date(item.created_at).getTime() >= sevenDaysAgo).length;
     const newSurvey=adminResponses.filter(i=>(i.status||'nouveau')==='nouveau').length;
-    return `<section class="page-heading admin-heading"><div><p class="eyebrow">Espace privé</p><h1>Administration</h1><p>Vos demandes et retours, dans des listes simples à consulter sur téléphone.</p></div><button type="button" class="secondary-button" data-action="admin-refresh">Actualiser</button></section>
-      <section class="admin-stats"><article class="card"><span>Nouvelles demandes</span><strong>${newAccess}</strong></article><article class="card"><span>Nouveaux questionnaires</span><strong>${newSurvey}</strong></article><article class="card"><span>Demandes totales</span><strong>${adminAccessRequests.length}</strong></article><article class="card"><span>Avis reçus</span><strong>${adminFeedback.length}</strong></article></section>
+    return `<section class="page-heading admin-heading"><div><p class="eyebrow">Espace privé</p><h1>Administration</h1><p>Suivez les inscriptions, les questionnaires et les avis depuis des listes compactes.</p></div><button type="button" class="secondary-button" data-action="admin-refresh">Actualiser</button></section>
+      <section class="admin-stats"><article class="card"><span>Inscrits totaux</span><strong>${adminUsers.length}</strong></article><article class="card"><span>Nouveaux inscrits (7 j)</span><strong>${recentUsers}</strong></article><article class="card"><span>Nouveaux questionnaires</span><strong>${newSurvey}</strong></article><article class="card"><span>Avis reçus</span><strong>${adminFeedback.length}</strong></article></section>
       ${adminLoading?'<div class="card card-pad admin-message">Chargement…</div>':''}${adminError?`<div class="card card-pad admin-error">${escapeHtml(adminError)}</div>`:''}${renderAdminPanel()}`;
   }
 
   async function updateAdminStatus(source, id, status) {
-    if (!isAdminUser) return;
-    const table = source === 'feedback' ? 'animoa_feedback' : source === 'access' ? 'animoa_access_requests' : 'animoa_survey_responses';
+    if (!isAdminUser || source === 'users') return;
+    const table = source === 'feedback' ? 'animoa_feedback' : 'animoa_survey_responses';
     const { error } = await adminClient().from(table).update({ status, updated_at: new Date().toISOString() }).eq('id', id);
     if (error) return showToast(error.message || 'Mise à jour impossible.');
-    const collection = source === 'feedback' ? adminFeedback : source === 'access' ? adminAccessRequests : adminResponses;
+    const collection = source === 'feedback' ? adminFeedback : adminResponses;
     const item = collection.find((entry) => String(entry.id) === String(id));
     if (item) item.status = status;
     showToast('Statut mis à jour.');
     renderPage();
   }
 
-  function accessInvitationMessage(item, invitationCode) {
-    const firstName = String(item?.first_name || '').trim();
-    const greeting = firstName ? `Bonjour ${firstName},` : 'Bonjour,';
-    const appUrl = 'https://animoa.fr';
-    return `${greeting}\n\nVotre demande d’accès à Animoa a été acceptée.\n\nPour créer votre compte :\n1. Ouvrez ${appUrl}\n2. Choisissez « Créer un compte »\n3. Saisissez votre adresse e-mail et le code d’invitation suivant : ${invitationCode}\n\nCe code vous sera demandé une seule fois, lors de votre première inscription, afin d’activer votre accès à Animoa. Ensuite, vous vous connecterez normalement avec votre adresse e-mail et votre mot de passe.\n\nCe code est personnel. Merci de ne pas le partager.\n\nÀ bientôt sur Animoa.`;
-  }
-
-  function adminInviteCode(id) {
-    return String(document.getElementById(`admin-invite-${id}`)?.value || '').trim();
-  }
-
-  async function prepareAccessInvitation(id, mode = 'email') {
-    if (!isAdminUser) return;
-    const item = adminAccessRequests.find((entry) => String(entry.id) === String(id));
-    if (!item?.email) return showToast('Adresse e-mail introuvable.');
-    const invitationCode = adminInviteCode(id);
-    if (!invitationCode) return showToast('Saisissez d’abord le code d’invitation.');
-    const message = accessInvitationMessage(item, invitationCode);
-    if (mode === 'copy') {
-      try {
-        await navigator.clipboard.writeText(message);
-        showToast('Message d’accès copié.');
-      } catch {
-        showToast('Copie impossible.');
-      }
-      return;
-    }
-
-    const client = adminClient();
-    if (!client) return showToast('Connexion à Animoa indisponible.');
-    const button = document.querySelector(`[data-action="admin-accept-email"][data-admin-id="${CSS.escape(String(id))}"]`);
-    const previousLabel = button?.textContent || 'Accepter et envoyer l’accès';
-    if (button) {
-      button.disabled = true;
-      button.textContent = 'Envoi en cours…';
-      button.setAttribute('aria-busy', 'true');
-    }
-
-    try {
-      const { data, error } = await client.functions.invoke('send-access-email', {
-        body: { requestId: String(id), invitationCode }
-      });
-
-      if (error) {
-        let serverMessage = '';
-        try {
-          const response = error.context;
-          if (response && typeof response.clone === 'function') {
-            const payload = await response.clone().json().catch(() => null);
-            serverMessage = String(payload?.error || payload?.message || '').trim();
-          }
-        } catch (readError) {
-          console.warn('Réponse d’erreur illisible :', readError);
-        }
-        throw new Error(serverMessage || error.message || 'L’e-mail n’a pas pu être envoyé.');
-      }
-      if (!data?.success) throw new Error(data?.error || data?.message || 'L’e-mail n’a pas pu être envoyé.');
-
-      // La fonction serveur envoie l’e-mail. On conserve ici le libellé français
-      // utilisé par l’interface et ses filtres.
-      const { error: statusError } = await client
-        .from('animoa_access_requests')
-        .update({ status: 'accepte', updated_at: new Date().toISOString() })
-        .eq('id', id);
-      if (statusError) console.warn('E-mail envoyé, statut local non actualisé :', statusError);
-
-      item.status = 'accepte';
-      showToast(data.warning || 'L’accès a bien été envoyé par e-mail.');
-      renderPage();
-    } catch (error) {
-      console.error('Envoi automatique impossible :', error);
-      showToast(error?.message || 'Impossible d’envoyer l’e-mail.');
-    } finally {
-      if (button?.isConnected) {
-        button.disabled = false;
-        button.textContent = previousLabel;
-        button.removeAttribute('aria-busy');
-      }
-    }
-  }
-
   async function deleteAdminResponse(source, id) {
-    if (!isAdminUser || !confirm('Supprimer définitivement ce retour ?')) return;
-    const table = source === 'feedback' ? 'animoa_feedback' : source === 'access' ? 'animoa_access_requests' : 'animoa_survey_responses';
+    if (!isAdminUser || source === 'users' || !confirm('Supprimer définitivement ce retour ?')) return;
+    const table = source === 'feedback' ? 'animoa_feedback' : 'animoa_survey_responses';
     const { error } = await adminClient().from(table).delete().eq('id', id);
     if (error) return showToast(error.message || 'Suppression impossible.');
     if (source === 'feedback') adminFeedback = adminFeedback.filter((item) => String(item.id) !== String(id));
-    else if (source === 'access') adminAccessRequests = adminAccessRequests.filter((item) => String(item.id) !== String(id));
     else adminResponses = adminResponses.filter((item) => String(item.id) !== String(id));
     showToast('Retour supprimé.');
     renderPage();
   }
 
   async function saveAdminNote(source,id,note) {
-    if (!isAdminUser) return;
-    const table=source==='feedback'?'animoa_feedback':source==='access'?'animoa_access_requests':'animoa_survey_responses';
+    if (!isAdminUser || source === 'users') return;
+    const table=source==='feedback'?'animoa_feedback':'animoa_survey_responses';
     const {error}=await adminClient().from(table).update({private_note:note,updated_at:new Date().toISOString()}).eq('id',id);
     if (error) return showToast(error.message||'Enregistrement impossible.');
-    const collection=source==='feedback'?adminFeedback:source==='access'?adminAccessRequests:adminResponses;
+    const collection=source==='feedback'?adminFeedback:adminResponses;
     const item=collection.find(x=>String(x.id)===String(id)); if(item)item.private_note=note;
     showToast('Note enregistrée.');
   }
@@ -3233,20 +3180,6 @@
         </div>
         <div class="quiet-hours-box"><div><strong>Heures silencieuses</strong><small>Les rappels non urgents sont différés pendant cette plage.</small></div><label>De <input type="time" id="quietHoursStart" value="${escapeHtml(settings.quietHoursStart)}"></label><label>à <input type="time" id="quietHoursEnd" value="${escapeHtml(settings.quietHoursEnd)}"></label><button type="button" class="secondary-button compact-button" data-action="save-notification-hours">Enregistrer</button></div>
       </article>`;
-    const accountDeletionContent = window.AnimoaAuth?.isLocalPreview?.()
-      ? `<article class="card card-pad account-delete-protected settings-inner-card">
-          <div><p class="eyebrow">Suppression du compte</p><h2>Indisponible en prévisualisation locale</h2><p>Connectez-vous à un véritable compte Animoa pour utiliser cette fonction.</p></div>
-        </article>`
-      : isAdminUser
-        ? `<article class="card card-pad account-delete-protected settings-inner-card">
-            <div class="account-protected-icon" aria-hidden="true">🔒</div>
-            <div><p class="eyebrow">Compte administrateur</p><h2>Suppression protégée</h2><p>Le compte administrateur principal ne peut pas être supprimé depuis l’application afin d’éviter de perdre l’accès à l’administration.</p></div>
-          </article>`
-        : `<article class="card card-pad danger-zone account-delete-zone settings-inner-card">
-            <div><p class="eyebrow danger-eyebrow">Suppression définitive</p><h2>Supprimer mon compte</h2><p>Le compte, les animaux, les informations, les documents, les photos et les rappels associés seront définitivement supprimés.</p></div>
-            <button type="button" class="danger-button account-delete-button" data-action="request-delete-account">Supprimer mon compte</button>
-          </article>`;
-
     const accountContent = `
       <article class="card card-pad account-card settings-inner-card">
         <img src="assets/animoa-icon-official.png" alt="" class="account-logo" width="331" height="378" decoding="async" />
@@ -3254,10 +3187,9 @@
         <button type="button" class="secondary-button" data-action="logout">Se déconnecter</button>
       </article>
       <article class="card card-pad danger-zone settings-compact-row settings-inner-card">
-        <div><p class="eyebrow danger-eyebrow">Carnet Animoa</p><h2>Effacer le carnet</h2><p>Les animaux, informations, documents et photos seront effacés, mais le compte restera actif.</p></div>
-        <button type="button" class="danger-button" data-action="reset-data">Effacer le carnet</button>
-      </article>
-      ${accountDeletionContent}`;
+        <div><p class="eyebrow danger-eyebrow">Données enregistrées</p><h2>Effacer toutes les données</h2><p>Cette action supprime le carnet et les photos de ce compte.</p></div>
+        <button type="button" class="danger-button" data-action="reset-data">Effacer toutes les données</button>
+      </article>`;
     const supportContent = `
       <article class="card card-pad settings-support-card settings-compact-row settings-inner-card">
         <div><p class="eyebrow">Aide & support</p><h2>Besoin d’aide avec Animoa ?</h2></div>
@@ -3318,7 +3250,7 @@
           <form id="supportForm" class="form-grid" novalidate>
             <div class="form-row"><label for="supportCategory">Sujet</label><select id="supportCategory" name="category" required><option value="Question">Question</option><option value="Problème technique">Problème technique</option><option value="Suggestion">Suggestion</option><option value="Compte et données">Compte et données</option><option value="Autre">Autre</option></select></div>
             <div class="form-row"><label for="supportEmail">Adresse e-mail pour la réponse</label><input id="supportEmail" name="email" type="email" value="${escapeHtml(email)}" placeholder="nom@exemple.fr" required /></div>
-            <div class="form-row"><label for="supportMessage">Message</label><textarea id="supportMessage" name="message" minlength="10" maxlength="4000" required placeholder="Décrivez votre demande…"></textarea><span class="form-help">Ne communiquez jamais votre mot de passe ni votre code d’invitation.</span></div>
+            <div class="form-row"><label for="supportMessage">Message</label><textarea id="supportMessage" name="message" minlength="10" maxlength="4000" required placeholder="Décrivez votre demande…"></textarea><span class="form-help">Ne communiquez jamais votre mot de passe.</span></div>
             <div class="form-row support-file-row"><label for="supportScreenshot">Capture d’écran</label><input id="supportScreenshot" class="support-attachment-input" name="screenshot" type="file" accept="image/jpeg,image/png,image/webp" /><span id="supportScreenshotName" class="form-help">Image JPG, PNG ou WebP, 2 Mo maximum.</span></div>
             <div class="contact-destination"><span>✉️</span><div><strong>Destinataire</strong><a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a></div></div>
             <button id="supportSubmitButton" class="primary-button" type="submit">Envoyer le message</button>
@@ -4571,14 +4503,14 @@
 
 
   function requestResetAnimoa() {
-    openModal('Effacer le carnet ?', `
+    openModal('Effacer toutes les données ?', `
       <div class="delete-confirmation">
         <div class="delete-warning-icon">!</div>
-        <p><strong>Le contenu du carnet sera définitivement effacé.</strong></p>
-        <p>Les animaux, informations de santé, dépenses, poids, souvenirs, documents et photos seront supprimés. Votre compte Animoa restera actif.</p>
+        <p><strong>Toutes les données locales seront effacées.</strong></p>
+        <p>Compagnons, santé, dépenses, poids, souvenirs et photos seront définitivement supprimés de ce navigateur.</p>
         <div class="delete-actions">
           <button type="button" class="secondary-button" data-action="close-modal">Annuler</button>
-          <button type="button" class="danger-button" data-action="confirm-reset-data">Oui, effacer le carnet</button>
+          <button type="button" class="danger-button" data-action="confirm-reset-data">Oui, tout effacer</button>
         </div>
       </div>
     `, 'Action sensible', { sensitive: true });
@@ -4596,145 +4528,12 @@
       await clearMediaStore(mediaRefsToDelete);
       closeModal();
       setPage('home');
-      showToast('Le carnet a été effacé. Votre compte reste actif.');
+      showToast('Toutes les données ont été effacées.');
     } catch (error) {
       data = snapshot;
       settings = settingsSnapshot;
       try { saveData(); saveSettings(); } catch {}
-      showToast(error.message || 'Suppression du carnet impossible.');
-    }
-  }
-
-  function requestDeleteAccount() {
-    if (isAdminUser) {
-      showToast('Le compte administrateur principal est protégé.');
-      return;
-    }
-    const email = window.AnimoaAuth?.getUser?.()?.email || '';
-    openModal('Supprimer définitivement le compte ?', `
-      <div class="account-delete-confirmation">
-        <div class="delete-warning-icon">!</div>
-        <p><strong>Cette action est définitive et ne peut pas être annulée.</strong></p>
-        <ul class="account-delete-list">
-          <li>Le compte de connexion sera supprimé.</li>
-          <li>Les animaux, informations, documents, photos et rappels seront effacés.</li>
-          <li>La connexion à Google Agenda sera retirée. Les événements déjà créés dans Google Agenda resteront dans l’agenda.</li>
-        </ul>
-        ${email ? `<p class="account-delete-email">Compte concerné : <strong>${escapeHtml(email)}</strong></p>` : ''}
-        <div class="form-row account-delete-field">
-          <label for="deleteAccountConfirmation">Pour confirmer, saisissez <strong>SUPPRIMER</strong> *</label>
-          <input id="deleteAccountConfirmation" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="SUPPRIMER" />
-        </div>
-        <label class="checkbox-row account-delete-check">
-          <input id="deleteAccountAcknowledgement" type="checkbox" />
-          <span>Je comprends que mon compte et mes données seront définitivement supprimés.</span>
-        </label>
-        <div class="delete-actions account-delete-actions">
-          <button type="button" class="secondary-button" data-action="close-modal">Annuler</button>
-          <button type="button" class="danger-button account-delete-confirm-button" data-action="confirm-delete-account" disabled>Supprimer définitivement</button>
-        </div>
-      </div>
-    `, 'Compte et données', { sensitive: true });
-    syncDeleteAccountConfirmation();
-  }
-
-  function syncDeleteAccountConfirmation() {
-    const value = String(document.getElementById('deleteAccountConfirmation')?.value || '').trim();
-    const acknowledged = Boolean(document.getElementById('deleteAccountAcknowledgement')?.checked);
-    const button = document.querySelector('[data-action="confirm-delete-account"]');
-    if (button) button.disabled = !(value === 'SUPPRIMER' && acknowledged);
-  }
-
-  async function clearDeletedAccountLocalState(userId) {
-    const localRefs = [...mediaRefsFrom(data)];
-    for (const ref of localRefs) {
-      try { await deleteMediaRef(ref); } catch {}
-    }
-
-    if (userId) {
-      [STORAGE_KEY, SETTINGS_KEY, UPDATED_AT_KEY].forEach((base) => {
-        try { localStorage.removeItem(`${base}:${userId}`); } catch {}
-      });
-      try {
-        if (localStorage.getItem('animoa_legacy_migration_owner') === userId) {
-          localStorage.removeItem('animoa_legacy_migration_owner');
-        }
-      } catch {}
-    }
-
-    try {
-      const registration = await navigator.serviceWorker?.getRegistration?.();
-      const subscription = await registration?.pushManager?.getSubscription?.();
-      if (subscription) await subscription.unsubscribe();
-    } catch {}
-
-    data = normalizeData(clone(defaultData));
-    settings = normalizeSettings();
-  }
-
-  async function deleteAccountPermanently() {
-    if (isAdminUser) {
-      showToast('Le compte administrateur principal est protégé.');
-      return;
-    }
-
-    const confirmation = String(document.getElementById('deleteAccountConfirmation')?.value || '').trim();
-    const acknowledged = Boolean(document.getElementById('deleteAccountAcknowledgement')?.checked);
-    if (confirmation !== 'SUPPRIMER' || !acknowledged) {
-      showToast('Saisissez SUPPRIMER et cochez la confirmation.');
-      return;
-    }
-
-    const client = window.AnimoaAuth?.getClient?.();
-    const user = window.AnimoaAuth?.getUser?.();
-    if (!client || !user || window.AnimoaAuth?.isLocalPreview?.()) {
-      showToast('La suppression du compte est indisponible.');
-      return;
-    }
-
-    const button = document.querySelector('[data-action="confirm-delete-account"]');
-    const previousLabel = button?.textContent || 'Supprimer définitivement';
-    if (button) {
-      button.disabled = true;
-      button.textContent = 'Suppression en cours…';
-      button.setAttribute('aria-busy', 'true');
-    }
-
-    try {
-      const { data: response, error } = await client.functions.invoke('delete-account', {
-        body: { confirmation: 'SUPPRIMER' }
-      });
-
-      if (error) {
-        let serverMessage = '';
-        try {
-          const context = error.context;
-          if (context && typeof context.clone === 'function') {
-            const payload = await context.clone().json().catch(() => null);
-            serverMessage = String(payload?.error || payload?.message || '').trim();
-          }
-        } catch {}
-        throw new Error(serverMessage || error.message || 'Le compte n’a pas pu être supprimé.');
-      }
-
-      if (response?.success !== true) {
-        throw new Error(response?.error || response?.message || 'Le compte n’a pas pu être supprimé.');
-      }
-
-      await clearDeletedAccountLocalState(user.id);
-      try { await client.auth.signOut({ scope: 'local' }); } catch {}
-      closeModal();
-      showToast('Votre compte et vos données ont été supprimés.');
-      window.setTimeout(() => location.replace('/'), 900);
-    } catch (error) {
-      console.error('Suppression du compte impossible :', error);
-      showToast(error?.message || 'Le compte n’a pas pu être supprimé.');
-      if (button?.isConnected) {
-        button.disabled = false;
-        button.textContent = previousLabel;
-        button.removeAttribute('aria-busy');
-      }
-      syncDeleteAccountConfirmation();
+      showToast(error.message || 'Suppression des données impossible.');
     }
   }
 
@@ -4758,13 +4557,11 @@
     if (add) openAddForm(add);
 
     if (action === 'open-menu') openDrawer();
-    if (action === 'admin-refresh') { adminResponses=[]; adminFeedback=[]; adminAccessRequests=[]; await loadAdminData(); }
-    if (action === 'admin-tab') { adminActiveTab=target.dataset.adminTab||'access'; adminStatusFilter='all'; renderPage(); }
+    if (action === 'admin-refresh') { adminUsers=[]; adminResponses=[]; adminFeedback=[]; await loadAdminData(); }
+    if (action === 'admin-tab') { adminActiveTab=target.dataset.adminTab||'users'; adminStatusFilter='all'; renderPage(); }
     if (action === 'admin-filter') { adminStatusFilter=target.dataset.adminFilter||'all'; renderPage(); }
     if (action === 'admin-save-note') { const field=document.querySelector(`[data-admin-note-source="${target.dataset.adminSource}"][data-admin-note-id="${target.dataset.adminId}"]`); await saveAdminNote(target.dataset.adminSource,target.dataset.adminId,field?.value||''); }
     if (action === 'admin-copy-email') { try { await navigator.clipboard.writeText(target.dataset.email||''); showToast('Adresse e-mail copiée.'); } catch { showToast('Copie impossible.'); } }
-    if (action === 'admin-accept-email') await prepareAccessInvitation(target.dataset.adminId, 'email');
-    if (action === 'admin-copy-invite') await prepareAccessInvitation(target.dataset.adminId, 'copy');
     if (action === 'admin-delete-response') await deleteAdminResponse(target.dataset.adminSource, target.dataset.adminId);
     if (action === 'close-menu') closeDrawer();
     if (action === 'open-add') openAddMenu();
@@ -4935,8 +4732,6 @@
     }
     if (action === 'reset-data') requestResetAnimoa();
     if (action === 'confirm-reset-data') resetAnimoa();
-    if (action === 'request-delete-account') requestDeleteAccount();
-    if (action === 'confirm-delete-account') deleteAccountPermanently();
 
     const petId = target.dataset.selectPet;
     if (petId) {
@@ -4979,14 +4774,6 @@
     if (event.target.matches('[data-admin-status-source]')) {
       await updateAdminStatus(event.target.dataset.adminStatusSource, event.target.dataset.adminId, event.target.value);
     }
-  });
-
-  document.addEventListener('input', (event) => {
-    if (event.target?.id === 'deleteAccountConfirmation') syncDeleteAccountConfirmation();
-  });
-
-  document.addEventListener('change', (event) => {
-    if (event.target?.id === 'deleteAccountAcknowledgement') syncDeleteAccountConfirmation();
   });
 
   document.addEventListener('change', (event) => {
