@@ -3,7 +3,10 @@
 
   const LANGUAGE_KEY = 'animoa_language';
   const supported = new Set(['fr', 'en']);
-  let language = supported.has(localStorage.getItem(LANGUAGE_KEY)) ? localStorage.getItem(LANGUAGE_KEY) : 'fr';
+  const storedLanguage = localStorage.getItem(LANGUAGE_KEY);
+  const browserLanguage = String(navigator.language || '').toLowerCase().startsWith('en') ? 'en' : 'fr';
+  let language = supported.has(storedLanguage) ? storedLanguage : browserLanguage;
+  if (!supported.has(storedLanguage)) localStorage.setItem(LANGUAGE_KEY, language);
 
   const exact = {
     'Les champs marqués d’un * sont obligatoires.': 'Fields marked with * are required.',
@@ -201,7 +204,6 @@
     'Cette action est irréversible.': 'This action cannot be undone.',
     'Votre compte, vos animaux, vos informations de santé, vos dépenses, vos souvenirs, vos documents et vos photos seront supprimés.': 'Your account, pets, health information, expenses, memories, documents and photos will be deleted.',
     'Pour confirmer, saisissez': 'To confirm, enter',
-    'Saisissez exactement SUPPRIMER pour confirmer.': 'Enter SUPPRIMER exactly to confirm.',
     'Supprimer définitivement': 'Delete permanently',
     'Suppression en cours…': 'Deletion in progress…',
     'La suppression du compte nécessite une connexion active.': 'Account deletion requires an active session.',
@@ -348,6 +350,10 @@
     'Dernier souvenir': 'Latest memory',
     'Catégories': 'Categories',
     'Tout le dossier': 'Full record',
+    'Tout': 'All',
+    'Agenda': 'Schedule',
+    'Soins': 'Care',
+    'Documents': 'Documents',
     'Filtrer le carnet de santé': 'Filter health records',
     'Voir les catégories précédentes': 'View previous categories',
     'Voir les catégories suivantes': 'View next categories',

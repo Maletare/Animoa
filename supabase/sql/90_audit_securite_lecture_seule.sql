@@ -7,7 +7,6 @@ with expected_tables(table_schema, table_name) as (
     ('public','animoa_user_data'),
     ('public','animoa_survey_responses'),
     ('public','animoa_feedback'),
-    ('public','animoa_access_requests'),
     ('public','animoa_admins'),
     ('public','animoa_reminder_deliveries'),
     ('public','animoa_push_subscriptions'),

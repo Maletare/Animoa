@@ -12,6 +12,8 @@
   let readyResolved = false;
   let readyUserId = null;
   let pendingAuthMode = 'login';
+  let currentAuthScreen = 'login';
+  let currentAuthMessage = '';
   let authListenerReady = false;
   let resolveReady;
   const readyPromise = new Promise((resolve) => { resolveReady = resolve; });
@@ -147,23 +149,32 @@
     return '<img class="auth-logo" src="assets/animoa-logo-official.png" alt="Animoa" width="1200" height="361" decoding="async" />';
   }
 
-  function renderLanguageChoice() {
-    showShell();
-    authShell.innerHTML = `<section class="auth-card auth-language-card">
-      ${logo()}
-      <div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('chooseLanguage')}</h1><p>${c('chooseLanguageHelp')}</p></div>
-      <div class="language-choice-grid">
-        <button type="button" class="language-choice ${lang() === 'fr' ? 'active' : ''}" data-auth-language="fr"><strong>Français</strong><span>FR</span></button>
-        <button type="button" class="language-choice ${lang() === 'en' ? 'active' : ''}" data-auth-language="en"><strong>English</strong><span>EN</span></button>
-      </div>
-      <button type="button" class="primary-button auth-submit" data-auth-action="confirm-language">${c('continue')}</button>
-    </section>`;
-    decorateRequiredAuthFields();
+  function authLanguageControl() {
+    const english = lang() === 'en';
+    return `<label class="auth-language-inline">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+      <span>${english ? 'Language' : 'Langue'}</span>
+      <select data-auth-language-select aria-label="${english ? 'Application language' : 'Langue de l’application'}">
+        <option value="fr" ${!english ? 'selected' : ''}>Français</option>
+        <option value="en" ${english ? 'selected' : ''}>English</option>
+      </select>
+    </label>`;
+  }
+
+  function rerenderCurrentAuthScreen() {
+    if (currentAuthScreen === 'configuration') return renderConfiguration();
+    if (currentAuthScreen === 'confirmation') return renderConfirmation();
+    if (currentAuthScreen === 'forgot') return renderForgot(currentAuthMessage);
+    if (currentAuthScreen === 'recovery') return renderRecovery(currentAuthMessage);
+    return renderLogin(currentAuthScreen === 'signup' ? 'signup' : 'login', currentAuthMessage);
   }
 
   function renderConfiguration() {
+    currentAuthScreen = 'configuration';
+    currentAuthMessage = '';
     showShell();
     authShell.innerHTML = `<section class="auth-card">
+      ${authLanguageControl()}
       ${logo()}
       <div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('configuration')}</h1><p>${c('configurationText')}</p></div>
       <div class="auth-notice"><strong>supabase-config.js</strong><span>${c('configWarning')}</span></div>
@@ -173,9 +184,12 @@
 
   function renderLogin(mode = 'login', message = '') {
     if (!isConfigured()) return renderConfiguration();
+    currentAuthScreen = mode === 'signup' ? 'signup' : 'login';
+    currentAuthMessage = message;
     showShell();
     const signup = mode === 'signup';
     authShell.innerHTML = `<section class="auth-card">
+      ${authLanguageControl()}
       ${logo()}
       <div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('welcome')}</h1><p>${c('tagline')}</p></div>
       <div class="auth-tabs" role="tablist">
@@ -196,19 +210,25 @@
   }
 
   function renderConfirmation() {
+    currentAuthScreen = 'confirmation';
+    currentAuthMessage = '';
     showShell();
-    authShell.innerHTML = `<section class="auth-card auth-success-card">${logo()}<div class="auth-success-icon">✓</div><div class="auth-copy"><h1>${c('confirmTitle')}</h1><p>${c('confirmText')}</p></div><button type="button" class="secondary-button auth-submit" data-auth-action="show-login">${c('back')}</button></section>`;
+    authShell.innerHTML = `<section class="auth-card auth-success-card">${authLanguageControl()}${logo()}<div class="auth-success-icon">✓</div><div class="auth-copy"><h1>${c('confirmTitle')}</h1><p>${c('confirmText')}</p></div><button type="button" class="secondary-button auth-submit" data-auth-action="show-login">${c('back')}</button></section>`;
   }
 
   function renderForgot(message = '') {
+    currentAuthScreen = 'forgot';
+    currentAuthMessage = message;
     showShell();
-    authShell.innerHTML = `<section class="auth-card">${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('forgotTitle')}</h1><p>${c('forgotText')}</p></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="forgotForm" class="auth-form"><label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required /></label><button class="primary-button auth-submit" type="submit">${c('sendLink')}</button></form><button type="button" class="auth-text-button" data-auth-action="show-login">${c('back')}</button></section>`;
+    authShell.innerHTML = `<section class="auth-card">${authLanguageControl()}${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('forgotTitle')}</h1><p>${c('forgotText')}</p></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="forgotForm" class="auth-form"><label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required /></label><button class="primary-button auth-submit" type="submit">${c('sendLink')}</button></form><button type="button" class="auth-text-button" data-auth-action="show-login">${c('back')}</button></section>`;
     decorateRequiredAuthFields();
   }
 
   function renderRecovery(message = '') {
+    currentAuthScreen = 'recovery';
+    currentAuthMessage = message;
     showShell();
-    authShell.innerHTML = `<section class="auth-card">${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('newPassword')}</h1></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="recoveryForm" class="auth-form"><label><span>${c('newPassword')}</span><input name="password" type="password" autocomplete="new-password" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label><button class="primary-button auth-submit" type="submit">${c('updatePassword')}</button></form></section>`;
+    authShell.innerHTML = `<section class="auth-card">${authLanguageControl()}${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('newPassword')}</h1></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="recoveryForm" class="auth-form"><label><span>${c('newPassword')}</span><input name="password" type="password" autocomplete="new-password" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label><button class="primary-button auth-submit" type="submit">${c('updatePassword')}</button></form></section>`;
     decorateRequiredAuthFields();
   }
 
@@ -340,8 +360,6 @@
 
   function openAuthentication(mode = 'login') {
     pendingAuthMode = mode === 'signup' ? 'signup' : 'login';
-    const languageChosen = localStorage.getItem('animoa_language_selected') === '1';
-    if (!languageChosen) return renderLanguageChoice();
     if (!ensureClient()) return renderConfiguration();
     renderLogin(pendingAuthMode);
   }
@@ -371,20 +389,9 @@
       return;
     }
 
-    const languageButton = event.target.closest('[data-auth-language]');
-    if (languageButton) {
-      i18n.setLanguage(languageButton.dataset.authLanguage);
-      renderLanguageChoice();
-      return;
-    }
     const target = event.target.closest('[data-auth-action]');
     if (!target) return;
     const action = target.dataset.authAction;
-    if (action === 'confirm-language') {
-      localStorage.setItem('animoa_language_selected', '1');
-      if (!ensureClient()) renderConfiguration();
-      else renderLogin(pendingAuthMode);
-    }
     if (action === 'local-preview') {
       localPreview = true;
       currentUser = null;
@@ -398,6 +405,13 @@
       await signInWithGoogle(target);
       return;
     }
+  });
+
+  document.addEventListener('change', (event) => {
+    const selector = event.target.closest('[data-auth-language-select]');
+    if (!selector) return;
+    i18n.setLanguage(selector.value);
+    rerenderCurrentAuthScreen();
   });
 
   document.addEventListener('submit', async (event) => {

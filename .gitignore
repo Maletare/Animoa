@@ -1,21 +1,41 @@
+# Secrets and local configuration
 .env
 .env.*
 !.env.example
-node_modules/
-dist/
-.next/
-.vscode/
-.DS_Store
-Thumbs.db
-*.log
-*.zip
-index-test.html
-.supabase/
-supabase/.temp/
-.vercel/
 *.pem
 *.key
 *.p12
 *.pfx
 *service-role*
 *service_role*
+
+# Dependencies and generated output
+node_modules/
+dist/
+.next/
+coverage/
+.cache/
+
+# Local tooling
+.vscode/
+.idea/
+.vercel/
+.supabase/
+supabase/.temp/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs, temporary files and backups
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# Local archives and test pages
+*.zip
+index-test.html
