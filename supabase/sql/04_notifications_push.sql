@@ -88,3 +88,54 @@ drop trigger if exists animoa_push_subscriptions_updated_at on public.animoa_pus
 create trigger animoa_push_subscriptions_updated_at
 before update on public.animoa_push_subscriptions
 for each row execute function public.set_animoa_push_updated_at();
+
+-- ANIMOA 3.10.0 — Planning versionné du répartiteur Web Push.
+-- Ce planning utilise les mêmes secrets Vault que le script 03_rappels_24h.sql :
+-- animoa_project_url et animoa_cron_secret.
+create extension if not exists pg_cron;
+create extension if not exists pg_net;
+
+do $$
+begin
+  if exists (
+    select 1 from cron.job
+    where jobname = 'animoa-push-dispatch-hourly'
+  ) then
+    perform cron.unschedule('animoa-push-dispatch-hourly');
+  end if;
+end;
+$$;
+
+-- Exécution toutes les heures, à la minute 15.
+-- La fonction accepte une fenêtre de 70 minutes, ce qui évite de manquer un rappel
+-- en cas de léger retard du Cron.
+select cron.schedule(
+  'animoa-push-dispatch-hourly',
+  '15 * * * *',
+  $$
+  select net.http_post(
+    url := (
+      select decrypted_secret
+      from vault.decrypted_secrets
+      where name = 'animoa_project_url'
+    ) || '/functions/v1/animoa-push-dispatch',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'x-animoa-cron-secret', (
+        select decrypted_secret
+        from vault.decrypted_secrets
+        where name = 'animoa_cron_secret'
+      )
+    ),
+    body := jsonb_build_object(
+      'source', 'supabase-cron',
+      'requested_at', now()
+    ),
+    timeout_milliseconds := 20000
+  );
+  $$
+);
+
+select jobid, jobname, schedule, active
+from cron.job
+where jobname = 'animoa-push-dispatch-hourly';

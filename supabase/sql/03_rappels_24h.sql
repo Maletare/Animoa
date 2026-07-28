@@ -1,4 +1,4 @@
--- ANIMOA — Rappels automatiques par e-mail la veille / 24 h avant
+-- ANIMOA 3.10.0 — E-mails automatiques : vaccins à J-7, autres rappels la veille / 24 h avant
 -- À exécuter dans Supabase > SQL Editor APRÈS avoir déployé l'Edge Function.
 --
 -- IMPORTANT :
@@ -129,8 +129,9 @@ end;
 $$;
 
 -- Exécution toutes les heures, à la minute 5.
--- Les événements avec une heure seront détectés dans les 24 heures précédentes.
--- Les événements sans heure partiront à midi la veille, heure de Paris.
+-- Les vaccins sont détectés 7 jours avant et envoyés à partir de 9 h dans le fuseau de l’utilisateur.
+-- Les autres événements avec une heure sont détectés dans les 24 heures précédentes.
+-- Les autres événements sans heure partent à midi la veille.
 select cron.schedule(
   'animoa-reminders-24h-hourly',
   '5 * * * *',

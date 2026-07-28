@@ -11,6 +11,8 @@ with expected_tables(table_schema, table_name) as (
     ('public','animoa_reminder_deliveries'),
     ('public','animoa_push_subscriptions'),
     ('public','animoa_push_deliveries'),
+    ('public','animoa_review_config'),
+    ('public','animoa_review_requests'),
     ('public','calendar_preferences'),
     ('public','calendar_event_links')
 ),

@@ -11,11 +11,15 @@ type UserBundle = {
   settings: {
     language?: string;
     timezone?: string;
+    notifyAppointments?: boolean;
+    notifyVaccines?: boolean;
+    notifyTreatments?: boolean;
   } | null;
 };
 
 const DEFAULT_TIME_ZONE = "Europe/Paris";
 const UNTIMED_EVENT_SEND_HOUR = 12;
+const VACCINE_EMAIL_SEND_HOUR = 9;
 const PAGE_SIZE = 500;
 const MAX_ERROR_LENGTH = 1000;
 const MAX_REPORTED_ERRORS = 50;
@@ -169,31 +173,60 @@ function zonedDateTimeToUtc(
   return new Date(guess);
 }
 
-function eventIsDue(
+type ReminderKind = "24h" | "vaccine-7d";
+
+function categoryEnabled(
+  event: Record<string, unknown>,
+  settings: UserBundle["settings"],
+): boolean {
+  const eventType = safeString(event.type);
+  if (eventType === "Vaccin") return settings?.notifyVaccines !== false;
+  if (eventType === "Rendez-vous") return settings?.notifyAppointments !== false;
+  if (["Traitement", "Médicament"].includes(eventType)) {
+    return settings?.notifyTreatments !== false;
+  }
+  return true;
+}
+
+function reminderKindDue(
   event: Record<string, unknown>,
   now: Date,
   timeZone: string,
-  sendHour: number,
-): boolean {
+  settings: UserBundle["settings"],
+): ReminderKind | null {
   const eventDate = safeString(event.date);
-  if (!validIsoDate(eventDate)) return false;
+  if (!validIsoDate(eventDate) || !categoryEnabled(event, settings)) return null;
+
+  // Les vaccins reçoivent uniquement un e-mail à J-7.
+  // Les notifications Web Push restent prévues à J-30, J-7 et le jour J.
+  if (safeString(event.type) === "Vaccin") {
+    const localNow = datePartsInTimeZone(now, timeZone);
+    const today = isoDateInTimeZone(now, timeZone);
+    const inSevenDays = addDaysToIsoDate(today, 7);
+    return eventDate === inSevenDays && localNow.hour >= VACCINE_EMAIL_SEND_HOUR
+      ? "vaccine-7d"
+      : null;
+  }
 
   const eventTime = safeString(event.time);
 
-  // Compatible avec une future heure d'événement au format HH:MM.
+  // Pour les autres événements avec une heure, l'e-mail part dans les 24 h précédentes.
   if (validTime(eventTime)) {
     const eventUtc = zonedDateTimeToUtc(eventDate, eventTime, timeZone);
     const remainingMs = eventUtc.getTime() - now.getTime();
-
-    return remainingMs > 0 && remainingMs <= 24 * 60 * 60 * 1000;
+    return remainingMs > 0 && remainingMs <= 24 * 60 * 60 * 1000
+      ? "24h"
+      : null;
   }
 
-  // Lorsqu’aucune heure n’est connue, le rappel part à midi la veille.
+  // Lorsqu’aucune heure n’est connue, l'e-mail part à midi la veille.
   const localNow = datePartsInTimeZone(now, timeZone);
   const today = isoDateInTimeZone(now, timeZone);
   const tomorrow = addDaysToIsoDate(today, 1);
 
-  return eventDate === tomorrow && localNow.hour >= sendHour;
+  return eventDate === tomorrow && localNow.hour >= UNTIMED_EVENT_SEND_HOUR
+    ? "24h"
+    : null;
 }
 
 function formatEventDate(
@@ -238,6 +271,7 @@ function buildEmail(params: {
   appUrl: string;
   logoUrl: string;
   timeZone: string;
+  reminderKind: ReminderKind;
 }) {
   const isEnglish = params.language === "en";
   const fallbackPet = isEnglish ? "your pet" : "votre animal";
@@ -262,13 +296,22 @@ function buildEmail(params: {
   const appUrl = escapeHtml(params.appUrl);
   const logoUrl = escapeHtml(params.logoUrl);
 
-  const subject = isEnglish
-    ? `An important event is coming up for ${plainPetName}`
-    : `Un événement important arrive bientôt pour ${plainPetName}`;
+  const isVaccineSevenDays = params.reminderKind === "vaccine-7d";
+  const subject = isVaccineSevenDays
+    ? (isEnglish
+      ? `A vaccine for ${plainPetName} is due in 7 days`
+      : `Un vaccin de ${plainPetName} est prévu dans 7 jours`)
+    : (isEnglish
+      ? `An important event is coming up for ${plainPetName}`
+      : `Un événement important arrive bientôt pour ${plainPetName}`);
 
-  const intro = isEnglish
-    ? `A reminder has been scheduled for <strong>${petName}</strong>.`
-    : `Un rappel a été programmé pour <strong>${petName}</strong>.`;
+  const intro = isVaccineSevenDays
+    ? (isEnglish
+      ? `The vaccine reminder for <strong>${petName}</strong> is scheduled in one week.`
+      : `Le rappel de vaccin de <strong>${petName}</strong> est prévu dans une semaine.`)
+    : (isEnglish
+      ? `A reminder has been scheduled for <strong>${petName}</strong>.`
+      : `Un rappel a été programmé pour <strong>${petName}</strong>.`);
 
   const dateLabel = "Date";
   const timeLabel = isEnglish ? "Time" : "Heure";
@@ -277,9 +320,13 @@ function buildEmail(params: {
   const noteLabel = isEnglish ? "Useful note" : "Note utile";
   const buttonLabel = isEnglish ? "Open Animoa" : "Ouvrir Animoa";
 
-  const footer = isEnglish
-    ? "This automatic reminder was sent because reminders are enabled for this event."
-    : "Ce rappel automatique a été envoyé car les rappels sont activés pour cet événement.";
+  const footer = isVaccineSevenDays
+    ? (isEnglish
+      ? "This automatic email was sent 7 days before the vaccine date because vaccine reminders are enabled."
+      : "Cet e-mail automatique a été envoyé 7 jours avant le vaccin car les rappels de vaccins sont activés.")
+    : (isEnglish
+      ? "This automatic reminder was sent because reminders are enabled for this event."
+      : "Ce rappel automatique a été envoyé car les rappels sont activés pour cet événement.");
 
   const rows = [
     `<tr><td style="padding:8px 0;color:#687976;width:120px">${dateLabel}</td><td style="padding:8px 0;font-weight:700;color:#173733">${formattedDate}</td></tr>`,
@@ -297,9 +344,11 @@ function buildEmail(params: {
       : "",
   ].join("");
 
-  const reminderBadge = validTime(params.eventTime)
-    ? (isEnglish ? "Reminder · 24 hours" : "Rappel · 24 heures")
-    : (isEnglish ? "Reminder · day before" : "Rappel · la veille");
+  const reminderBadge = isVaccineSevenDays
+    ? (isEnglish ? "Vaccine reminder · 7 days" : "Rappel vaccin · 7 jours")
+    : (validTime(params.eventTime)
+      ? (isEnglish ? "Reminder · 24 hours" : "Rappel · 24 heures")
+      : (isEnglish ? "Reminder · day before" : "Rappel · la veille"));
 
   const html = `<!doctype html>
 <html lang="${isEnglish ? "en" : "fr"}">
@@ -454,8 +503,6 @@ export default {
         `${appUrl}/assets/animoa-logo-email.png`,
       );
 
-      const sendHour = UNTIMED_EVENT_SEND_HOUR;
-
       if (!dryRun && !brevoApiKey) {
         throw new Error("Le secret BREVO_API_KEY est absent.");
       }
@@ -510,12 +557,11 @@ export default {
             ? configuredTimeZone
             : DEFAULT_TIME_ZONE;
 
-          const dueEvents = health.filter((event) => {
+          const dueEvents = health.flatMap((event) => {
             stats.scannedEvents += 1;
-
-            return safeString(event.status) === "planned" &&
-              event.reminder === true &&
-              eventIsDue(event, now, timeZone, sendHour);
+            if (safeString(event.status) !== "planned" || event.reminder !== true) return [];
+            const reminderKind = reminderKindDue(event, now, timeZone, bundle.settings);
+            return reminderKind ? [{ event, reminderKind }] : [];
           });
 
           if (!dueEvents.length) continue;
@@ -549,7 +595,9 @@ export default {
             safeString(user.user_metadata?.name) ||
             recipientEmail.split("@")[0];
 
-          for (const event of dueEvents) {
+          for (const dueEvent of dueEvents) {
+            const event = dueEvent.event;
+            const reminderKind = dueEvent.reminderKind;
             const eventId = safeString(event.id);
             const eventDate = safeString(event.date);
 
@@ -585,7 +633,7 @@ export default {
                 p_event_id: eventId,
                 p_event_date: eventDate,
                 p_event_title: eventTitle,
-                p_reminder_kind: "24h",
+                p_reminder_kind: reminderKind,
               });
 
             if (claimError) {
@@ -618,6 +666,7 @@ export default {
                 appUrl,
                 logoUrl,
                 timeZone,
+                reminderKind,
               });
 
               const brevoResult = await sendBrevoEmail({
