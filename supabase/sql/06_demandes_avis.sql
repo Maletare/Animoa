@@ -1,4 +1,4 @@
--- ANIMOA 3.10.0 — Demandes d'avis publiques et suivi administrateur
+-- ANIMOA 3.10.1 — Demandes d'avis publiques, accès direct et suivi administrateur
 -- À exécuter UNE FOIS dans Supabase > SQL Editor avant de déployer le nouveau app.js.
 --
 -- Principe :
@@ -7,7 +7,8 @@
 -- - « Plus tard » après le 1er affichage : nouvelle demande 7 jours après ;
 -- - « Plus tard » après le 2e affichage : nouvelle demande 30 jours après ;
 -- - le 3e affichage est le dernier ;
--- - « Ne plus afficher » et « Donner mon avis » arrêtent les relances.
+-- - « Ne plus afficher » et « Donner mon avis » arrêtent les relances ;
+-- - l’accès permanent dans les Paramètres peut enregistrer un clic avant le premier message.
 
 create extension if not exists pgcrypto;
 
@@ -284,6 +285,8 @@ begin
     raise exception 'Action de demande d''avis invalide.';
   end if;
 
+  perform public.ensure_animoa_review_request();
+
   select * into current_row
   from public.animoa_review_requests
   where user_id = current_user_id
@@ -293,11 +296,13 @@ begin
     raise exception 'Aucune demande d''avis active.';
   end if;
 
-  if current_row.prompt_count = 0 then
+  -- Un avis spontané depuis les Paramètres est possible avant le premier message automatique.
+  if current_row.prompt_count = 0 and normalized_action <> 'review' then
     raise exception 'Aucune demande d''avis active.';
   end if;
 
-  if current_row.status in ('clicked', 'dismissed') then
+  if current_row.status = 'clicked'
+     or (current_row.status = 'dismissed' and normalized_action <> 'review') then
     return current_row;
   end if;
 

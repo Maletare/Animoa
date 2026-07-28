@@ -38,3 +38,128 @@ body.landing-visible{margin:0;min-width:320px;background:linear-gradient(rgba(24
 @media(max-width:680px){#landingPage.compact-landing .hero{padding-top:14px}.feature-grid{grid-template-columns:1fr!important;gap:9px!important}.feature-card{display:grid;grid-template-columns:42px 1fr;column-gap:10px;padding:14px!important}.feature-icon{grid-row:1/3}.feature-card h2{margin:0 0 4px!important}.survey-teaser{flex-direction:column;text-align:center}.survey-teaser a{width:100%;padding:11px;border-radius:13px;background:white}}
 @media(prefers-color-scheme:dark){html[data-theme="system"] body.landing-visible{background:linear-gradient(rgba(12,31,29,.72),rgba(20,29,28,.78)),url("assets/animoa-background-dark.webp") center/cover fixed}html[data-theme="system"] #landingPage.compact-landing{--ink:#edf8f6;--muted:#b8cbc7;--line:rgba(255,255,255,.12)}html[data-theme="system"] #landingPage.compact-landing .feature-card,html[data-theme="system"] #landingPage.compact-landing .survey-teaser{background:rgba(23,50,47,.8)}html[data-theme="system"] #landingPage.compact-landing .login-link{background:rgba(23,50,47,.76)}}
 html[data-theme="dark"] body.landing-visible{background:linear-gradient(rgba(12,31,29,.72),rgba(20,29,28,.78)),url("assets/animoa-background-dark.webp") center/cover fixed}html[data-theme="dark"] #landingPage.compact-landing{--ink:#edf8f6;--muted:#b8cbc7;--line:rgba(255,255,255,.12)}html[data-theme="dark"] #landingPage.compact-landing .feature-card,html[data-theme="dark"] #landingPage.compact-landing .survey-teaser{background:rgba(23,50,47,.8)}html[data-theme="dark"] #landingPage.compact-landing .login-link{background:rgba(23,50,47,.76)}
+
+/* Animoa 3.11.1 — contraste renforcé de la page publique */
+#landingPage.compact-landing{
+  --ink:#173b37!important;
+  --muted:#526d67!important;
+  --teal:#2db9aa!important;
+  --teal-dark:#117f75!important;
+  --coral:#f39b89!important;
+  --line:rgba(29,92,83,.14)!important;
+  color:#173b37!important;
+  color-scheme:light;
+}
+body.landing-visible{
+  background:
+    linear-gradient(rgba(248,253,251,.82),rgba(255,247,242,.86)),
+    url("assets/animoa-background-light.webp") center/cover fixed!important;
+  color:#173b37!important;
+}
+#landingPage.compact-landing .site-header{padding-inline:2px}
+#landingPage.compact-landing .login-link{
+  color:#fff!important;
+  background:rgba(31,78,72,.94)!important;
+  border-color:rgba(255,255,255,.55)!important;
+  box-shadow:0 10px 24px rgba(23,61,56,.16);
+}
+#landingPage.compact-landing h1,
+#landingPage.compact-landing .pet-summary h2,
+#landingPage.compact-landing .phone-card strong,
+#landingPage.compact-landing .feature-card h2,
+#landingPage.compact-landing .survey-teaser h2{
+  color:#173b37!important;
+  opacity:1!important;
+}
+#landingPage.compact-landing .hero-lead{
+  color:#526d67!important;
+  font-weight:620;
+}
+#landingPage.compact-landing .button-primary{
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.38);
+  background:linear-gradient(135deg,#12877d,#2fc0b0)!important;
+  box-shadow:0 15px 34px rgba(25,148,136,.3)!important;
+}
+#landingPage.compact-landing .phone-frame{
+  background:#173f3a!important;
+  box-shadow:0 28px 68px rgba(20,66,60,.28)!important;
+}
+#landingPage.compact-landing .phone-screen{
+  color:#173b37!important;
+  background:linear-gradient(180deg,#ffffff,#f4faf8)!important;
+}
+#landingPage.compact-landing .pet-summary p,
+#landingPage.compact-landing .phone-card small{
+  color:#607a74!important;
+  opacity:1!important;
+}
+#landingPage.compact-landing .phone-card{
+  color:#173b37!important;
+  background:rgba(255,255,255,.98)!important;
+  border-color:#d7e9e4!important;
+  box-shadow:0 8px 20px rgba(28,70,65,.07)!important;
+}
+#landingPage.compact-landing .phone-card-wide{
+  background:linear-gradient(135deg,#def6f0,#ffffff)!important;
+}
+#landingPage.compact-landing .ui-icon{
+  background:#daf3ee!important;
+  color:#117f75!important;
+}
+#landingPage.compact-landing .feature-card{
+  color:#173b37!important;
+  background:rgba(255,255,255,.9)!important;
+  border-color:rgba(29,92,83,.13)!important;
+  box-shadow:0 14px 34px rgba(28,70,65,.1)!important;
+}
+#landingPage.compact-landing .feature-card p{
+  color:#526d67!important;
+  opacity:1!important;
+}
+#landingPage.compact-landing .feature-icon{
+  background:#dff5f0!important;
+  color:#117f75!important;
+}
+#landingPage.compact-landing .privacy-strip{
+  background:linear-gradient(135deg,#24564f,#1c4842)!important;
+  color:#fff!important;
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 16px 38px rgba(23,61,56,.18)!important;
+}
+#landingPage.compact-landing .survey-teaser{
+  color:#173b37!important;
+  background:rgba(255,255,255,.92)!important;
+  border-color:rgba(29,92,83,.14)!important;
+  box-shadow:0 14px 34px rgba(28,70,65,.09);
+}
+#landingPage.compact-landing .survey-teaser p{
+  color:#526d67!important;
+  opacity:1!important;
+}
+#landingPage.compact-landing .survey-teaser a{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:12px 18px!important;
+  border-radius:14px!important;
+  color:#fff!important;
+  background:linear-gradient(135deg,#12877d,#2fc0b0)!important;
+  box-shadow:0 10px 24px rgba(25,148,136,.25);
+}
+#landingPage.compact-landing .site-footer,
+#landingPage.compact-landing .site-footer button,
+#landingPage.compact-landing .site-footer span{
+  color:#526d67!important;
+  opacity:1!important;
+}
+@media(max-width:680px){
+  #landingPage.compact-landing .landing-wrap{width:min(100% - 28px,1080px)}
+  #landingPage.compact-landing .hero-copy{gap:18px}
+  #landingPage.compact-landing h1{font-size:clamp(2.25rem,10.6vw,3.25rem);line-height:1.01}
+  #landingPage.compact-landing .hero-lead{font-size:.98rem;line-height:1.52}
+  #landingPage.compact-landing .feature-card{background:rgba(255,255,255,.92)!important}
+  #landingPage.compact-landing .survey-teaser{padding:19px 18px!important}
+  #landingPage.compact-landing .survey-teaser a{width:100%;font-size:.93rem}
+}

@@ -4774,3 +4774,386 @@ html[data-theme="dark"] .auth-language-inline {
     font-size: .66rem;
   }
 }
+
+
+/* Animoa 3.10.1 — avis permanent dans les paramètres */
+.settings-review-card {
+  align-items: center;
+  gap: 18px;
+  border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary-light) 62%, var(--surface)) 0%, var(--surface) 70%);
+}
+
+.settings-review-card[hidden] {
+  display: none !important;
+}
+
+.settings-review-copy {
+  min-width: 0;
+}
+
+.settings-review-copy h2 {
+  margin: 2px 0 6px;
+}
+
+.settings-review-copy p:not(.eyebrow) {
+  margin: 0;
+  max-width: 680px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.settings-review-stars {
+  margin-bottom: 5px;
+  color: #e7a928;
+  font-size: 1.1rem;
+  letter-spacing: .08em;
+  line-height: 1;
+}
+
+.settings-review-button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.review-preview-label {
+  margin-top: 2px !important;
+  color: var(--primary-dark) !important;
+  font-size: .78rem;
+  font-weight: 750;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .settings-review-card {
+    align-items: stretch;
+  }
+
+  .settings-review-button {
+    width: 100%;
+  }
+}
+
+/* Animoa 3.11.0 — avis internes et note moyenne */
+.internal-review-modal {
+  max-width: 560px;
+}
+
+.review-rating-field,
+.review-comment-field {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+  text-align: left;
+}
+
+.review-rating-field {
+  justify-items: center;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface-soft);
+}
+
+.review-rating-label,
+.review-comment-field > span {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.review-rating-picker {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.review-rating-star {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  color: color-mix(in srgb, var(--muted) 40%, var(--surface));
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+  transition: transform .16s ease, color .16s ease, background .16s ease;
+}
+
+.review-rating-star:hover,
+.review-rating-star:focus-visible {
+  transform: translateY(-2px);
+  background: color-mix(in srgb, #e4aa24 12%, var(--surface));
+  outline: none;
+}
+
+.review-rating-star.is-active {
+  color: #e4aa24;
+  text-shadow: 0 2px 9px rgba(198, 139, 8, .18);
+}
+
+.review-rating-field small,
+.review-comment-field small,
+.settings-review-status {
+  color: var(--muted);
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+.review-comment-field textarea {
+  width: 100%;
+  min-height: 108px;
+  resize: vertical;
+}
+
+.review-request-actions.is-single-action {
+  grid-template-columns: minmax(0, 1fr) minmax(0, .72fr);
+}
+
+.home-review-summary {
+  width: 100%;
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 44px auto minmax(0, 1fr) 24px;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 13px;
+  border: 1px solid color-mix(in srgb, #e4aa24 35%, var(--border));
+  border-radius: 20px;
+  background: linear-gradient(135deg, color-mix(in srgb, #fff2cb 68%, var(--surface)) 0%, var(--surface) 78%);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  box-shadow: var(--shadow-soft);
+}
+
+.home-review-summary[hidden] {
+  display: none !important;
+}
+
+.home-review-star {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: color-mix(in srgb, #e4aa24 14%, var(--surface));
+  color: #d59b18;
+  font-size: 1.45rem;
+}
+
+.home-review-copy {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.home-review-copy strong {
+  font-size: 1rem;
+}
+
+.home-review-copy small,
+.home-review-label {
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.home-review-label {
+  justify-self: end;
+  text-align: right;
+}
+
+.home-review-arrow {
+  color: var(--primary);
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.review-summary-modal {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.review-summary-score {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 18px 34px;
+  border: 1px solid color-mix(in srgb, #e4aa24 30%, var(--border));
+  border-radius: 22px;
+  background: color-mix(in srgb, #fff2cb 48%, var(--surface));
+}
+
+.review-summary-score > span {
+  color: #e4aa24;
+  font-size: 2rem;
+}
+
+.review-summary-score strong {
+  font-size: 1.65rem;
+}
+
+.review-summary-score small,
+.review-summary-modal p {
+  color: var(--muted);
+}
+
+.review-summary-modal p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.admin-review-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-review-overview > div {
+  display: grid;
+  gap: 4px;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-soft);
+}
+
+.admin-review-overview span {
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.admin-review-overview strong {
+  font-size: 1.15rem;
+}
+
+.admin-status.review-status-submitted {
+  background: color-mix(in srgb, var(--success) 15%, var(--surface));
+  color: color-mix(in srgb, var(--success) 78%, var(--text));
+}
+
+.settings-review-status {
+  display: block;
+  margin-top: 7px;
+}
+
+html[data-theme="dark"] .home-review-summary,
+html[data-theme="dark"] .review-summary-score {
+  background: linear-gradient(135deg, color-mix(in srgb, #6f571a 30%, var(--surface)) 0%, var(--surface) 80%);
+}
+
+@media (max-width: 640px) {
+  .home-review-summary {
+    grid-template-columns: 40px auto minmax(0, 1fr) 20px;
+    padding: 9px 11px;
+  }
+
+  .home-review-star {
+    width: 38px;
+    height: 38px;
+  }
+
+  .home-review-label {
+    font-size: .67rem;
+  }
+
+  .admin-review-overview {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .review-rating-star {
+    width: 38px;
+    height: 40px;
+    font-size: 1.7rem;
+  }
+
+  .home-review-summary {
+    grid-template-columns: 38px 1fr 18px;
+  }
+
+  .home-review-label {
+    display: none;
+  }
+
+  .home-review-arrow {
+    grid-column: 3;
+  }
+}
+
+
+/* 3.11.2 — Actions principales accessibles directement depuis le menu */
+.drawer-nav .menu-review-action,
+.desktop-nav .menu-review-action {
+  color: var(--primary-dark);
+}
+.drawer-nav .menu-review-action .desktop-nav-icon,
+.desktop-nav .menu-review-action .desktop-nav-icon {
+  color: #c58b00;
+}
+.drawer-nav .menu-logout-action,
+.desktop-nav .menu-logout-action {
+  margin-top: 4px;
+  color: #a33b46;
+}
+.drawer-nav .menu-review-action:focus-visible,
+.drawer-nav .menu-logout-action:focus-visible,
+.desktop-nav .menu-review-action:focus-visible,
+.desktop-nav .menu-logout-action:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 32%, transparent);
+  outline-offset: 2px;
+}
+.drawer { overflow-y: auto; overscroll-behavior: contain; }
+.drawer-header, .drawer-pet-context, .drawer-footer { flex-shrink: 0; }
+
+
+/* Animoa 3.11.3 — retour cohérent sur les pages secondaires */
+.page-back-row {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  margin-bottom: -2px;
+}
+.page-back-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  color: var(--primary-dark);
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 850;
+  line-height: 1;
+  box-shadow: 0 5px 16px rgba(40, 70, 63, .055);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.page-back-button > span:first-child {
+  font-size: 1.15rem;
+  transform: translateY(-1px);
+}
+.page-back-button:hover {
+  border-color: color-mix(in srgb, var(--primary) 48%, var(--border));
+  background: var(--primary-light);
+}
+.page-back-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 28%, transparent);
+  outline-offset: 2px;
+}
+@media (max-width: 430px) {
+  .page-back-row { min-height: 40px; }
+  .page-back-button { min-height: 40px; padding: 0 12px; border-radius: 13px; }
+}

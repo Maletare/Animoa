@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.10.0-reviews-vaccine-reminders';
+const CACHE_NAME = 'animoa-v3.11.3-secondary-back-navigation';
 
 const CORE = [
   '/',
