@@ -4381,7 +4381,7 @@ html[data-theme="dark"] .auth-language-inline {
 }
 
 
-/* Animoa 3.9.2 — confirmation de suppression du compte en deux étapes */
+/* Animoa 3.9.3 — confirmation de suppression du compte en deux étapes */
 .account-delete-confirmation .delete-actions {
   margin-top: 4px;
 }
@@ -4392,5 +4392,173 @@ html[data-theme="dark"] .auth-language-inline {
 @media (max-width: 560px) {
   .account-delete-confirmation .delete-actions {
     grid-template-columns: 1fr;
+  }
+}
+
+
+/* Animoa 3.9.3 — finition responsive et menus d’actions stables */
+.icon-button {
+  flex-shrink: 0;
+}
+
+.pet-context-copy,
+.desktop-pet-context button > div,
+.drawer-pet-context button > div,
+.home-welcome-copy,
+.home-pet-copy,
+.home-focus-copy {
+  min-width: 0;
+}
+
+.pet-context-copy strong,
+.desktop-pet-context strong,
+.drawer-pet-context strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pet-context-chevron,
+.drawer-pet-context button > span {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.home-welcome h1,
+.home-pet-copy h2,
+.home-focus-copy h2,
+.list-title,
+.list-subtitle {
+  overflow-wrap: anywhere;
+}
+
+.link-button,
+.home-switch-button {
+  min-height: 40px;
+}
+
+.settings-accordion-close {
+  width: 40px;
+  height: 40px;
+}
+
+.record-menu-button {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  flex: 0 0 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.record-menu-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  overflow: visible;
+  fill: currentColor;
+}
+
+.health-tabs .health-main-tab {
+  position: relative;
+}
+
+@media (max-width: 520px) {
+  .record-list-item:not(.reminder-list-item) {
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    grid-template-areas:
+      "record-icon record-copy record-menu"
+      "record-icon record-value record-value";
+    align-items: start;
+    column-gap: 10px;
+    row-gap: 4px;
+    padding: 12px;
+  }
+
+  .record-list-item:not(.reminder-list-item) > .list-icon {
+    grid-area: record-icon;
+    align-self: center;
+  }
+
+  .record-list-item:not(.reminder-list-item) > div:nth-child(2) {
+    grid-area: record-copy;
+    min-width: 0;
+  }
+
+  .record-list-item:not(.reminder-list-item) > .record-trailing {
+    display: contents;
+  }
+
+  .record-list-item:not(.reminder-list-item) .record-trailing .list-value {
+    grid-area: record-value;
+    min-width: 0;
+    margin-top: 1px;
+    text-align: left;
+    font-size: .75rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .record-list-item:not(.reminder-list-item) .record-trailing .list-value small {
+    display: inline;
+    margin: 0 0 0 7px;
+  }
+
+  .record-list-item:not(.reminder-list-item) .record-trailing .record-menu-button {
+    grid-area: record-menu;
+    align-self: start;
+    justify-self: end;
+  }
+
+  .document-record-item .document-list-value {
+    white-space: normal;
+  }
+
+  .health-tabs .health-main-tab {
+    padding-left: 5px;
+    padding-right: 5px;
+    gap: 4px;
+  }
+
+  .health-tabs .health-main-tab .health-tab-label {
+    overflow: visible;
+    text-overflow: clip;
+  }
+}
+
+@media (max-width: 430px) {
+  .health-tabs .health-main-tab.active small {
+    display: none;
+  }
+}
+
+@media (max-width: 350px) {
+  .health-main-tabs-panel {
+    padding: 4px;
+  }
+
+  .section-tabs.health-tabs {
+    gap: 3px;
+  }
+
+  .health-tabs .health-main-tab {
+    min-height: 40px;
+    padding-left: 4px;
+    padding-right: 4px;
+    gap: 3px;
+  }
+
+  .health-tabs .health-main-tab .health-tab-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .health-tabs .health-main-tab .health-tab-label {
+    font-size: .64rem;
   }
 }

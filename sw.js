@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.9.2-delete-double-confirm';
+const CACHE_NAME = 'animoa-v3.9.3-responsive-polish';
 
 const CORE = [
   '/',
