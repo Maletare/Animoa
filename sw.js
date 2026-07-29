@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.11.4-review-prompt-loop-fix';
+const CACHE_NAME = 'animoa-v3.11.7-social-links-app';
 
 const CORE = [
   '/',

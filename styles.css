@@ -1585,6 +1585,43 @@ html[data-theme="dark"] .cropper-dialog { background: var(--surface-elevated); }
 .contact-destination a, .legal-card a { color: var(--primary-dark); font-weight: 800; }
 
 .settings-support-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+.settings-help-content { display: grid; gap: 12px; }
+.settings-help-card { align-items: center; }
+.settings-help-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; }
+.settings-social-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface-soft);
+}
+.settings-social-copy { display: grid; gap: 2px; min-width: 0; }
+.settings-social-copy strong { color: var(--text); font-size: .9rem; }
+.settings-social-copy small { color: var(--muted); font-size: .73rem; line-height: 1.35; }
+.settings-social-links { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.settings-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--primary-dark);
+  text-decoration: none;
+  font-size: .77rem;
+  font-weight: 850;
+  line-height: 1;
+  transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.settings-social-link:hover { transform: translateY(-1px); background: var(--surface); box-shadow: 0 7px 18px rgba(26, 75, 68, .09); }
+.settings-social-link:focus-visible { outline: 3px solid color-mix(in srgb, var(--primary) 30%, transparent); outline-offset: 2px; }
+.settings-social-link svg { width: 17px; height: 17px; flex: 0 0 auto; fill: currentColor; }
 .settings-legal-row {
   display: flex;
   justify-content: center;
@@ -1634,9 +1671,12 @@ html[data-theme="dark"] .contact-destination,
 html[data-theme="dark"] .legal-contact-box { background: var(--surface-soft); }
 
 @media (max-width: 560px) {
-  .support-contact-card, .settings-support-card { align-items: stretch; flex-direction: column; }
-  .support-contact-card .primary-button, .settings-support-actions > button { width: 100%; }
-  .settings-support-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
+  .support-contact-card, .settings-support-card, .settings-help-card { align-items: stretch; flex-direction: column; }
+  .support-contact-card .primary-button, .settings-support-actions > button, .settings-help-actions > button { width: 100%; }
+  .settings-support-actions, .settings-help-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
+  .settings-social-row { align-items: stretch; flex-direction: column; }
+  .settings-social-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .settings-social-link { min-width: 0; }
   .legal-contact-box { align-items: flex-start; flex-direction: column; }
 }
 
@@ -5156,4 +5196,17 @@ html[data-theme="dark"] .review-summary-score {
 @media (max-width: 430px) {
   .page-back-row { min-height: 40px; }
   .page-back-button { min-height: 40px; padding: 0 12px; border-radius: 13px; }
+}
+
+/* Animoa 3.11.7 — contraste des liens sociaux dans l’application */
+.settings-social-link,
+.settings-social-link span,
+.settings-social-link svg{
+  opacity:1!important;
+}
+.settings-social-link span{
+  color:inherit!important;
+}
+.settings-social-link svg{
+  color:inherit!important;
 }

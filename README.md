@@ -18,50 +18,31 @@ Puis ouvrez `http://localhost:8015`.
 
 Le projet est une application statique déployable directement sur Vercel. Le fichier `vercel.json` contient les principaux en-têtes de sécurité et les règles de cache.
 
-## Mise à jour 3.10.0
+## Mise à jour 3.11.0
 
-Cette version ajoute :
+Cette version remplace la demande d’avis externe par un système interne à Animoa :
 
-- un e-mail de rappel de vaccin exactement à J-7, à partir de 9 h dans le fuseau de l’utilisateur ;
-- la prise en compte des préférences Rendez-vous, Vaccins et Traitements pour les e-mails ;
-- un historique anti-doublon des envois et des échecs Brevo ;
-- le planning horaire versionné des notifications Web Push ;
-- la demande d’avis public avec la cadence 7 jours, puis 7 jours, puis 30 jours ;
-- un suivi réservé à l’administrateur.
+- note obligatoire de 1 à 5 étoiles ;
+- commentaire facultatif visible uniquement dans l’Administration ;
+- cadence conservée : premier message à 7 jours, puis 7 jours, puis 30 jours ;
+- bouton permanent dans `Paramètres > Aide et confidentialité` ;
+- possibilité de modifier son avis ;
+- affichage sur l’accueil de la note moyenne et du nombre d’avis, sans montrer les commentaires ni l’identité des utilisateurs ;
+- suivi détaillé dans `Administration > Avis utilisateurs` et `Administration > Demandes d’avis`.
 
-### Ordre d’installation recommandé
+### Installation de la version 3.11.0
 
-1. Déployer à nouveau l’Edge Function `animoa-reminders-24h` avec le fichier présent dans `supabase/functions/`.
-2. Vérifier que le Cron `animoa-reminders-24h-hourly` existe toujours. Le script `supabase/sql/03_rappels_24h.sql` reste la référence si le planning doit être recréé.
-3. Exécuter `supabase/sql/04_notifications_push.sql` pour créer ou remettre en place le Cron horaire `animoa-push-dispatch-hourly`. Redéployer aussi `animoa-push-dispatch` si la fonction n’est pas déjà en ligne.
-4. Exécuter `supabase/sql/06_demandes_avis.sql` une seule fois dans le SQL Editor Supabase.
-5. Déployer les fichiers web sur Vercel.
-6. Dans `Administration > Demandes d’avis`, renseigner le lien public HTTPS, puis activer la fonction.
+Après avoir installé les versions 3.10.0 et 3.10.1 :
 
-Le script 06 initialise les comptes déjà présents avec une première échéance sept jours après son exécution. Les administrateurs sont exclus. Les nouveaux comptes démarrent leur délai lors de leur première ouverture d’Animoa.
+1. Exécuter une seule fois `supabase/sql/08_avis_internes.sql` dans le SQL Editor Supabase.
+2. Lancer Animoa en local et vérifier la prévisualisation depuis `Administration > Demandes d’avis`.
+3. Déployer les fichiers web sur GitHub/Vercel.
 
-La demande d’avis reste désactivée tant qu’aucun lien HTTPS n’est enregistré dans l’administration.
+Le script 08 active automatiquement les demandes internes et conserve toutes les échéances déjà calculées. Aucun redéploiement d’Edge Function n’est nécessaire.
 
-### Vérifications après installation
+### Test immédiat avec un compte de test
 
-Dans Supabase, les deux requêtes suivantes doivent retourner un planning actif :
-
-```sql
-select jobid, jobname, schedule, active
-from cron.job
-where jobname in ('animoa-reminders-24h-hourly', 'animoa-push-dispatch-hourly');
-```
-
-Les derniers envois ou échecs d’e-mails sont visibles avec :
-
-```sql
-select event_title, reminder_kind, status, attempts, sent_at, last_error, updated_at
-from public.animoa_reminder_deliveries
-order by updated_at desc
-limit 50;
-```
-
-Pour tester la demande d’avis avec un compte de test sans attendre sept jours, remplacez l’adresse ci-dessous puis reconnectez-vous avec ce compte :
+Pour rendre un compte éligible sans attendre sept jours, remplacer l’adresse ci-dessous puis exécuter :
 
 ```sql
 update public.animoa_review_requests as requests
@@ -69,6 +50,25 @@ set next_prompt_at = now(), status = 'scheduled', updated_at = now()
 from auth.users as users
 where users.id = requests.user_id
   and lower(users.email) = lower('ADRESSE_DU_COMPTE_TEST');
+```
+
+À la prochaine connexion de ce compte, le formulaire interne doit apparaître. Après l’envoi, l’avis est visible uniquement par l’administrateur dans `Avis utilisateurs`.
+
+## Rappels et notifications
+
+La version conserve :
+
+- l’e-mail de rappel vaccin à J-7 ;
+- les e-mails des rendez-vous et traitements dans les 24 heures précédentes ;
+- les notifications Web Push planifiées ;
+- l’historique anti-doublon des envois.
+
+Les Crons attendus sont :
+
+```sql
+select jobid, jobname, schedule, active
+from cron.job
+where jobname in ('animoa-reminders-24h-hourly', 'animoa-push-dispatch-hourly');
 ```
 
 ## Configuration Supabase
@@ -92,3 +92,57 @@ Les secrets privés doivent rester dans les variables d’environnement Supabase
 1. Vérifier qu’aucun secret privé n’a été ajouté au dépôt.
 2. Tester la connexion, les animaux, la santé, les documents et l’administration.
 3. Vérifier la version affichée dans `app.js`, `index.html`, `sw.js` et les paramètres de cache.
+
+
+## Mise à jour 3.11.1
+- Contraste renforcé sur la page publique, y compris lorsque le téléphone ou le navigateur utilise le mode sombre.
+- Boutons, textes, maquette téléphone, cartes et pied de page plus lisibles.
+- Aucune nouvelle action Supabase : le script `08_avis_internes.sql` reste celui de la 3.11.0 et ne doit pas être relancé.
+
+
+## Mise à jour 3.11.2
+
+- Ajout de « Donner votre avis » et « Se déconnecter » directement dans le menu principal.
+- Pour le compte administrateur, « Donner votre avis » ouvre uniquement un aperçu et n'enregistre aucune note.
+- Retrait de ces deux actions de la page Paramètres.
+- Réorganisation des Paramètres en cinq rubriques : Mon compte, Notifications, Apparence, Langue et région, Données et confidentialité.
+- Aucune modification Supabase supplémentaire n'est nécessaire après l'installation du script 08 de la version 3.11.0.
+
+
+## Mise à jour 3.11.3
+
+- Ajout d’un bouton Retour cohérent sur les pages secondaires.
+- La navigation mémorise la page précédente et utilise un écran logique de secours si nécessaire.
+- Pages concernées : Mes animaux, fiche animal, Poids, Paramètres, Aide, Contact, Confidentialité, Mentions légales et Administration.
+- Aucun changement Supabase n’est requis.
+
+## Mise à jour 3.11.4
+
+- Correctif urgent de la boucle de la demande d’avis.
+- Suppression du nouveau contrôle automatique 700 ms après la fermeture d’une fenêtre.
+- Protection locale par utilisateur après « Envoyer mon avis », « Plus tard » ou « Ne plus afficher » afin que l’accès à l’application reste toujours possible.
+- Vérification d’un avis déjà existant avant toute nouvelle demande automatique.
+- Ajout du script Supabase idempotent `09_correctif_boucle_avis.sql` pour réparer les anciennes lignes de suivi et fiabiliser les actions.
+
+## Mise à jour 3.11.5
+
+- Ajout des liens officiels TikTok et Facebook dans le pied de page de la page d’accueil publique.
+- Ouverture sécurisée des réseaux sociaux dans un nouvel onglet.
+- Ajout des profils sociaux aux données structurées de l’organisation Animoa.
+- Mise en page responsive et compatible avec les modes clair et sombre.
+- Aucun changement Supabase n’est requis.
+
+## Mise à jour 3.11.6
+
+- Ajout d’une rubrique compacte « Aide et contact » dans les paramètres de l’application.
+- Accès discret aux profils officiels TikTok et Facebook depuis l’espace connecté.
+- Conservation des liens sociaux dans le pied de page de l’accueil public.
+- Ouverture sécurisée dans un nouvel onglet et adaptation mobile, ordinateur, mode clair et mode sombre.
+- Aucun changement Supabase n’est requis.
+
+## Mise à jour 3.11.7
+
+- Contraste renforcé pour les textes et icônes TikTok et Facebook dans le pied de page public.
+- Lisibilité sécurisée en modes clair, sombre et système.
+- Renforcement identique des liens sociaux discrets dans les paramètres de l’application.
+- Aucun changement Supabase n’est requis.
