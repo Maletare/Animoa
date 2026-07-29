@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.11.3-secondary-back-navigation';
+const CACHE_NAME = 'animoa-v3.11.4-review-prompt-loop-fix';
 
 const CORE = [
   '/',
