@@ -13,6 +13,8 @@ with expected_tables(table_schema, table_name) as (
     ('public','animoa_push_deliveries'),
     ('public','animoa_review_config'),
     ('public','animoa_review_requests'),
+    ('public','animoa_media_library'),
+    ('public','animoa_media_drive_connections'),
     ('public','calendar_preferences'),
     ('public','calendar_event_links')
 ),

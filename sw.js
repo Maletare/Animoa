@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.11.7-social-links-app';
+const CACHE_NAME = 'animoa-v3.12.1-media-library-summary';
 
 const CORE = [
   '/',
