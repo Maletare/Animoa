@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.12.4-ui-fixes';
+const CACHE_NAME = 'animoa-v3.12.2-media-dedupe-1';
 
 const CORE = [
   '/',
