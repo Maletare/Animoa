@@ -5210,3 +5210,100 @@ html[data-theme="dark"] .review-summary-score {
 .settings-social-link svg{
   color:inherit!important;
 }
+
+/* Animoa 3.12.0 — Banque de médias privée administratrice */
+.admin-media-page{display:grid;gap:16px;margin-top:12px}
+.admin-media-security,.admin-media-drive{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;border-color:color-mix(in srgb,var(--primary) 24%,var(--border));background:linear-gradient(135deg,color-mix(in srgb,var(--primary-light) 54%,var(--surface)),var(--surface) 72%)}
+.admin-media-security h2,.admin-media-drive h2,.admin-media-search-form h2,.admin-media-library h2{margin:3px 0 7px}
+.admin-media-security p:last-child,.admin-media-drive p,.admin-media-search-form p,.admin-media-library-heading p:last-child{margin:0;color:var(--muted);line-height:1.5}
+.admin-media-drive{display:block}
+.admin-media-drive .card-title-row{align-items:flex-start}
+.admin-media-drive-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.admin-media-drive-note{margin-top:12px!important;padding-top:12px;border-top:1px solid var(--border);font-size:.78rem}
+.admin-media-search-form{display:grid;gap:15px}
+.admin-media-search-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.admin-media-search-grid label{display:grid;gap:6px;min-width:0}
+.admin-media-search-grid label>span,.admin-media-library-actions label>span{font-size:.75rem;font-weight:850;color:var(--text)}
+.admin-media-search-grid select,.admin-media-search-grid input,.admin-media-library-actions select{width:100%;min-height:45px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--primary) 16%,var(--border));border-radius:13px;background:var(--input-bg,var(--surface));color:var(--text);font:inherit;outline:none}
+.admin-media-search-grid select:focus,.admin-media-search-grid input:focus,.admin-media-library-actions select:focus{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 15%,transparent)}
+.admin-media-query{grid-column:1/-1}
+.admin-media-search-button{justify-self:start;min-width:220px}
+.admin-media-warning{padding:13px 15px;border:1px solid color-mix(in srgb,var(--warning) 38%,var(--border));border-radius:15px;background:color-mix(in srgb,var(--warning) 8%,var(--surface));color:var(--text);font-size:.84rem}
+.admin-media-warning p{margin:0}.admin-media-warning p+p{margin-top:5px}
+.admin-media-warning.is-error{border-color:color-mix(in srgb,var(--danger,#b83c4b) 32%,var(--border));background:color-mix(in srgb,var(--danger,#b83c4b) 7%,var(--surface));color:var(--danger,#b83c4b)}
+.admin-media-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.admin-media-card{overflow:hidden;border-radius:19px;border:1px solid var(--border)}
+.admin-media-preview{position:relative;aspect-ratio:9/12;background:#101817;overflow:hidden}
+.admin-media-preview video{width:100%;height:100%;display:block;object-fit:cover;background:#101817}
+.admin-media-source{position:absolute;top:9px;left:9px;display:inline-flex;padding:5px 8px;border-radius:999px;background:rgba(10,22,20,.78);color:#fff;font-size:.68rem;font-weight:850;backdrop-filter:blur(6px)}
+.admin-media-card-body{display:grid;gap:11px;padding:13px}
+.admin-media-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:9px}
+.admin-media-title-row>div{min-width:0;display:grid;gap:3px}
+.admin-media-title-row strong{font-size:.89rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-media-title-row small{color:var(--muted);font-size:.71rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-media-title-row>span{flex:0 0 auto;padding:4px 7px;border-radius:999px;background:var(--surface-soft);color:var(--muted);font-size:.65rem;font-weight:800}
+.admin-media-meta{display:flex;flex-wrap:wrap;gap:6px}
+.admin-media-meta span{padding:5px 7px;border-radius:9px;background:var(--surface-soft);color:var(--muted);font-size:.68rem;font-weight:750}
+.admin-media-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.admin-media-actions button{min-height:42px;padding:9px 10px;font-size:.76rem}
+.admin-media-actions .text-button{grid-column:1/-1}
+.admin-media-library{display:grid;gap:12px;margin-top:4px}
+.admin-media-library-heading{display:flex;align-items:end;justify-content:space-between;gap:12px}
+.admin-media-library-list{display:grid;gap:10px}
+.admin-media-library-card{display:grid;grid-template-columns:118px minmax(0,1fr);gap:13px;padding:11px;border-radius:18px;border:1px solid var(--border)}
+.admin-media-library-card>img{width:118px;height:96px;object-fit:cover;border-radius:13px;background:var(--surface-soft)}
+.admin-media-library-copy{display:grid;gap:10px;min-width:0}
+.admin-media-library-copy>div:first-child{display:grid;gap:3px;min-width:0}
+.admin-media-library-copy strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.86rem}
+.admin-media-library-copy small{color:var(--muted);font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-media-library-tags{display:flex;flex-wrap:wrap;gap:6px}
+.admin-media-library-tags span{padding:4px 7px;border-radius:999px;background:var(--surface-soft);color:var(--muted);font-size:.66rem;font-weight:800}
+.admin-media-library-actions{display:flex;align-items:end;flex-wrap:wrap;gap:8px}
+.admin-media-library-actions label{display:grid;gap:5px;min-width:142px}
+.admin-media-library-actions button{min-height:42px;padding:8px 11px;font-size:.75rem}
+html[data-theme="dark"] .admin-media-preview{background:#050908}
+
+@media(max-width:980px){
+  .admin-media-search-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-media-results{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  .admin-media-security{display:grid;gap:11px}
+  .admin-media-security .push-status-badge{justify-self:start}
+  .admin-media-drive .card-title-row{display:grid;gap:10px}
+  .admin-media-drive .push-status-badge{justify-self:start}
+  .admin-media-drive-actions{display:grid;grid-template-columns:1fr}
+  .admin-media-drive-actions button{width:100%}
+  .admin-media-search-grid{grid-template-columns:1fr}
+  .admin-media-query{grid-column:auto}
+  .admin-media-search-button{width:100%;min-width:0}
+  .admin-media-results{grid-template-columns:1fr}
+  .admin-media-preview{aspect-ratio:9/11}
+  .admin-media-actions{grid-template-columns:1fr}
+  .admin-media-actions .text-button{grid-column:auto}
+  .admin-media-library-card{grid-template-columns:92px minmax(0,1fr);gap:10px;padding:9px}
+  .admin-media-library-card>img{width:92px;height:92px}
+  .admin-media-library-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr}
+  .admin-media-library-actions label{min-width:0}
+  .admin-media-library-actions button{width:100%}
+}
+
+
+/* Animoa 3.12.1 — résumé compact de la médiathèque administratrice */
+.admin-media-library-summary{display:grid;gap:16px;border-color:color-mix(in srgb,var(--primary) 20%,var(--border));background:linear-gradient(135deg,color-mix(in srgb,var(--primary-light) 42%,var(--surface)),var(--surface) 76%)}
+.admin-media-library-summary-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.admin-media-library-summary-heading h2{margin:3px 0 7px}
+.admin-media-library-summary-heading p:last-child{margin:0;color:var(--muted);line-height:1.5}
+.admin-media-total{display:grid;place-items:center;min-width:58px;height:58px;padding:8px;border-radius:18px;background:var(--surface);border:1px solid var(--border);font-size:1.45rem;color:var(--primary-dark)}
+.admin-media-library-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.admin-media-library-stats>div{display:grid;gap:5px;padding:13px 14px;border:1px solid var(--border);border-radius:15px;background:var(--surface)}
+.admin-media-library-stats span{font-size:.72rem;font-weight:800;color:var(--muted)}
+.admin-media-library-stats strong{font-size:1.18rem;color:var(--text)}
+.admin-media-library-summary-actions{display:flex;align-items:center;gap:10px;padding-top:2px}
+.admin-media-library-summary-actions p{margin:0;color:var(--muted);font-size:.82rem}
+@media(max-width:680px){
+  .admin-media-library-summary-heading{align-items:center}
+  .admin-media-library-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-media-library-summary-actions{display:grid}
+  .admin-media-library-summary-actions button{width:100%}
+}
