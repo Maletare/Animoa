@@ -5289,7 +5289,7 @@ html[data-theme="dark"] .admin-media-preview{background:#050908}
 }
 
 
-/* Animoa 3.12.1 — résumé compact de la médiathèque administratrice */
+/* Animoa 3.12.2 — résumé compact de la médiathèque administratrice */
 .admin-media-library-summary{display:grid;gap:16px;border-color:color-mix(in srgb,var(--primary) 20%,var(--border));background:linear-gradient(135deg,color-mix(in srgb,var(--primary-light) 42%,var(--surface)),var(--surface) 76%)}
 .admin-media-library-summary-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
 .admin-media-library-summary-heading h2{margin:3px 0 7px}

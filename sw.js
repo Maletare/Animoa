@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.12.1-media-library-summary';
+const CACHE_NAME = 'animoa-v3.12.2-vercel-analytics';
 
 const CORE = [
   '/',
@@ -12,6 +12,7 @@ const CORE = [
   '/questionnaire.js',
   '/cloud.js',
   '/app.js',
+  '/analytics-loader.js',
   '/site.webmanifest',
   '/assets/animoa-logo-official.png',
   '/assets/animoa-wordmark-official.png',
@@ -36,6 +37,7 @@ const ALWAYS_REFRESH = new Set([
   '/questionnaire.js',
   '/cloud.js',
   '/app.js',
+  '/analytics-loader.js',
   '/site.webmanifest'
 ]);
 

@@ -174,3 +174,13 @@ Les secrets privés doivent rester dans les variables d’environnement Supabase
 - Un bouton ouvre directement le dossier `ANIMOA - MÉDIATHÈQUE` dans Google Drive.
 - Les messages de mise à jour destinés aux utilisateurs restent limités aux nouveautés publiques ; les outils d’administration n’y sont jamais mentionnés.
 - Les informations relatives à la médiathèque administratrice ont été retirées de la politique de confidentialité affichée aux utilisateurs, car elles ne concernent pas leurs données.
+
+## Mise à jour 3.12.2
+
+- Activation de Vercel Web Analytics sur la page publique et le questionnaire.
+- Intégration adaptée au projet Animoa en HTML/JavaScript sans framework : aucun paquet npm n’est nécessaire.
+- Ajout du chargeur local `analytics-loader.js` et du script Vercel `/_vercel/insights/script.js`.
+- Mise à jour du cache du service worker afin de diffuser immédiatement la nouvelle intégration.
+- Ajout d’une information claire dans la politique de confidentialité concernant les statistiques anonymes de fréquentation.
+- Après déploiement sur Vercel, seules les nouvelles visites sont comptabilisées.
+
