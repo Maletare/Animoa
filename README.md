@@ -184,3 +184,24 @@ Les secrets privés doivent rester dans les variables d’environnement Supabase
 - Ajout d’une information claire dans la politique de confidentialité concernant les statistiques anonymes de fréquentation.
 - Après déploiement sur Vercel, seules les nouvelles visites sont comptabilisées.
 
+
+
+## Mise à jour 3.12.3
+
+- Refonte de la page publique pour mieux présenter Animoa et améliorer sa compréhension par Google.
+- Ajout de contenus visibles sur le carnet de santé numérique, les rendez-vous, vaccins, traitements, poids, documents, dépenses et souvenirs.
+- Ajout de sections dédiées aux chiens, chats, lapins et oiseaux.
+- Ajout d’une FAQ visible et alignée avec les données structurées.
+- Optimisation du titre, de la description, des balises sociales et du sitemap.
+- Questionnaire exclu de l’indexation Google.
+- Vercel Web Analytics conservé.
+
+
+## Mise à jour 3.12.4
+
+- Correction du logo Animoa déformé dans l’aperçu du téléphone sur la page publique.
+- Conservation automatique des proportions du logo sur mobile et ordinateur.
+- Ajout d’un bouton « Voir / Masquer » dans les champs de mot de passe.
+- Bouton disponible pour la connexion, la création de compte et la définition d’un nouveau mot de passe.
+- Mise à jour du cache PWA afin de diffuser immédiatement les corrections.
+- Aucun changement Supabase n’est requis.

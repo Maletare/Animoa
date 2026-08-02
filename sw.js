@@ -1,4 +1,4 @@
-const CACHE_NAME = 'animoa-v3.12.2-vercel-analytics';
+const CACHE_NAME = 'animoa-v3.12.4-ui-fixes';
 
 const CORE = [
   '/',
