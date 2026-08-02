@@ -146,3 +146,31 @@ Les secrets privés doivent rester dans les variables d’environnement Supabase
 - Lisibilité sécurisée en modes clair, sombre et système.
 - Renforcement identique des liens sociaux discrets dans les paramètres de l’application.
 - Aucun changement Supabase n’est requis.
+
+
+## Mise à jour 3.12.0
+
+- Ajout d’une **Banque de médias** dans l’Administration, accessible uniquement au compte présent dans `public.animoa_admins`.
+- Recherche de vidéos via les API officielles Pexels et Pixabay, avec filtres animal, thème et format vertical/horizontal/carré.
+- Prévisualisation des vidéos et affichage obligatoire de la source et du créateur.
+- Connexion Google Drive séparée, réservée à l’administratrice, avec le périmètre limité `drive.file`.
+- Création automatique du dossier `ANIMOA - MÉDIATHÈQUE`, puis classement par animal et par thème.
+- Suivi des médias disponibles, utilisés ou archivés afin d’éviter les répétitions.
+- Les clés Pexels et Pixabay et le jeton Google Drive ne sont jamais placés dans le navigateur.
+
+### Installation Supabase 3.12.0
+
+1. Exécuter `supabase/sql/10_banque_medias_admin.sql` dans l’éditeur SQL Supabase.
+2. Ajouter les secrets Edge Functions `PEXELS_API_KEY` et `PIXABAY_API_KEY`. Les secrets Google existants `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` sont réutilisés.
+3. Déployer la fonction `supabase/functions/animoa-media-library` sous le nom `animoa-media-library`.
+4. Dans Google Cloud, activer l’API Google Drive et ajouter le scope `https://www.googleapis.com/auth/drive.file` à l’écran de consentement OAuth.
+5. Déployer les fichiers web de la version 3.12.0.
+
+
+## Mise à jour 3.12.1
+
+- La liste détaillée des vidéos enregistrées a été retirée de l’Administration.
+- La Banque de médias affiche désormais uniquement un résumé compact : total, disponibles, utilisées et archivées.
+- Un bouton ouvre directement le dossier `ANIMOA - MÉDIATHÈQUE` dans Google Drive.
+- Les messages de mise à jour destinés aux utilisateurs restent limités aux nouveautés publiques ; les outils d’administration n’y sont jamais mentionnés.
+- Les informations relatives à la médiathèque administratrice ont été retirées de la politique de confidentialité affichée aux utilisateurs, car elles ne concernent pas leurs données.
