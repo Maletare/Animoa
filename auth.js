@@ -30,6 +30,8 @@
       email: 'Adresse e-mail',
       password: 'Mot de passe',
       passwordHelp: '8 caractères minimum',
+      showPassword: 'Voir',
+      hidePassword: 'Masquer',
       forgot: 'Mot de passe oublié ?',
       noAccount: 'Pas encore de compte ?',
       alreadyAccount: 'Déjà un compte ?',
@@ -71,6 +73,8 @@
       email: 'Email address',
       password: 'Password',
       passwordHelp: 'At least 8 characters',
+      showPassword: 'Show',
+      hidePassword: 'Hide',
       forgot: 'Forgot your password?',
       noAccount: 'Don’t have an account yet?',
       alreadyAccount: 'Already have an account?',
@@ -149,6 +153,17 @@
     return '<img class="auth-logo" src="assets/animoa-logo-official.png" alt="Animoa" width="1200" height="361" decoding="async" />';
   }
 
+  function passwordField({ label, autocomplete }) {
+    return `<label>
+      <span>${label}</span>
+      <span class="auth-password-field">
+        <input name="password" type="password" autocomplete="${autocomplete}" minlength="8" required placeholder="••••••••" />
+        <button type="button" class="auth-password-toggle" data-auth-action="toggle-password" aria-label="${c('showPassword')}" aria-pressed="false">${c('showPassword')}</button>
+      </span>
+      <small>${c('passwordHelp')}</small>
+    </label>`;
+  }
+
   function authLanguageControl() {
     const english = lang() === 'en';
     return `<label class="auth-language-inline">
@@ -200,7 +215,7 @@
       <button class="google-auth-button" type="button" data-auth-action="google"><span class="google-auth-icon" aria-hidden="true">G</span><span>${c('googleContinue')}</span></button><p class="google-auth-help">${c('googleExistingOnly')}</p><div class="auth-divider" aria-hidden="true"><span>${c('or')}</span></div>
       <form id="authForm" class="auth-form" data-mode="${signup ? 'signup' : 'login'}">
         <label><span>${c('email')}</span><input name="email" type="email" autocomplete="email" required placeholder="nom@exemple.fr" /></label>
-        <label><span>${c('password')}</span><input name="password" type="password" autocomplete="${signup ? 'new-password' : 'current-password'}" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label>
+        ${passwordField({ label: c('password'), autocomplete: signup ? 'new-password' : 'current-password' })}
         <button class="primary-button auth-submit" type="submit">${signup ? c('signup') : c('login')}</button>
       </form>
       ${!signup ? `<button type="button" class="auth-text-button" data-auth-action="forgot">${c('forgot')}</button>` : ''}
@@ -228,7 +243,7 @@
     currentAuthScreen = 'recovery';
     currentAuthMessage = message;
     showShell();
-    authShell.innerHTML = `<section class="auth-card">${authLanguageControl()}${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('newPassword')}</h1></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="recoveryForm" class="auth-form"><label><span>${c('newPassword')}</span><input name="password" type="password" autocomplete="new-password" minlength="8" required placeholder="••••••••" /><small>${c('passwordHelp')}</small></label><button class="primary-button auth-submit" type="submit">${c('updatePassword')}</button></form></section>`;
+    authShell.innerHTML = `<section class="auth-card">${authLanguageControl()}${logo()}<div class="auth-copy"><p class="eyebrow">Animoa</p><h1>${c('newPassword')}</h1></div>${message ? `<div class="auth-message" role="status">${escapeHtml(message)}</div>` : ''}<form id="recoveryForm" class="auth-form">${passwordField({ label: c('newPassword'), autocomplete: 'new-password' })}<button class="primary-button auth-submit" type="submit">${c('updatePassword')}</button></form></section>`;
     decorateRequiredAuthFields();
   }
 
@@ -392,6 +407,17 @@
     const target = event.target.closest('[data-auth-action]');
     if (!target) return;
     const action = target.dataset.authAction;
+    if (action === 'toggle-password') {
+      const input = target.closest('.auth-password-field')?.querySelector('input');
+      if (!input) return;
+      const reveal = input.type === 'password';
+      input.type = reveal ? 'text' : 'password';
+      target.textContent = reveal ? c('hidePassword') : c('showPassword');
+      target.setAttribute('aria-label', reveal ? c('hidePassword') : c('showPassword'));
+      target.setAttribute('aria-pressed', String(reveal));
+      input.focus({ preventScroll: true });
+      return;
+    }
     if (action === 'local-preview') {
       localPreview = true;
       currentUser = null;

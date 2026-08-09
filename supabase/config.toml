@@ -1,0 +1,5 @@
+# Configuration des Edge Functions Animoa.
+# Le répartiteur Facebook est appelé par pg_cron sans JWT utilisateur ;
+# il s’authentifie lui-même avec le secret ANIMOA_CRON_SECRET.
+[functions.animoa-facebook-dispatch]
+verify_jwt = false

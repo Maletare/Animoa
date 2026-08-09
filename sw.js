@@ -1,16 +1,18 @@
-const CACHE_NAME = 'animoa-v3.12.2-media-dedupe-1';
+const CACHE_NAME = 'animoa-v3.14.0-facebook-admin';
 
 const CORE = [
   '/',
   '/index.html',
   '/styles.css',
   '/landing-compact.css',
+  '/admin-facebook.css',
   '/questionnaire.html',
   '/supabase-config.js',
   '/i18n.js',
   '/auth.js',
   '/questionnaire.js',
   '/cloud.js',
+  '/admin-facebook.js',
   '/app.js',
   '/analytics-loader.js',
   '/site.webmanifest',
@@ -30,12 +32,14 @@ const ALWAYS_REFRESH = new Set([
   '/index.html',
   '/styles.css',
   '/landing-compact.css',
+  '/admin-facebook.css',
   '/questionnaire.html',
   '/supabase-config.js',
   '/i18n.js',
   '/auth.js',
   '/questionnaire.js',
   '/cloud.js',
+  '/admin-facebook.js',
   '/app.js',
   '/analytics-loader.js',
   '/site.webmanifest'

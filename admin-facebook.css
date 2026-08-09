@@ -1,0 +1,107 @@
+.admin-facebook-page{display:grid;gap:16px;margin-top:12px}
+.admin-facebook-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;border-color:color-mix(in srgb,var(--primary) 24%,var(--border));background:linear-gradient(135deg,color-mix(in srgb,var(--primary-light) 52%,var(--surface)),var(--surface) 72%)}
+.admin-facebook-intro h2,.admin-facebook-history h2,.admin-facebook-editor h2,.admin-facebook-artwork-card h2,.admin-facebook-publish-card h2,.admin-facebook-start h2{margin:3px 0 7px}
+.admin-facebook-intro p:last-child,.admin-facebook-editor-head p:last-child,.admin-facebook-publish-card p,.admin-facebook-start p{margin:0;color:var(--muted);line-height:1.5}
+.admin-facebook-intro-actions{display:flex;flex-wrap:wrap;gap:9px;justify-content:flex-end}
+.admin-facebook-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.admin-facebook-stats>div{display:grid;gap:5px;padding:13px 14px;border:1px solid var(--border);border-radius:15px;background:var(--surface)}
+.admin-facebook-stats span{font-size:.72rem;font-weight:800;color:var(--muted)}
+.admin-facebook-stats strong{font-size:1.18rem;color:var(--text)}
+.admin-facebook-notice,.admin-facebook-feedback{display:flex;align-items:flex-start;gap:9px;padding:13px 15px;border:1px solid color-mix(in srgb,var(--primary) 28%,var(--border));border-radius:15px;background:color-mix(in srgb,var(--primary) 8%,var(--surface));font-size:.82rem;line-height:1.45}
+.admin-facebook-notice{display:grid}.admin-facebook-notice strong{color:var(--primary-dark)}.admin-facebook-notice span{color:var(--muted)}
+.admin-facebook-feedback.is-error{border-color:color-mix(in srgb,var(--danger,#b83c4b) 32%,var(--border));background:color-mix(in srgb,var(--danger,#b83c4b) 7%,var(--surface));color:var(--danger,#b83c4b)}
+.admin-facebook-start{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.admin-facebook-start>div{display:flex;align-items:center;gap:14px}
+.admin-facebook-start-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:17px;background:#1877f2;color:#fff;font:900 2rem/1 system-ui}
+.admin-facebook-workspace{display:grid;grid-template-columns:minmax(0,1.03fr) minmax(360px,.97fr);gap:15px;align-items:start}
+.admin-facebook-editor{display:grid;gap:16px}
+.admin-facebook-editor-head,.admin-facebook-artwork-head,.admin-facebook-section-title,.admin-facebook-history-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.admin-facebook-status{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:5px 9px;border-radius:999px;font-size:.7rem;font-weight:850;white-space:nowrap;background:var(--surface-soft);color:var(--muted)}
+.admin-facebook-status.is-draft{background:color-mix(in srgb,#8f9b9a 13%,var(--surface));color:#657270}
+.admin-facebook-status.is-ready{background:color-mix(in srgb,var(--primary) 13%,var(--surface));color:var(--primary-dark)}
+.admin-facebook-status.is-published{background:color-mix(in srgb,#2e9d64 13%,var(--surface));color:#24764d}
+.admin-facebook-status.is-error{background:color-mix(in srgb,var(--danger,#b83c4b) 11%,var(--surface));color:var(--danger,#b83c4b)}
+.admin-facebook-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.admin-facebook-form-grid label{display:grid;gap:6px;min-width:0}
+.admin-facebook-form-grid label>span{font-size:.75rem;font-weight:850;color:var(--text)}
+.admin-facebook-form-grid .is-wide{grid-column:1/-1}
+.admin-facebook-form-grid input,.admin-facebook-form-grid select,.admin-facebook-form-grid textarea{width:100%;min-height:45px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--primary) 16%,var(--border));border-radius:13px;background:var(--input-bg,var(--surface));color:var(--text);font:inherit;outline:none;resize:vertical}
+.admin-facebook-form-grid input:focus,.admin-facebook-form-grid select:focus,.admin-facebook-form-grid textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 15%,transparent)}
+.admin-facebook-generation-actions,.admin-facebook-save-actions{display:flex;flex-wrap:wrap;gap:8px}
+.admin-facebook-save-actions{padding-top:2px;border-top:1px solid var(--border)}
+.admin-facebook-save-actions button{margin-top:13px}
+.admin-facebook-media-section{display:grid;gap:10px;padding:13px;border:1px solid var(--border);border-radius:16px;background:var(--surface-soft)}
+.admin-facebook-section-title>div{display:grid;gap:3px}.admin-facebook-section-title strong{font-size:.84rem}.admin-facebook-section-title small{font-size:.71rem;color:var(--muted)}
+.admin-facebook-media-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+.admin-facebook-media-choice{position:relative;aspect-ratio:1;border:2px solid transparent;border-radius:12px;overflow:hidden;background:var(--surface);padding:0;cursor:pointer}
+.admin-facebook-media-choice img{width:100%;height:100%;display:block;object-fit:cover}
+.admin-facebook-media-choice span{position:absolute;left:5px;right:5px;bottom:5px;padding:3px 4px;border-radius:7px;background:rgba(5,24,23,.72);color:#fff;font-size:.56rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin-facebook-media-choice.is-selected{border-color:var(--primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--primary) 18%,transparent)}
+.admin-facebook-media-empty{padding:10px;border-radius:12px;background:var(--surface);color:var(--muted);font-size:.75rem;line-height:1.45}
+.admin-facebook-preview-column{display:grid;gap:13px;position:sticky;top:12px}
+.admin-facebook-artwork-card{display:grid;gap:12px}
+.admin-facebook-canvas-wrap{display:grid;place-items:center;border-radius:17px;overflow:hidden;background:#dfeceb;border:1px solid var(--border);padding:9px}
+#adminFacebookArtwork{display:block;width:100%;height:auto;max-height:680px;object-fit:contain;border-radius:11px;background:#fff;box-shadow:0 12px 28px rgba(8,62,59,.12)}
+.admin-facebook-post-preview{overflow:hidden}
+.admin-facebook-fb-head{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:13px 14px 8px}
+.admin-facebook-fb-head img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:var(--surface-soft)}
+.admin-facebook-fb-head>div{display:grid;gap:2px}.admin-facebook-fb-head strong{font-size:.86rem}.admin-facebook-fb-head span{font-size:.68rem;color:var(--muted)}
+.admin-facebook-fb-more{font-size:1rem!important;letter-spacing:2px}
+.admin-facebook-fb-copy{padding:6px 14px 13px}.admin-facebook-fb-copy p{margin:0;white-space:pre-line;font-size:.78rem;line-height:1.48}.admin-facebook-fb-copy p+p{margin-top:8px}
+.admin-facebook-fb-tags{color:#1877f2}
+.admin-facebook-post-image-copy{padding:12px 14px;background:var(--surface-soft);border-top:1px solid var(--border);font-size:.69rem;color:var(--muted)}
+.admin-facebook-publish-card{display:grid;gap:12px;border-color:color-mix(in srgb,#1877f2 20%,var(--border))}
+.admin-facebook-publish-card>div p:last-child{font-size:.78rem}
+.admin-facebook-publish-button{width:100%;min-height:48px}
+.admin-facebook-history{display:grid;gap:11px;margin-top:2px}
+.admin-facebook-history-list{display:grid;gap:9px}
+.admin-facebook-history-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:13px;padding:13px 14px}
+.admin-facebook-history-main{display:grid;gap:7px;min-width:0}.admin-facebook-history-main>div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 9px;align-items:center}.admin-facebook-history-main strong{font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.admin-facebook-history-main small{grid-column:2;color:var(--muted);font-size:.67rem}.admin-facebook-history-main p{margin:0;color:var(--muted);font-size:.73rem;line-height:1.4}
+.admin-facebook-history-error{font-size:.7rem;color:var(--danger,#b83c4b)}
+.admin-facebook-history-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:7px}.admin-facebook-history-actions button{min-height:38px;padding:8px 10px;font-size:.72rem}
+.admin-facebook-empty{display:grid;gap:4px}.admin-facebook-empty span{color:var(--muted);font-size:.78rem}
+html[data-theme="dark"] .admin-facebook-canvas-wrap{background:#081412}
+@media(max-width:1080px){.admin-facebook-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-facebook-workspace{grid-template-columns:1fr}.admin-facebook-preview-column{position:static}.admin-facebook-media-grid{grid-template-columns:repeat(8,minmax(0,1fr))}}
+@media(max-width:720px){.admin-facebook-intro,.admin-facebook-start,.admin-facebook-editor-head,.admin-facebook-artwork-head,.admin-facebook-history-card{display:grid}.admin-facebook-intro-actions,.admin-facebook-generation-actions,.admin-facebook-save-actions{display:grid;grid-template-columns:1fr}.admin-facebook-intro-actions button,.admin-facebook-generation-actions button,.admin-facebook-save-actions button,.admin-facebook-artwork-head button{width:100%}.admin-facebook-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-facebook-form-grid{grid-template-columns:1fr}.admin-facebook-form-grid .is-wide{grid-column:auto}.admin-facebook-media-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.admin-facebook-history-actions{display:grid;grid-template-columns:1fr}.admin-facebook-history-actions button{width:100%}.admin-facebook-history-main>div{grid-template-columns:1fr}.admin-facebook-history-main small{grid-column:auto}.admin-facebook-start>div{align-items:flex-start}}
+
+/* 3.14.0 — photos HD + cadrage intelligent */
+.admin-facebook-hd-section{display:grid;gap:11px;padding:14px;border:1px solid color-mix(in srgb,var(--primary) 30%,var(--border));border-radius:18px;background:linear-gradient(145deg,color-mix(in srgb,var(--primary) 7%,var(--surface)),color-mix(in srgb,#ff6f73 5%,var(--surface)))}
+.admin-facebook-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.admin-facebook-photo-choice{position:relative;aspect-ratio:4/5;border:2px solid transparent;border-radius:14px;overflow:hidden;padding:0;background:var(--surface);cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.admin-facebook-photo-choice:hover{transform:translateY(-2px)}
+.admin-facebook-photo-choice img{width:100%;height:100%;display:block;object-fit:cover}
+.admin-facebook-photo-choice span{position:absolute;left:7px;bottom:7px;padding:4px 7px;border-radius:999px;background:rgba(5,35,34,.74);color:#fff;font-size:.58rem;font-weight:850;backdrop-filter:blur(5px)}
+.admin-facebook-photo-choice.is-selected{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 17%,transparent),0 10px 24px rgba(8,80,76,.12)}
+.admin-facebook-photo-loading,.admin-facebook-photo-note{padding:11px 12px;border-radius:12px;background:var(--surface);font-size:.73rem;line-height:1.45;color:var(--muted)}
+.admin-facebook-crop-box{display:grid;gap:12px;padding:14px;border:1px solid var(--border);border-radius:18px;background:var(--surface-soft)}
+.admin-facebook-crop-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.admin-facebook-crop-grid label{display:grid;gap:7px;padding:10px 11px;border-radius:13px;background:var(--surface);border:1px solid color-mix(in srgb,var(--primary) 12%,var(--border))}
+.admin-facebook-crop-grid label>span{display:flex;justify-content:space-between;gap:10px;font-size:.69rem;font-weight:800;color:var(--muted)}
+.admin-facebook-crop-grid label b{color:var(--primary-dark)}
+.admin-facebook-crop-grid input[type="range"]{width:100%;accent-color:var(--primary);cursor:pointer}
+.admin-facebook-crop-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.admin-facebook-crop-actions span{font-size:.68rem;line-height:1.4;color:var(--muted)}
+.admin-facebook-media-footer{display:flex;justify-content:flex-end;padding-top:2px}
+.admin-facebook-canvas-wrap{background:radial-gradient(circle at 35% 20%,#f6fffd,#dcefed);padding:12px}
+#adminFacebookArtwork{box-shadow:0 18px 42px rgba(8,62,59,.18)}
+@media(max-width:1080px){.admin-facebook-photo-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:720px){.admin-facebook-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-facebook-crop-grid{grid-template-columns:1fr}.admin-facebook-crop-actions{display:grid}.admin-facebook-media-footer button{width:100%}}
+
+/* 3.14.0 — publication directe, programmation et santé de la connexion Facebook */
+.admin-facebook-status.is-scheduled{background:color-mix(in srgb,#1877f2 12%,var(--surface));color:#155db7}
+.admin-facebook-status.is-publishing{background:color-mix(in srgb,#8a5bd3 13%,var(--surface));color:#6a3faf}
+.admin-facebook-connection{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 14px;padding:13px 15px;border:1px solid var(--border);border-radius:16px;background:var(--surface)}
+.admin-facebook-connection strong{font-size:.82rem}.admin-facebook-connection span{grid-column:1;color:var(--muted);font-size:.72rem;line-height:1.45}.admin-facebook-connection button{grid-column:2;grid-row:1/3;min-height:38px}
+.admin-facebook-connection.is-ok{border-color:color-mix(in srgb,#2e9d64 30%,var(--border));background:color-mix(in srgb,#2e9d64 6%,var(--surface))}.admin-facebook-connection.is-ok strong{color:#24764d}
+.admin-facebook-connection.is-warning{border-color:color-mix(in srgb,#e7a52a 42%,var(--border));background:color-mix(in srgb,#f4b63d 9%,var(--surface))}.admin-facebook-connection.is-warning strong{color:#9b6914}
+.admin-facebook-connection.is-urgent{border-color:color-mix(in srgb,#ed8b27 48%,var(--border));background:color-mix(in srgb,#ed8b27 10%,var(--surface))}.admin-facebook-connection.is-urgent strong{color:#a75a0d}
+.admin-facebook-connection.is-critical,.admin-facebook-connection.is-error{border-color:color-mix(in srgb,var(--danger,#b83c4b) 38%,var(--border));background:color-mix(in srgb,var(--danger,#b83c4b) 7%,var(--surface))}.admin-facebook-connection.is-critical strong,.admin-facebook-connection.is-error strong{color:var(--danger,#b83c4b)}
+.admin-facebook-connection.is-checking{opacity:.82}
+.admin-facebook-schedule-box{display:grid;gap:11px;padding:13px;border:1px solid color-mix(in srgb,#1877f2 24%,var(--border));border-radius:16px;background:color-mix(in srgb,#1877f2 4%,var(--surface))}
+.admin-facebook-schedule-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.admin-facebook-schedule-fields label{display:grid;gap:6px}.admin-facebook-schedule-fields label>span{font-size:.72rem;font-weight:850;color:var(--text)}
+.admin-facebook-schedule-fields input{width:100%;min-height:44px;padding:9px 11px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg,var(--surface));color:var(--text);font:inherit}
+.admin-facebook-schedule-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.admin-facebook-schedule-actions .secondary-button{min-height:44px;flex:1}
+.admin-facebook-schedule-done{padding:11px 12px;border-radius:13px;background:var(--surface-soft);color:var(--muted);font-size:.74rem;line-height:1.45}.admin-facebook-schedule-done.is-sending{background:color-mix(in srgb,#8a5bd3 8%,var(--surface));color:#6a3faf}
+.admin-facebook-stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media(max-width:1080px){.admin-facebook-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){.admin-facebook-connection{grid-template-columns:1fr}.admin-facebook-connection span,.admin-facebook-connection button{grid-column:1;grid-row:auto}.admin-facebook-connection button{width:100%}.admin-facebook-schedule-fields{grid-template-columns:1fr}.admin-facebook-schedule-actions{display:grid;grid-template-columns:1fr}.admin-facebook-schedule-actions button{width:100%}.admin-facebook-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}

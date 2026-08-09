@@ -237,6 +237,92 @@ async function searchPixabay(query: string, orientation: string, species: string
   return items;
 }
 
+
+type FacebookImageItem = {
+  source: "pexels" | "pixabay";
+  sourceId: string;
+  sourcePageUrl: string;
+  creatorName: string;
+  thumbnailUrl: string;
+  imageUrl: string;
+  width: number;
+  height: number;
+};
+
+async function searchPexelsImages(query: string, orientation: string): Promise<FacebookImageItem[]> {
+  const apiKey = safeString(Deno.env.get("PEXELS_API_KEY"), 300);
+  if (!apiKey) throw new HttpError(503, "La clé Pexels n’est pas encore configurée dans Supabase.");
+  const params = new URLSearchParams({ query, per_page: "18", page: "1" });
+  if (["portrait", "landscape", "square"].includes(orientation)) params.set("orientation", orientation);
+  const response = await fetch(`https://api.pexels.com/v1/search?${params}`, { headers: { Authorization: apiKey } });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new HttpError(response.status, safeString(payload?.error, 300) || `Pexels a répondu avec l’erreur ${response.status}.`);
+  const items: FacebookImageItem[] = [];
+  for (const photo of Array.isArray(payload?.photos) ? payload.photos : []) {
+    const sourcePageUrl = safeHttpsUrl(photo?.url, /(^|\.)pexels\.com$/i);
+    const imageUrl = safeHttpsUrl(photo?.src?.large2x || photo?.src?.large || photo?.src?.original, /(^|\.)pexels\.com$/i);
+    const thumbnailUrl = safeHttpsUrl(photo?.src?.medium || photo?.src?.small, /(^|\.)pexels\.com$/i);
+    const width = safeNumber(photo?.width);
+    const height = safeNumber(photo?.height);
+    if (!sourcePageUrl || !imageUrl || !thumbnailUrl || !width || !height) continue;
+    items.push({
+      source: "pexels",
+      sourceId: String(photo?.id || ""),
+      sourcePageUrl,
+      creatorName: safeString(photo?.photographer, 120) || "Photographe Pexels",
+      thumbnailUrl,
+      imageUrl,
+      width,
+      height,
+    });
+  }
+  return items;
+}
+
+async function searchPixabayImages(query: string, orientation: string): Promise<FacebookImageItem[]> {
+  const apiKey = safeString(Deno.env.get("PIXABAY_API_KEY"), 300);
+  if (!apiKey) throw new HttpError(503, "La clé Pixabay n’est pas encore configurée dans Supabase.");
+  const params = new URLSearchParams({
+    key: apiKey,
+    q: query,
+    lang: "en",
+    image_type: "photo",
+    category: "animals",
+    safesearch: "true",
+    per_page: "20",
+    page: "1",
+    min_width: "1000",
+    min_height: "900",
+  });
+  if (orientation === "portrait") params.set("orientation", "vertical");
+  else if (orientation === "landscape") params.set("orientation", "horizontal");
+  const response = await fetch(`https://pixabay.com/api/?${params}`);
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new HttpError(response.status, safeString(payload?.message, 300) || `Pixabay a répondu avec l’erreur ${response.status}.`);
+  const items: FacebookImageItem[] = [];
+  for (const hit of Array.isArray(payload?.hits) ? payload.hits : []) {
+    const sourcePageUrl = safeHttpsUrl(hit?.pageURL, /(^|\.)pixabay\.com$/i);
+    const imageUrl = safeHttpsUrl(hit?.largeImageURL || hit?.webformatURL, /(^|\.)pixabay\.com$/i);
+    const thumbnailUrl = safeHttpsUrl(hit?.webformatURL || hit?.previewURL, /(^|\.)pixabay\.com$/i);
+    const width = safeNumber(hit?.imageWidth || hit?.webformatWidth);
+    const height = safeNumber(hit?.imageHeight || hit?.webformatHeight);
+    if (!sourcePageUrl || !imageUrl || !thumbnailUrl || !width || !height) continue;
+    const actual = orientationOf(width, height);
+    if (orientation === "square" && actual !== "square" && Math.abs(width / height - 1) > .35) continue;
+    items.push({
+      source: "pixabay",
+      sourceId: String(hit?.id || ""),
+      sourcePageUrl,
+      creatorName: safeString(hit?.user, 120) || "Photographe Pixabay",
+      thumbnailUrl,
+      imageUrl,
+      width,
+      height,
+    });
+  }
+  return items;
+}
+
 function interleave<T>(left: T[], right: T[]): T[] {
   const result: T[] = [];
   const max = Math.max(left.length, right.length);
@@ -486,6 +572,25 @@ const authenticatedHandler = withSupabase({ auth: "user" }, async (request, ctx)
       }
       const combined = source === "pexels" ? pexels : source === "pixabay" ? pixabay : interleave(pexels, pixabay);
       const items = await markSavedItems(ctx, combined.slice(0, MAX_RESULTS));
+      return json({ ok: true, query, items, warnings });
+    }
+
+
+    if (action === "search-facebook-images") {
+      const query = safeString(body.query, 120);
+      const orientation = ["portrait", "landscape", "square"].includes(safeString(body.orientation, 20)) ? safeString(body.orientation, 20) : "portrait";
+      if (query.length < 2) throw new HttpError(400, "Sujet photo manquant.");
+
+      const warnings: string[] = [];
+      let pexels: FacebookImageItem[] = [];
+      let pixabay: FacebookImageItem[] = [];
+      try { pexels = await searchPexelsImages(query, orientation); }
+      catch (error) { warnings.push(error instanceof Error ? error.message : "Pexels est indisponible."); }
+      try { pixabay = await searchPixabayImages(query, orientation); }
+      catch (error) { warnings.push(error instanceof Error ? error.message : "Pixabay est indisponible."); }
+
+      const items = interleave(pexels, pixabay).slice(0, MAX_RESULTS);
+      if (!items.length && warnings.length) throw new HttpError(503, warnings.join(" "));
       return json({ ok: true, query, items, warnings });
     }
 

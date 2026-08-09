@@ -186,9 +186,77 @@ Les secrets privés doivent rester dans les variables d’environnement Supabase
 
 
 
-## Optimisation Banque de médias — doublons
+## Mise à jour 3.12.3
 
-- Les vidéos déjà téléchargées depuis Pexels ou Pixabay ne sont plus affichées dans les nouveaux résultats de recherche.
-- Après un téléchargement, la carte disparaît immédiatement de la liste de résultats.
-- La protection serveur existante continue d'empêcher un second enregistrement du même identifiant source.
-- Cette amélioration est côté interface et ne nécessite pas de nouveau script SQL ni de redéploiement de la fonction Supabase.
+- Refonte de la page publique pour mieux présenter Animoa et améliorer sa compréhension par Google.
+- Ajout de contenus visibles sur le carnet de santé numérique, les rendez-vous, vaccins, traitements, poids, documents, dépenses et souvenirs.
+- Ajout de sections dédiées aux chiens, chats, lapins et oiseaux.
+- Ajout d’une FAQ visible et alignée avec les données structurées.
+- Optimisation du titre, de la description, des balises sociales et du sitemap.
+- Questionnaire exclu de l’indexation Google.
+- Vercel Web Analytics conservé.
+
+
+## Mise à jour 3.12.4
+
+- Correction du logo Animoa déformé dans l’aperçu du téléphone sur la page publique.
+- Conservation automatique des proportions du logo sur mobile et ordinateur.
+- Ajout d’un bouton « Voir / Masquer » dans les champs de mot de passe.
+- Bouton disponible pour la connexion, la création de compte et la définition d’un nouveau mot de passe.
+- Mise à jour du cache PWA afin de diffuser immédiatement les corrections.
+- Aucun changement Supabase n’est requis.
+
+## Mise à jour 3.13.1
+
+- Ajout de **Publications Facebook** dans l’Administration Animoa.
+- Générateur interne sans API d’IA payante : thèmes, accroches, textes courts, descriptions et hashtags sont produits localement à partir d’une bibliothèque éditoriale Animoa.
+- Variété renforcée : rotation des angles de publication, des accroches, des styles d’affiche, des formats et des médias récents afin d’éviter les publications répétitives.
+- Formats Facebook disponibles : carré 1080 × 1080 et vertical 1080 × 1350.
+- Composition automatique des affiches avec les vrais logos et couleurs Animoa.
+- Réutilisation de la Banque de médias existante et du Drive en complément.
+- Recherche de vraies photos HD Pexels/Pixabay adaptées au sujet de la publication, en réutilisant les clés gratuites déjà configurées dans la Banque de médias.
+- Cadrage intelligent par point focal : horizontal, vertical et zoom mémorisés par média ; bouton de recentrage automatique.
+- Les compositions plein écran placent le bloc texte dans la zone la plus éloignée du point focal afin d’éviter de recouvrir la tête de l’animal.
+- 8 familles graphiques plus dynamiques : Éclat Animoa, Photo vedette, Pop éditorial, Bulles & douceur, Affiche impact, Polaroid lumineux, Collage pétillant et Magazine Animoa.
+- Aperçu complet de la publication Facebook avant validation, avec modification libre du texte et des hashtags.
+- Actions : nouvelle idée, régénérer le texte, changer le style, changer le média, télécharger le PNG, enregistrer en brouillon, marquer prête, supprimer et publier.
+- Historique avec les statuts **Brouillon / Prête / Publiée / Erreur**.
+- Préparation de la publication directe sur la Page Facebook Animoa via une Edge Function Supabase sécurisée ; aucun jeton Meta n’est exposé dans le navigateur.
+- Mode de test local conservé : tant que le SQL 11 n’est pas exécuté, les brouillons sont enregistrés uniquement dans le navigateur.
+- Restauration des corrections publiques 3.12.4 écrasées par mégarde : page publique/SEO et bouton Voir/Masquer le mot de passe.
+- Conservation du correctif anti-doublons de la Banque de médias.
+
+### Installation Supabase 3.13.1
+
+1. Tester d’abord le module en local : la génération, l’aperçu et l’historique local fonctionnent sans nouveau secret.
+2. Pour activer les nouvelles photos HD, redéployer `supabase/functions/animoa-media-library` sous le nom `animoa-media-library` (aucune nouvelle clé).
+3. Pour activer l’historique Supabase, exécuter `supabase/sql/11_publications_facebook_admin.sql`.
+4. Déployer `supabase/functions/animoa-facebook-publications` sous le nom `animoa-facebook-publications`.
+5. **Instruction remplacée par la 3.14.0 :** ne créez plus les anciens secrets préfixés `ANIMOA_FACEBOOK_`. La configuration actuelle est décrite dans la section 3.14.0 ci-dessous.
+6. Aucun secret Facebook et aucun fichier `.env.local` ne doivent être placés dans le ZIP ou dans le navigateur.
+
+## Mise à jour 3.14.0
+
+- Conservation intégrale du générateur visuel Facebook validé en 3.13.1 : 8 styles, formats 1:1 / 4:5, photos HD, Banque de médias et cadrage intelligent.
+- Connexion réelle à la Page Facebook Animoa via l’Edge Function `animoa-facebook-publications`.
+- Les secrets utilisés sont désormais ceux enregistrés dans Supabase : `FACEBOOK_PAGE_ID`, `FACEBOOK_PAGE_ACCESS_TOKEN` et `FACEBOOK_DATA_ACCESS_EXPIRES_AT`.
+- Alignement de la fonction Facebook sur Graph API `v26.0` par défaut, avec possibilité de surcharge par `META_GRAPH_API_VERSION` côté serveur.
+- Ajout de **Publier maintenant** avec verrouillage anti-double-envoi pendant l’envoi.
+- Ajout de **Programmer / Reprogrammer / Annuler** en heure de Paris (`Europe/Paris`).
+- Historique enrichi avec les états **Programmée** et **Envoi en cours**.
+- Les modifications d’une publication programmée retirent temporairement la ligne de la file, régénèrent l’affiche puis réactivent la programmation afin d’éviter l’envoi d’une version incomplète.
+- Ajout du répartiteur serveur `animoa-facebook-dispatch` : il traite les publications arrivées à échéance même lorsque le navigateur et l’ordinateur sont fermés.
+- Réservation atomique des publications dues avec `FOR UPDATE SKIP LOCKED` afin que deux exécutions du Cron ne prennent pas la même publication.
+- Ajout d’un contrôle permanent de la connexion Facebook dans Administration > Publications Facebook.
+- Alertes visuelles d’échéance de l’accès aux données à J-14 / J-7 / J-3 et après expiration.
+- Ajout d’un rappel e-mail unique à `contact@animoa.fr` dans la fenêtre J-7, envoyé côté serveur via Brevo.
+- Aucun token Facebook n’est stocké dans PostgreSQL, dans le navigateur, dans le ZIP ou dans `.env.local`.
+
+### Installation Supabase 3.14.0
+
+1. Le script `supabase/sql/11_publications_facebook_admin.sql` doit avoir été exécuté une première fois.
+2. Déployer la fonction mise à jour `supabase/functions/animoa-facebook-publications` sous le nom `animoa-facebook-publications`.
+3. Déployer la nouvelle fonction `supabase/functions/animoa-facebook-dispatch` sous le nom `animoa-facebook-dispatch`. Cette fonction est configurée avec `verify_jwt = false` dans `supabase/config.toml`, mais refuse les appels sans le secret `ANIMOA_CRON_SECRET`.
+4. Exécuter `supabase/sql/12_publications_facebook_programmation.sql`. Il ajoute les colonnes de programmation, la réservation atomique, une vérification chaque minute qui n’appelle l’Edge Function que lorsqu’un envoi est dû, et un contrôle quotidien pour le rappel J-7.
+5. Les secrets Edge nécessaires sont : `FACEBOOK_PAGE_ID`, `FACEBOOK_PAGE_ACCESS_TOKEN`, `FACEBOOK_DATA_ACCESS_EXPIRES_AT` et l’existant `ANIMOA_CRON_SECRET`. Le rappel e-mail réutilise les secrets Brevo déjà présents.
+6. Aucun secret ne doit être copié dans les fichiers du site ni dans le ZIP.
