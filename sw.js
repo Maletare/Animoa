@@ -1,18 +1,17 @@
-const CACHE_NAME = 'animoa-v3.14.0-facebook-admin';
+const CACHE_NAME = 'animoa-v3.15.0-user-app';
 
 const CORE = [
   '/',
   '/index.html',
   '/styles.css',
   '/landing-compact.css',
-  '/admin-facebook.css',
   '/questionnaire.html',
   '/supabase-config.js',
   '/i18n.js',
+  '/funnel.js',
   '/auth.js',
   '/questionnaire.js',
   '/cloud.js',
-  '/admin-facebook.js',
   '/app.js',
   '/analytics-loader.js',
   '/site.webmanifest',
@@ -32,14 +31,13 @@ const ALWAYS_REFRESH = new Set([
   '/index.html',
   '/styles.css',
   '/landing-compact.css',
-  '/admin-facebook.css',
   '/questionnaire.html',
   '/supabase-config.js',
   '/i18n.js',
+  '/funnel.js',
   '/auth.js',
   '/questionnaire.js',
   '/cloud.js',
-  '/admin-facebook.js',
   '/app.js',
   '/analytics-loader.js',
   '/site.webmanifest'

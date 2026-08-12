@@ -8,7 +8,7 @@
   const MEDIA_STORE_NAME = 'images';
   const MEDIA_PREFIX = 'media:';
   const CLOUD_PREFIX = 'cloud:';
-  const APP_VERSION = '3.14.0';
+  const APP_VERSION = '3.15.0';
   const SUPPORT_EMAIL = 'contact@animoa.fr';
   const PET_CATALOG = Object.freeze({"Chien":[{"name":"Affenpinscher","size":"small","lifespan":14,"fci":186},{"name":"Airedale Terrier","size":"medium","lifespan":12.5,"fci":7},{"name":"Akita","size":"large","lifespan":11,"fci":255},{"name":"Akita Americain","size":"large","lifespan":11,"fci":344},{"name":"American Foxhound","size":"medium","lifespan":12.5,"fci":303},{"name":"American Staffordshire Terrier","size":"medium","lifespan":12.5,"fci":286},{"name":"Anglo-Français de Petite Venerie","size":"medium","lifespan":12.5,"fci":325},{"name":"Ariegeois","size":"medium","lifespan":12.5,"fci":20},{"name":"Azawakh","size":"large","lifespan":11,"fci":307},{"name":"Bangkaew de Thailande","size":"medium","lifespan":12.5,"fci":358},{"name":"Barbet","size":"medium","lifespan":12.5,"fci":105},{"name":"Barbu Tcheque","size":"medium","lifespan":12.5,"fci":245},{"name":"Barzoi - Levrier de Chasse Russe","size":"large","lifespan":11,"fci":193},{"name":"Basenji","size":"medium","lifespan":12.5,"fci":43},{"name":"Basset Artesien Normand","size":"small","lifespan":14,"fci":34},{"name":"Basset Bleu de Gascogne","size":"small","lifespan":14,"fci":35},{"name":"Basset de Westphalie","size":"small","lifespan":14,"fci":100},{"name":"Basset des Alpes","size":"small","lifespan":14,"fci":254},{"name":"Basset Fauve de Bretagne","size":"small","lifespan":14,"fci":36},{"name":"Basset Hound","size":"small","lifespan":14,"fci":163},{"name":"Basset Suedois","size":"small","lifespan":14,"fci":130},{"name":"Beagle","size":"medium","lifespan":12.5,"fci":161},{"name":"Beagle-Harrier","size":"medium","lifespan":12.5,"fci":290},{"name":"Berger Allemand","size":"large","lifespan":11,"fci":166},{"name":"Berger Australien","size":"medium","lifespan":12.5,"fci":342},{"name":"Berger Bergamasque","size":"medium","lifespan":12.5,"fci":194},{"name":"Berger Blanc Suisse","size":"large","lifespan":11,"fci":347},{"name":"Berger d'Asie Centrale","size":"medium","lifespan":12.5,"fci":335},{"name":"Berger de Beauce","size":"medium","lifespan":12.5,"fci":44},{"name":"Berger de Bosnie-Herzegovine et de Croatie","size":"medium","lifespan":12.5,"fci":355},{"name":"Berger de Brie","size":"medium","lifespan":12.5,"fci":113},{"name":"Berger de La Maremme et des Abruzzes","size":"medium","lifespan":12.5,"fci":201},{"name":"Berger de Picardie - Berger Picard","size":"medium","lifespan":12.5,"fci":176},{"name":"Berger de Russie Meridionale","size":"giant","lifespan":9.5,"fci":326},{"name":"Berger du Caucase","size":"giant","lifespan":9.5,"fci":328},{"name":"Berger du Karst","size":"medium","lifespan":12.5,"fci":278},{"name":"Berger Finnois de Laponie","size":"medium","lifespan":12.5,"fci":284},{"name":"Berger Hollandais","size":"large","lifespan":11,"fci":223},{"name":"Berger Miniature Américain","size":"medium","lifespan":12.5,"fci":367},{"name":"Berger Polonais de Plaine","size":"medium","lifespan":12.5,"fci":251},{"name":"Bichon à Poil Frise","size":"small","lifespan":14,"fci":215},{"name":"Bichon Bolonais","size":"small","lifespan":14,"fci":196},{"name":"Bichon Havanais","size":"small","lifespan":14,"fci":250},{"name":"Bichon Maltais","size":"small","lifespan":14,"fci":65},{"name":"Billy","size":"medium","lifespan":12.5,"fci":25},{"name":"Border Collie","size":"medium","lifespan":12.5,"fci":297},{"name":"Border Terrier","size":"small","lifespan":14,"fci":10},{"name":"Bouledogue Français","size":"small","lifespan":14,"fci":101},{"name":"Bouvier Appenzellois","size":"medium","lifespan":12.5,"fci":46},{"name":"Bouvier Australien","size":"medium","lifespan":12.5,"fci":287},{"name":"Bouvier Australien Courte Queue","size":"medium","lifespan":12.5,"fci":351},{"name":"Bouvier Bernois","size":"large","lifespan":11,"fci":45},{"name":"Bouvier de L'Entlebuch","size":"medium","lifespan":12.5,"fci":47},{"name":"Bouvier des Ardennes","size":"medium","lifespan":12.5,"fci":171},{"name":"Bouvier des Flandres","size":"large","lifespan":11,"fci":191},{"name":"Boxer","size":"large","lifespan":11,"fci":144},{"name":"Brachet Allemand","size":"medium","lifespan":12.5,"fci":299},{"name":"Brachet de Styrie à Poil Dur","size":"medium","lifespan":12.5,"fci":62},{"name":"Brachet Noir & Feu (Quatre-Oeille)","size":"medium","lifespan":12.5,"fci":63},{"name":"Brachet Polonais","size":"medium","lifespan":12.5,"fci":52},{"name":"Brachet Tyrolien","size":"medium","lifespan":12.5,"fci":68},{"name":"Braque Allemand à Poil Court","size":"large","lifespan":11,"fci":119},{"name":"Braque d'Auvergne","size":"large","lifespan":11,"fci":180},{"name":"Braque de L'Ariège","size":"large","lifespan":11,"fci":177},{"name":"Braque de Weimar","size":"large","lifespan":11,"fci":99},{"name":"Braque du Bourbonnais","size":"large","lifespan":11,"fci":179},{"name":"Braque Français - Type Gascogne","size":"large","lifespan":11,"fci":133},{"name":"Braque Français - Type Pyrenees","size":"large","lifespan":11,"fci":134},{"name":"Braque Hongrois à Poil Court (Vizsla)","size":"large","lifespan":11,"fci":57},{"name":"Braque Hongrois à Poil Dur","size":"large","lifespan":11,"fci":239},{"name":"Braque Italien","size":"large","lifespan":11,"fci":202},{"name":"Braque Saint-Germain","size":"large","lifespan":11,"fci":115},{"name":"Braque Slovaque à Poil Dur","size":"large","lifespan":11,"fci":320},{"name":"Briquet Griffon Vendeen","size":"medium","lifespan":12.5,"fci":19},{"name":"Broholmer","size":"giant","lifespan":9.5,"fci":315},{"name":"Buhund Norvegien","size":"medium","lifespan":12.5,"fci":237},{"name":"Bull Terrier","size":"medium","lifespan":12.5,"fci":11},{"name":"Bull Terrier Miniature","size":"small","lifespan":14,"fci":359},{"name":"Bulldog","size":"medium","lifespan":12.5,"fci":149},{"name":"Bulldog Campeiro Brésilien","size":"medium","lifespan":12.5,"fci":374},{"name":"Bulldog Continental","size":"medium","lifespan":12.5,"fci":369},{"name":"Bullmastiff","size":"giant","lifespan":9.5,"fci":157},{"name":"Cairn Terrier","size":"small","lifespan":14,"fci":4},{"name":"Caniche","size":"medium","lifespan":12.5,"fci":172},{"name":"Carlin","size":"small","lifespan":14,"fci":253},{"name":"Cavalier King Charles Spaniel","size":"small","lifespan":14,"fci":136},{"name":"Chien à Loutre","size":"medium","lifespan":12.5,"fci":294},{"name":"Chien Berger Croate","size":"medium","lifespan":12.5,"fci":277},{"name":"Chien Chinois à Crête","size":"small","lifespan":14,"fci":288},{"name":"Chien Courant d'Estonie","size":"medium","lifespan":12.5,"fci":366},{"name":"Chien Courant d'Istrie à Poil Dur","size":"medium","lifespan":12.5,"fci":152},{"name":"Chien Courant d'Istrie à Poil Ras","size":"medium","lifespan":12.5,"fci":151},{"name":"Chien Courant de Bosnie à Poil Raide - Dit Barak","size":"medium","lifespan":12.5,"fci":155},{"name":"Chien Courant de Halden","size":"medium","lifespan":12.5,"fci":267},{"name":"Chien Courant de Hamilton","size":"medium","lifespan":12.5,"fci":132},{"name":"Chien Courant de Hygen","size":"medium","lifespan":12.5,"fci":266},{"name":"Chien Courant de La Vallee de La Save","size":"medium","lifespan":12.5,"fci":154},{"name":"Chien Courant de Montagne du Montenegro","size":"medium","lifespan":12.5,"fci":279},{"name":"Chien Courant de Schiller","size":"medium","lifespan":12.5,"fci":131},{"name":"Chien Courant de Transylvanie","size":"medium","lifespan":12.5,"fci":241},{"name":"Chien Courant des Apennins","size":"medium","lifespan":12.5,"fci":375},{"name":"Chien Courant des Tatras","size":"medium","lifespan":12.5,"fci":377},{"name":"Chien Courant du Småland","size":"medium","lifespan":12.5,"fci":129},{"name":"Chien Courant Espagnol","size":"medium","lifespan":12.5,"fci":204},{"name":"Chien Courant Finlandais","size":"medium","lifespan":12.5,"fci":51},{"name":"Chien Courant Grec","size":"medium","lifespan":12.5,"fci":214},{"name":"Chien Courant Italien  à Poil Dur","size":"medium","lifespan":12.5,"fci":198},{"name":"Chien Courant Italien à Poil Ras","size":"medium","lifespan":12.5,"fci":337},{"name":"Chien Courant Norvegien","size":"medium","lifespan":12.5,"fci":203},{"name":"Chien Courant Polonais","size":"medium","lifespan":12.5,"fci":354},{"name":"Chien Courant Serbe","size":"medium","lifespan":12.5,"fci":150},{"name":"Chien Courant Slovaque","size":"medium","lifespan":12.5,"fci":244},{"name":"Chien Courant Suisse","size":"medium","lifespan":12.5,"fci":59},{"name":"Chien Courant Tricolore Serbe","size":"medium","lifespan":12.5,"fci":229},{"name":"Chien d'Arret Allemand à Poil Dur","size":"medium","lifespan":12.5,"fci":98},{"name":"Chien d'Arret Allemand à Poil Raide","size":"medium","lifespan":12.5,"fci":232},{"name":"Chien d'Arret Danois Ancestral","size":"medium","lifespan":12.5,"fci":281},{"name":"Chien d'Arret Frison","size":"medium","lifespan":12.5,"fci":222},{"name":"Chien d'Arret Portugais","size":"medium","lifespan":12.5,"fci":187},{"name":"Chien d'Artois","size":"medium","lifespan":12.5,"fci":28},{"name":"Chien d'Eau Americain","size":"medium","lifespan":12.5,"fci":301},{"name":"Chien d'Eau Espagnol","size":"medium","lifespan":12.5,"fci":336},{"name":"Chien d'Eau Frison","size":"medium","lifespan":12.5,"fci":221},{"name":"Chien d'Eau Irlandais","size":"medium","lifespan":12.5,"fci":124},{"name":"Chien d'Eau Portugais","size":"medium","lifespan":12.5,"fci":37},{"name":"Chien d'Eau Romagnol","size":"medium","lifespan":12.5,"fci":298},{"name":"Chien d'Elan Norvegien Gris","size":"medium","lifespan":12.5,"fci":242},{"name":"Chien d'Elan Norvegien Noir","size":"medium","lifespan":12.5,"fci":268},{"name":"Chien d'Elan Suedois","size":"medium","lifespan":12.5,"fci":42},{"name":"Chien d'Ours de Carelie","size":"medium","lifespan":12.5,"fci":48},{"name":"Chien d'Oysel Allemand","size":"medium","lifespan":12.5,"fci":104},{"name":"Chien de Bali -  Kintamani","size":"medium","lifespan":12.5,"fci":362},{"name":"Chien de Berger Anglais Ancestral","size":"large","lifespan":11,"fci":16},{"name":"Chien de Berger Belge","size":"large","lifespan":11,"fci":15},{"name":"Chien de Berger Catalan","size":"medium","lifespan":12.5,"fci":87},{"name":"Chien de Berger de Bohême - Berger de Bohême","size":"medium","lifespan":12.5,"fci":364},{"name":"Chien de Berger de La Serra de Aires","size":"medium","lifespan":12.5,"fci":93},{"name":"Chien de Berger de Majorque","size":"medium","lifespan":12.5,"fci":321},{"name":"Chien de Berger des Pyrenees à Face Rase","size":"medium","lifespan":12.5,"fci":138},{"name":"Chien de Berger des Pyrenees à Poil Long","size":"medium","lifespan":12.5,"fci":141},{"name":"Chien de Berger des Shetland","size":"medium","lifespan":12.5,"fci":88},{"name":"Chien de Berger Islandais","size":"medium","lifespan":12.5,"fci":289},{"name":"Chien de Berger Kangal","size":"giant","lifespan":9.5,"fci":331},{"name":"Chien de Berger Macédonien Karaman","size":"giant","lifespan":9.5,"fci":378},{"name":"Chien de Berger Polonais des Tatras","size":"medium","lifespan":12.5,"fci":252},{"name":"Chien de Berger Roumain Corb","size":"medium","lifespan":12.5,"fci":373},{"name":"Chien de Berger Roumain de Bucovine","size":"giant","lifespan":9.5,"fci":357},{"name":"Chien de Berger Roumain de Mioritza","size":"medium","lifespan":12.5,"fci":349},{"name":"Chien de Berger Roumain des Carpathes","size":"medium","lifespan":12.5,"fci":350},{"name":"Chien de Berger Yougoslave de Charplanina","size":"medium","lifespan":12.5,"fci":41},{"name":"Chien de Canaan","size":"medium","lifespan":12.5,"fci":273},{"name":"Chien de Castro Laboreiro","size":"medium","lifespan":12.5,"fci":170},{"name":"Chien de Cour Italien","size":"medium","lifespan":12.5,"fci":343},{"name":"Chien de Ferme Dano-Suedois","size":"medium","lifespan":12.5,"fci":356},{"name":"Chien de Garenne des Canaries","size":"medium","lifespan":12.5,"fci":329},{"name":"Chien de Garenne Portugais","size":"medium","lifespan":12.5,"fci":94},{"name":"Chien de La Serra Da Estrela","size":"medium","lifespan":12.5,"fci":173},{"name":"Chien de Leonberg","size":"giant","lifespan":9.5,"fci":145},{"name":"Chien de Montagne de L'Atlas (Aïdi)","size":"medium","lifespan":12.5,"fci":247},{"name":"Chien de Montagne des Pyrenees","size":"giant","lifespan":9.5,"fci":137},{"name":"Chien de Perdrix de Drente","size":"medium","lifespan":12.5,"fci":224},{"name":"Chien de Recherche Au Sang de Hanovre","size":"medium","lifespan":12.5,"fci":213},{"name":"Chien de Rhodesie à Crete Dorsale","size":"medium","lifespan":12.5,"fci":146},{"name":"Chien de Rouge de Baviere","size":"medium","lifespan":12.5,"fci":217},{"name":"Chien de Saint Hubert","size":"medium","lifespan":12.5,"fci":84},{"name":"Chien de Taiwan","size":"medium","lifespan":12.5,"fci":348},{"name":"Chien de Terre-Neuve","size":"giant","lifespan":9.5,"fci":50},{"name":"Chien du Groenland","size":"medium","lifespan":12.5,"fci":274},{"name":"Chien du Mont Saint-Bernard - Saint-Bernard","size":"giant","lifespan":9.5,"fci":61},{"name":"Chien du Pharaon","size":"medium","lifespan":12.5,"fci":248},{"name":"Chien Esquimau Canadien","size":"medium","lifespan":12.5,"fci":211},{"name":"Chien Finnois de Laponie","size":"medium","lifespan":12.5,"fci":189},{"name":"Chien Loup Tchecoslovaque","size":"medium","lifespan":12.5,"fci":332},{"name":"Chien Noir & Feu Pour La Chasse Au Raton Laveur","size":"medium","lifespan":12.5,"fci":300},{"name":"Chien Norvegien de Macareux","size":"medium","lifespan":12.5,"fci":265},{"name":"Chien Nu du Perou","size":"medium","lifespan":12.5,"fci":310},{"name":"Chien Thailandais à Crete Dorsale","size":"medium","lifespan":12.5,"fci":338},{"name":"Chien-Loup de Saarloos","size":"large","lifespan":11,"fci":311},{"name":"Chihuahua","size":"small","lifespan":14,"fci":218},{"name":"Chow Chow","size":"medium","lifespan":12.5,"fci":205},{"name":"Cimarron Uruguayen","size":"medium","lifespan":12.5,"fci":353},{"name":"Cirneco de L'Etna","size":"medium","lifespan":12.5,"fci":199},{"name":"Clumber Spaniel","size":"medium","lifespan":12.5,"fci":109},{"name":"Cocker Américain","size":"medium","lifespan":12.5,"fci":167},{"name":"Cocker Spaniel Anglais","size":"medium","lifespan":12.5,"fci":5},{"name":"Collie à Poil Court","size":"medium","lifespan":12.5,"fci":296},{"name":"Collie à Poil Long","size":"medium","lifespan":12.5,"fci":156},{"name":"Collie Barbu","size":"medium","lifespan":12.5,"fci":271},{"name":"Coton de Tulear","size":"small","lifespan":14,"fci":283},{"name":"Dalmatien","size":"large","lifespan":11,"fci":153},{"name":"Dandie Dinmont Terrier","size":"small","lifespan":14,"fci":168},{"name":"Deerhound","size":"medium","lifespan":12.5,"fci":164},{"name":"Deutsch Langhaar","size":"medium","lifespan":12.5,"fci":117},{"name":"Dobermann","size":"large","lifespan":11,"fci":143},{"name":"Dogue Allemand","size":"giant","lifespan":9.5,"fci":235},{"name":"Dogue Argentin","size":"large","lifespan":11,"fci":292},{"name":"Dogue de Bordeaux","size":"giant","lifespan":9.5,"fci":116},{"name":"Dogue de Majorque","size":"medium","lifespan":12.5,"fci":249},{"name":"Dogue du Tibet","size":"large","lifespan":11,"fci":230},{"name":"English Foxhound","size":"medium","lifespan":12.5,"fci":159},{"name":"English Springer Spaniel","size":"medium","lifespan":12.5,"fci":125},{"name":"Epagneul Bleu de Picardie","size":"medium","lifespan":12.5,"fci":106},{"name":"Epagneul Breton","size":"medium","lifespan":12.5,"fci":95},{"name":"Epagneul de Pont-Audemer","size":"medium","lifespan":12.5,"fci":114},{"name":"Epagneul Français","size":"medium","lifespan":12.5,"fci":175},{"name":"Epagneul Japonais","size":"small","lifespan":14,"fci":206},{"name":"Epagneul King Charles","size":"small","lifespan":14,"fci":128},{"name":"Epagneul Nain Continental","size":"small","lifespan":14,"fci":77},{"name":"Epagneul Picard","size":"medium","lifespan":12.5,"fci":108},{"name":"Epagneul Tibetain","size":"small","lifespan":14,"fci":231},{"name":"Eurasier","size":"large","lifespan":11,"fci":291},{"name":"Field Spaniel","size":"medium","lifespan":12.5,"fci":123},{"name":"Fila Brasileiro","size":"giant","lifespan":9.5,"fci":225},{"name":"Fila de Saint Miguel","size":"medium","lifespan":12.5,"fci":340},{"name":"Fox Terrier à Poil Lisse","size":"small","lifespan":14,"fci":12},{"name":"Fox-Terrier à Poil Dur","size":"medium","lifespan":12.5,"fci":169},{"name":"Français Blanc et Noir","size":"medium","lifespan":12.5,"fci":220},{"name":"Français Blanc et Orange","size":"medium","lifespan":12.5,"fci":316},{"name":"Français Tricolore","size":"medium","lifespan":12.5,"fci":219},{"name":"Gascon Saintongeois","size":"medium","lifespan":12.5,"fci":21},{"name":"Golden Retriever","size":"large","lifespan":11,"fci":111},{"name":"Grand Anglo-Français Blanc & Orange","size":"medium","lifespan":12.5,"fci":324},{"name":"Grand Anglo-Français Blanc et Noir","size":"medium","lifespan":12.5,"fci":323},{"name":"Grand Anglo-Français Tricolore","size":"medium","lifespan":12.5,"fci":322},{"name":"Grand Basset Griffon Vendeen","size":"medium","lifespan":12.5,"fci":33},{"name":"Grand Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":22},{"name":"Grand Bouvier Suisse","size":"large","lifespan":11,"fci":58},{"name":"Grand Epagneul de Münster","size":"medium","lifespan":12.5,"fci":118},{"name":"Grand Griffon Vendeen","size":"medium","lifespan":12.5,"fci":282},{"name":"Griffon à Poil Dur Korthals","size":"medium","lifespan":12.5,"fci":107},{"name":"Griffon Belge","size":"small","lifespan":14,"fci":81},{"name":"Griffon Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":32},{"name":"Griffon Bruxellois","size":"small","lifespan":14,"fci":80},{"name":"Griffon Fauve de Bretagne","size":"medium","lifespan":12.5,"fci":66},{"name":"Griffon Nivernais","size":"medium","lifespan":12.5,"fci":17},{"name":"Harrier","size":"medium","lifespan":12.5,"fci":295},{"name":"Hokkaido","size":"medium","lifespan":12.5,"fci":261},{"name":"Hovawart","size":"large","lifespan":11,"fci":190},{"name":"Husky de Sibérie","size":"large","lifespan":11,"fci":270},{"name":"Jindo Coreen","size":"medium","lifespan":12.5,"fci":334},{"name":"Kai","size":"medium","lifespan":12.5,"fci":317},{"name":"Kazakh Tazy","size":"large","lifespan":11,"fci":372},{"name":"Kelpie Australien","size":"medium","lifespan":12.5,"fci":293},{"name":"Kishu","size":"medium","lifespan":12.5,"fci":318},{"name":"Komondor","size":"giant","lifespan":9.5,"fci":53},{"name":"Kromfohrländer","size":"medium","lifespan":12.5,"fci":192},{"name":"Kuvasz","size":"giant","lifespan":9.5,"fci":54},{"name":"Laïka de Iakoutie","size":"medium","lifespan":12.5,"fci":365},{"name":"Laika de Siberie Occidentale","size":"medium","lifespan":12.5,"fci":306},{"name":"Laika de Siberie Orientale","size":"medium","lifespan":12.5,"fci":305},{"name":"Laika Russo-Europeen","size":"medium","lifespan":12.5,"fci":304},{"name":"Lakeland Terrier","size":"small","lifespan":14,"fci":70},{"name":"Lancashire Heeler","size":"medium","lifespan":12.5,"fci":360},{"name":"Landseer (Type Continental-Europeen)","size":"giant","lifespan":9.5,"fci":226},{"name":"Lapphund Suedois","size":"medium","lifespan":12.5,"fci":135},{"name":"Levrette d'Italie","size":"medium","lifespan":12.5,"fci":200},{"name":"Levrier Afghan","size":"large","lifespan":11,"fci":228},{"name":"Levrier Anglais","size":"medium","lifespan":12.5,"fci":158},{"name":"Levrier Espagnol","size":"medium","lifespan":12.5,"fci":285},{"name":"Levrier Hongrois","size":"medium","lifespan":12.5,"fci":240},{"name":"Levrier Irlandais","size":"giant","lifespan":9.5,"fci":160},{"name":"Levrier Polonais","size":"medium","lifespan":12.5,"fci":333},{"name":"Lhasa Apso","size":"small","lifespan":14,"fci":227},{"name":"Malamute de L'Alaska","size":"large","lifespan":11,"fci":243},{"name":"Mastiff","size":"giant","lifespan":9.5,"fci":264},{"name":"Matin des Pyrenees","size":"giant","lifespan":9.5,"fci":92},{"name":"Matin Espagnol","size":"giant","lifespan":9.5,"fci":91},{"name":"Matin Napolitain","size":"giant","lifespan":9.5,"fci":197},{"name":"Mâtin Transmontano","size":"giant","lifespan":9.5,"fci":368},{"name":"Mudi","size":"medium","lifespan":12.5,"fci":238},{"name":"Nederlandse Kooikerhondje","size":"medium","lifespan":12.5,"fci":314},{"name":"Norfolk Terrier","size":"small","lifespan":14,"fci":272},{"name":"Norwich Terrier","size":"small","lifespan":14,"fci":72},{"name":"Pekinois","size":"small","lifespan":14,"fci":207},{"name":"Perdiguero de Burgos","size":"medium","lifespan":12.5,"fci":90},{"name":"Petit Basset Griffon Vendeen","size":"small","lifespan":14,"fci":67},{"name":"Petit Bleu de Gascogne","size":"medium","lifespan":12.5,"fci":31},{"name":"Petit Brabançon","size":"small","lifespan":14,"fci":82},{"name":"Petit Chien Courant Suisse","size":"medium","lifespan":12.5,"fci":60},{"name":"Petit Chien Lion","size":"small","lifespan":14,"fci":233},{"name":"Petit Chien Russe","size":"medium","lifespan":12.5,"fci":352},{"name":"Petit Epagneul de Münster","size":"medium","lifespan":12.5,"fci":102},{"name":"Pinscher Allemand","size":"medium","lifespan":12.5,"fci":184},{"name":"Pinscher Autrichien","size":"medium","lifespan":12.5,"fci":64},{"name":"Pinscher Nain","size":"small","lifespan":14,"fci":185},{"name":"Pisteur Brésilien","size":"medium","lifespan":12.5,"fci":275},{"name":"Podenco d'Ibiza","size":"medium","lifespan":12.5,"fci":89},{"name":"Pointer Anglais","size":"large","lifespan":11,"fci":1},{"name":"Poitevin","size":"medium","lifespan":12.5,"fci":24},{"name":"Porcelaine","size":"medium","lifespan":12.5,"fci":30},{"name":"Presa Canario","size":"giant","lifespan":9.5,"fci":346},{"name":"Pudelpointer","size":"large","lifespan":11,"fci":216},{"name":"Puli","size":"medium","lifespan":12.5,"fci":55},{"name":"Pumi","size":"medium","lifespan":12.5,"fci":56},{"name":"Rafeiro de L'Alentejo","size":"medium","lifespan":12.5,"fci":96},{"name":"Ratier de Prague","size":"small","lifespan":14,"fci":363},{"name":"Ratier Valencien","size":"small","lifespan":14,"fci":370},{"name":"Retriever à Poil Boucle","size":"large","lifespan":11,"fci":110},{"name":"Retriever à Poil Plat","size":"large","lifespan":11,"fci":121},{"name":"Retriever de La Baie de Chesapeake","size":"large","lifespan":11,"fci":263},{"name":"Retriever de La Nouvelle Ecosse","size":"large","lifespan":11,"fci":312},{"name":"Retriever du Labrador","size":"large","lifespan":11,"fci":122},{"name":"Rottweiler","size":"large","lifespan":11,"fci":147},{"name":"Sabueso Fino Colombiano","size":"medium","lifespan":12.5,"fci":376},{"name":"Saluki","size":"large","lifespan":11,"fci":269},{"name":"Samoyede","size":"large","lifespan":11,"fci":212},{"name":"Schapendoes Neerlandais","size":"medium","lifespan":12.5,"fci":313},{"name":"Schipperke","size":"small","lifespan":14,"fci":83},{"name":"Schnauzer","size":"medium","lifespan":12.5,"fci":182},{"name":"Schnauzer Geant","size":"medium","lifespan":12.5,"fci":181},{"name":"Schnauzer Nain","size":"medium","lifespan":12.5,"fci":183},{"name":"Sealyham Terrier","size":"small","lifespan":14,"fci":74},{"name":"Segugio Maremmano","size":"medium","lifespan":12.5,"fci":361},{"name":"Setter Anglais","size":"large","lifespan":11,"fci":2},{"name":"Setter Gordon","size":"large","lifespan":11,"fci":6},{"name":"Setter Irlandais Rouge","size":"large","lifespan":11,"fci":120},{"name":"Setter Irlandais Rouge et Blanc","size":"large","lifespan":11,"fci":330},{"name":"Shar Pei","size":"medium","lifespan":12.5,"fci":309},{"name":"Shiba","size":"medium","lifespan":12.5,"fci":257},{"name":"Shih Tzu","size":"small","lifespan":14,"fci":208},{"name":"Shikoku","size":"medium","lifespan":12.5,"fci":319},{"name":"Skye Terrier","size":"small","lifespan":14,"fci":75},{"name":"Sloughi","size":"large","lifespan":11,"fci":188},{"name":"Smous des Pays-Bas","size":"medium","lifespan":12.5,"fci":308},{"name":"Spinone","size":"medium","lifespan":12.5,"fci":165},{"name":"Spitz Allemand","size":"medium","lifespan":12.5,"fci":97},{"name":"Spitz de Norrbotten","size":"medium","lifespan":12.5,"fci":276},{"name":"Spitz Finlandais","size":"medium","lifespan":12.5,"fci":49},{"name":"Spitz Japonais","size":"medium","lifespan":12.5,"fci":262},{"name":"Staffordshire Bull Terrier","size":"medium","lifespan":12.5,"fci":76},{"name":"Sussex Spaniel","size":"medium","lifespan":12.5,"fci":127},{"name":"Tchouvatch Slovaque","size":"medium","lifespan":12.5,"fci":142},{"name":"Teckel","size":"small","lifespan":14,"fci":148},{"name":"Terrier Andalou","size":"small","lifespan":14,"fci":371},{"name":"Terrier Anglais d'Agrement (Noir et Feu)","size":"medium","lifespan":12.5,"fci":13},{"name":"Terrier Australien","size":"small","lifespan":14,"fci":8},{"name":"Terrier Australien à Poil Soyeux","size":"small","lifespan":14,"fci":236},{"name":"Terrier Bresilien","size":"small","lifespan":14,"fci":341},{"name":"Terrier de Bedlington","size":"small","lifespan":14,"fci":9},{"name":"Terrier de Boston","size":"medium","lifespan":12.5,"fci":140},{"name":"Terrier de Chasse Allemand","size":"medium","lifespan":12.5,"fci":103},{"name":"Terrier de Manchester","size":"medium","lifespan":12.5,"fci":71},{"name":"Terrier du Reverend Russell","size":"medium","lifespan":12.5,"fci":339},{"name":"Terrier du Yorkshire","size":"small","lifespan":14,"fci":86},{"name":"Terrier Ecossais","size":"medium","lifespan":12.5,"fci":73},{"name":"Terrier Irlandais","size":"medium","lifespan":12.5,"fci":139},{"name":"Terrier Irlandais à Poil Doux","size":"medium","lifespan":12.5,"fci":40},{"name":"Terrier Irlandais Glen Of Imaal","size":"medium","lifespan":12.5,"fci":302},{"name":"Terrier Jack Russell","size":"small","lifespan":14,"fci":345},{"name":"Terrier Japonais","size":"small","lifespan":14,"fci":259},{"name":"Terrier Kerry Blue","size":"medium","lifespan":12.5,"fci":3},{"name":"Terrier Noir Russe","size":"medium","lifespan":12.5,"fci":327},{"name":"Terrier Tcheque","size":"medium","lifespan":12.5,"fci":246},{"name":"Terrier Tibetain","size":"small","lifespan":14,"fci":209},{"name":"Tosa","size":"giant","lifespan":9.5,"fci":260},{"name":"Vallhund Suedois - Spitz des Visigoths","size":"medium","lifespan":12.5,"fci":14},{"name":"Volpino Italien","size":"medium","lifespan":12.5,"fci":195},{"name":"Welsh Corgi (Cardigan)","size":"medium","lifespan":12.5,"fci":38},{"name":"Welsh Corgi (Pembroke)","size":"medium","lifespan":12.5,"fci":39},{"name":"Welsh Springer Spaniel","size":"medium","lifespan":12.5,"fci":126},{"name":"Welsh Terrier","size":"small","lifespan":14,"fci":78},{"name":"West Highland White Terrier","size":"small","lifespan":14,"fci":85},{"name":"Whippet","size":"medium","lifespan":12.5,"fci":162},{"name":"Xoloitzcuintle","size":"medium","lifespan":12.5,"fci":234},{"name":"Croisé","size":"medium","lifespan":12.5,"fci":null},{"name":"Race inconnue","size":"medium","lifespan":12.5,"fci":null},{"name":"Autre race","size":"medium","lifespan":12.5,"fci":null}],"Chat":[{"name":"Exotic Shorthair","lifespan":15},{"name":"Persan","lifespan":15},{"name":"Ragdoll","lifespan":15},{"name":"Sacré de Birmanie","lifespan":15},{"name":"Turc de Van","lifespan":15},{"name":"American Curl à poil long","lifespan":15},{"name":"American Curl à poil court","lifespan":15},{"name":"LaPerm à poil long","lifespan":15},{"name":"LaPerm à poil court","lifespan":15},{"name":"Maine Coon","lifespan":15},{"name":"Neva Masquerade","lifespan":15},{"name":"Chat des forêts norvégiennes","lifespan":15},{"name":"Sibérien","lifespan":15},{"name":"Angora turc","lifespan":15},{"name":"Bengal","lifespan":15},{"name":"British Longhair","lifespan":15},{"name":"Burmilla","lifespan":15},{"name":"British Shorthair","lifespan":15},{"name":"Burmese","lifespan":15},{"name":"Chartreux","lifespan":15},{"name":"Cymric","lifespan":15},{"name":"Européen","lifespan":15},{"name":"Bobtail des Kouriles à poil long","lifespan":15},{"name":"Bobtail des Kouriles à poil court","lifespan":15},{"name":"Korat","lifespan":15},{"name":"Manx","lifespan":15},{"name":"Mau égyptien","lifespan":15},{"name":"Ocicat","lifespan":15},{"name":"Singapura","lifespan":15},{"name":"Snowshoe","lifespan":15},{"name":"Sokoke","lifespan":15},{"name":"Selkirk Rex à poil long","lifespan":15},{"name":"Selkirk Rex à poil court","lifespan":15},{"name":"Abyssin","lifespan":15},{"name":"Balinais","lifespan":15},{"name":"Cornish Rex","lifespan":15},{"name":"Devon Rex","lifespan":15},{"name":"Donskoy","lifespan":15},{"name":"German Rex","lifespan":15},{"name":"Bobtail japonais à poil court","lifespan":15},{"name":"Oriental à poil long","lifespan":15},{"name":"Oriental à poil court","lifespan":15},{"name":"Peterbald","lifespan":15},{"name":"Bleu russe","lifespan":15},{"name":"Siamois","lifespan":15},{"name":"Somali","lifespan":15},{"name":"Sphynx","lifespan":15},{"name":"Thaï","lifespan":15},{"name":"Bombay","lifespan":15},{"name":"Lykoi","lifespan":15},{"name":"Chat domestique à poil long","lifespan":15},{"name":"Chat domestique à poil court","lifespan":15},{"name":"Croisé","lifespan":15},{"name":"Race inconnue","lifespan":15},{"name":"Autre race","lifespan":15}],"Lapin":[{"name":"Alaska","size":"medium","lifespan":9.5},{"name":"Angora français","size":"medium","lifespan":9.5},{"name":"Argenté anglais","size":"small","lifespan":10.5},{"name":"Argenté de Champagne","size":"medium","lifespan":9.5},{"name":"Argenté de Saint-Hubert","size":"medium","lifespan":9.5},{"name":"Barbu de Gand","size":"medium","lifespan":9.5},{"name":"Bélier anglais","size":"large","lifespan":8.5},{"name":"Bélier de Meissen","size":"large","lifespan":8.5},{"name":"Bélier français","size":"giant","lifespan":7.5},{"name":"Blanc de Hotot","size":"medium","lifespan":9.5},{"name":"Blanc de Vendée","size":"medium","lifespan":9.5},{"name":"Brun marron de Lorraine","size":"small","lifespan":10.5},{"name":"Californien","size":"medium","lifespan":9.5},{"name":"Chamois de Thuringe","size":"medium","lifespan":9.5},{"name":"Chinchilla","size":"small","lifespan":10.5},{"name":"Fauve de Bourgogne","size":"medium","lifespan":9.5},{"name":"Feh de Marbourg","size":"small","lifespan":10.5},{"name":"Géant blanc du Bouscat","size":"giant","lifespan":7.5},{"name":"Géant des Flandres","size":"giant","lifespan":7.5},{"name":"Géant papillon français","size":"giant","lifespan":7.5},{"name":"Grand argenté clair","size":"large","lifespan":8.5},{"name":"Grand chinchilla","size":"large","lifespan":8.5},{"name":"Grand russe","size":"large","lifespan":8.5},{"name":"Havane français","size":"small","lifespan":10.5},{"name":"Hermine","size":"dwarf","lifespan":11},{"name":"Hollandais","size":"small","lifespan":10.5},{"name":"Japonais","size":"medium","lifespan":9.5},{"name":"Lapin chèvre","size":"medium","lifespan":9.5},{"name":"Lièvre belge","size":"large","lifespan":8.5},{"name":"Lynx","size":"small","lifespan":10.5},{"name":"Nain angora","size":"dwarf","lifespan":11},{"name":"Nain bélier","size":"dwarf","lifespan":11},{"name":"Nain bélier angora","size":"dwarf","lifespan":11},{"name":"Nain bélier Rex","size":"dwarf","lifespan":11},{"name":"Nain bélier Satin","size":"dwarf","lifespan":11},{"name":"Nain bélier tête de lion","size":"dwarf","lifespan":11},{"name":"Nain de couleur","size":"dwarf","lifespan":11},{"name":"Nain lièvre","size":"dwarf","lifespan":11},{"name":"Nain papillon","size":"dwarf","lifespan":11},{"name":"Nain renard","size":"dwarf","lifespan":11},{"name":"Nain Rex","size":"dwarf","lifespan":11},{"name":"Nain Satin","size":"dwarf","lifespan":11},{"name":"Nain tête de lion","size":"dwarf","lifespan":11},{"name":"Néo-Zélandais","size":"large","lifespan":8.5},{"name":"Normand","size":"medium","lifespan":9.5},{"name":"Papillon anglais","size":"small","lifespan":10.5},{"name":"Papillon rhénan","size":"medium","lifespan":9.5},{"name":"Perl Feh","size":"small","lifespan":10.5},{"name":"Petit bélier","size":"small","lifespan":10.5},{"name":"Petit Rex","size":"small","lifespan":10.5},{"name":"Renard suisse","size":"medium","lifespan":9.5},{"name":"Rex","size":"medium","lifespan":9.5},{"name":"Russe","size":"small","lifespan":10.5},{"name":"Sablé des Vosges","size":"small","lifespan":10.5},{"name":"Satin","size":"medium","lifespan":9.5},{"name":"Vienne bleu","size":"large","lifespan":8.5},{"name":"Croisé","size":"medium","lifespan":9.5},{"name":"Race inconnue","size":"medium","lifespan":9.5},{"name":"Autre race","size":"medium","lifespan":9.5}],"Oiseau":[{"name":"Amazone à ailes orange","scientific":"Amazona amazonica","lifespan":45,"maturityMonths":48},{"name":"Amazone à front bleu","scientific":"Amazona aestiva","lifespan":50,"maturityMonths":48},{"name":"Amazone à front jaune","scientific":"Amazona ochrocephala","lifespan":50,"maturityMonths":48},{"name":"Ara bleu et jaune","scientific":"Ara ararauna","lifespan":55,"maturityMonths":60},{"name":"Ara chloroptère","scientific":"Ara chloropterus","lifespan":55,"maturityMonths":60},{"name":"Ara hyacinthe","scientific":"Anodorhynchus hyacinthinus","lifespan":55,"maturityMonths":72},{"name":"Ara militaire","scientific":"Ara militaris","lifespan":50,"maturityMonths":60},{"name":"Ara noble","scientific":"Diopsittaca nobilis","lifespan":30,"maturityMonths":30},{"name":"Ara rouge","scientific":"Ara macao","lifespan":55,"maturityMonths":60},{"name":"Bengali rouge","scientific":"Amandava amandava","lifespan":8,"maturityMonths":7},{"name":"Cacatoès à huppe jaune","scientific":"Cacatua galerita","lifespan":55,"maturityMonths":60},{"name":"Cacatoès blanc","scientific":"Cacatua alba","lifespan":55,"maturityMonths":60},{"name":"Cacatoès de Goffin","scientific":"Cacatua goffiniana","lifespan":40,"maturityMonths":36},{"name":"Cacatoès de Leadbeater","scientific":"Lophochroa leadbeateri","lifespan":50,"maturityMonths":60},{"name":"Cacatoès rosalbin","scientific":"Eolophus roseicapilla","lifespan":45,"maturityMonths":48},{"name":"Caille du Japon","scientific":"Coturnix japonica","lifespan":5,"maturityMonths":2},{"name":"Caïque à tête noire","scientific":"Pionites melanocephalus","lifespan":30,"maturityMonths":30},{"name":"Calopsitte élégante","scientific":"Nymphicus hollandicus","lifespan":18,"maturityMonths":12},{"name":"Canari domestique","scientific":"Serinus canaria domestica","lifespan":12,"maturityMonths":10},{"name":"Colombe diamant","scientific":"Geopelia cuneata","lifespan":12,"maturityMonths":8},{"name":"Conure à joues vertes","scientific":"Pyrrhura molinae","lifespan":25,"maturityMonths":18},{"name":"Conure jandaya","scientific":"Aratinga jandaya","lifespan":30,"maturityMonths":24},{"name":"Conure mitrée","scientific":"Psittacara mitratus","lifespan":30,"maturityMonths":30},{"name":"Conure nanday","scientific":"Aratinga nenday","lifespan":30,"maturityMonths":24},{"name":"Conure soleil","scientific":"Aratinga solstitialis","lifespan":30,"maturityMonths":24},{"name":"Cordon-bleu à joues rouges","scientific":"Uraeginthus bengalus","lifespan":8,"maturityMonths":7},{"name":"Diamant de Gould","scientific":"Erythrura gouldiae","lifespan":8,"maturityMonths":8},{"name":"Diamant mandarin","scientific":"Taeniopygia guttata","lifespan":8,"maturityMonths":6},{"name":"Inséparable de Fischer","scientific":"Agapornis fischeri","lifespan":18,"maturityMonths":10},{"name":"Inséparable masqué","scientific":"Agapornis personatus","lifespan":18,"maturityMonths":10},{"name":"Inséparable rosegorge","scientific":"Agapornis roseicollis","lifespan":18,"maturityMonths":10},{"name":"Lori rouge","scientific":"Eos bornea","lifespan":25,"maturityMonths":24},{"name":"Loriquet arc-en-ciel","scientific":"Trichoglossus moluccanus","lifespan":20,"maturityMonths":24},{"name":"Moineau du Japon","scientific":"Lonchura striata domestica","lifespan":8,"maturityMonths":7},{"name":"Padda de Java","scientific":"Lonchura oryzivora","lifespan":10,"maturityMonths":8},{"name":"Perroquet de Jardine","scientific":"Poicephalus gulielmi","lifespan":30,"maturityMonths":30},{"name":"Perroquet de Meyer","scientific":"Poicephalus meyeri","lifespan":25,"maturityMonths":24},{"name":"Perroquet Eclectus","scientific":"Eclectus roratus","lifespan":40,"maturityMonths":36},{"name":"Perroquet gris du Gabon","scientific":"Psittacus erithacus","lifespan":45,"maturityMonths":48},{"name":"Perruche à collier","scientific":"Psittacula krameri","lifespan":25,"maturityMonths":24},{"name":"Perruche à croupion rouge","scientific":"Psephotus haematonotus","lifespan":15,"maturityMonths":12},{"name":"Perruche à moustaches","scientific":"Psittacula alexandri","lifespan":25,"maturityMonths":24},{"name":"Perruche à tête prune","scientific":"Psittacula cyanocephala","lifespan":20,"maturityMonths":24},{"name":"Perruche alexandre","scientific":"Psittacula eupatria","lifespan":30,"maturityMonths":30},{"name":"Perruche Catherine","scientific":"Bolborhynchus lineola","lifespan":15,"maturityMonths":12},{"name":"Perruche de Bourke","scientific":"Neopsephotus bourkii","lifespan":12,"maturityMonths":10},{"name":"Perruche de Derby","scientific":"Psittacula derbiana","lifespan":25,"maturityMonths":30},{"name":"Perruche de Pennant","scientific":"Platycercus elegans","lifespan":20,"maturityMonths":18},{"name":"Perruche moine","scientific":"Myiopsitta monachus","lifespan":25,"maturityMonths":18},{"name":"Perruche omnicolore","scientific":"Platycercus eximius","lifespan":18,"maturityMonths":18},{"name":"Perruche ondulée","scientific":"Melopsittacus undulatus","lifespan":12,"maturityMonths":8},{"name":"Perruche splendide","scientific":"Neophema splendida","lifespan":12,"maturityMonths":10},{"name":"Perruche turquoisine","scientific":"Neophema pulchella","lifespan":12,"maturityMonths":10},{"name":"Pigeon domestique","scientific":"Columba livia domestica","lifespan":15,"maturityMonths":8},{"name":"Pionus à tête bleue","scientific":"Pionus menstruus","lifespan":30,"maturityMonths":30},{"name":"Poule domestique","scientific":"Gallus gallus domesticus","lifespan":10,"maturityMonths":6},{"name":"Toui céleste","scientific":"Forpus coelestis","lifespan":18,"maturityMonths":12},{"name":"Toui du Mexique","scientific":"Forpus cyanopygius","lifespan":18,"maturityMonths":12},{"name":"Tourterelle rieuse","scientific":"Streptopelia risoria","lifespan":15,"maturityMonths":8},{"name":"Youyou du Sénégal","scientific":"Poicephalus senegalus","lifespan":25,"maturityMonths":24},{"name":"Espèce inconnue","scientific":"","lifespan":15,"maturityMonths":12},{"name":"Autre espèce","scientific":"","lifespan":15,"maturityMonths":12}]});
   const BREED_PICKER_POPULAR = Object.freeze({
@@ -20,17 +20,17 @@
   let breedPickerState = null;
   let breedPickerCloseTimer = null;
 
-  const PUBLIC_RELEASE_VERSION = '3.12.4';
+  const PUBLIC_RELEASE_VERSION = '3.15.0';
   const RELEASE_SEEN_KEY = `animoa_release_seen_${PUBLIC_RELEASE_VERSION}`;
   // Ce bloc est volontairement réservé aux nouveautés visibles par les utilisateurs.
   // Les outils internes et les changements d’administration ne doivent jamais y apparaître.
   const RELEASE_NOTES = Object.freeze({
     title: 'Animoa a été mis à jour',
-    subtitle: 'La mesure d’audience de la page publique est maintenant active.',
+    subtitle: 'L’inscription est maintenant plus directe.',
     items: [
-      'Les visites et les pages consultées peuvent être comptabilisées de façon anonyme.',
-      'Cette mesure d’audience n’ajoute aucun cookie publicitaire.',
-      'Aucune information enregistrée dans le carnet de vos animaux n’est utilisée pour ces statistiques.'
+      'Après la création du compte, vous accédez directement à Animoa.',
+      'Le parcours d’inscription peut être mesuré pour repérer les étapes à simplifier.',
+      'Ce suivi technique n’enregistre ni le nom de votre animal, ni ses informations de santé, ni vos documents.'
     ]
   });
 
@@ -208,28 +208,6 @@
   let googleCalendarAccessToken = '';
   let googleCalendarTokenExpiresAt = 0;
   let googleCalendarRequestPending = null;
-  let isAdminUser = false;
-  let adminResponses = [];
-  let adminFeedback = [];
-  let adminUsers = [];
-  let adminReviewRequests = [];
-  let adminReviewConfig = null;
-  let adminReviewSetupMissing = false;
-  let adminMediaLibrary = [];
-  let adminMediaResults = [];
-  let adminMediaWarnings = [];
-  let adminMediaSetupMissing = false;
-  let adminMediaSearching = false;
-  let adminMediaSearchError = '';
-  let adminMediaSavingKey = '';
-  let adminMediaSearchDraft = { source: 'all', species: 'Chien', theme: 'Jeu', orientation: 'portrait', query: '' };
-  let adminMediaDriveStatus = { loaded: false, connected: false, email: '', rootFolderUrl: '', connectedAt: '' };
-  let googleDriveTokenClient = null;
-  let googleDriveRequestPending = null;
-  let adminActiveTab = 'users';
-  let adminStatusFilter = 'all';
-  let adminLoading = false;
-  let adminError = '';
   let reviewPromptActive = false;
   let reviewPromptRecording = false;
   let reviewPromptRetryTimer = null;
@@ -2177,7 +2155,6 @@
   }
 
   function reviewPromptBody() {
-    const preview = reviewPromptMode === 'preview';
     const automatic = reviewPromptMode === 'automatic';
     const comment = escapeHtml(reviewDraftComment || '');
     return `<div class="review-request-modal internal-review-modal">
@@ -2195,7 +2172,6 @@
         <button type="button" class="primary-button" data-action="review-submit">Envoyer mon avis</button>
         ${automatic ? '<button type="button" class="secondary-button" data-action="review-later">Plus tard</button><button type="button" class="text-button review-never-button" data-action="review-never">Ne plus afficher</button>' : '<button type="button" class="secondary-button" data-action="close-modal">Annuler</button>'}
       </div>
-      ${preview ? '<p class="review-preview-label">Aperçu administrateur : aucun avis ne sera enregistré.</p>' : ''}
     </div>`;
   }
 
@@ -2210,7 +2186,7 @@
   async function loadPublicReviewConfig({ force = false } = {}) {
     if (!force && publicReviewConfig) return publicReviewConfig;
     if (!force && publicReviewConfigPromise) return publicReviewConfigPromise;
-    const client = adminClient();
+    const client = supabaseClient();
     const user = window.AnimoaAuth?.getUser?.();
     if (!client || !user) return null;
     publicReviewConfigPromise = client
@@ -2242,7 +2218,7 @@
   async function loadInternalReviewSummary({ force = false } = {}) {
     if (!force && internalReviewSummary) return internalReviewSummary;
     if (!force && internalReviewSummaryPromise) return internalReviewSummaryPromise;
-    const client = adminClient();
+    const client = supabaseClient();
     const user = window.AnimoaAuth?.getUser?.();
     if (!client || !user) return null;
     internalReviewSummaryPromise = client.rpc('get_animoa_review_summary')
@@ -2261,9 +2237,9 @@
 
   async function loadMyInternalReview({ force = false } = {}) {
     if (!force && myInternalReviewLoaded) return myInternalReview;
-    const client = adminClient();
+    const client = supabaseClient();
     const user = window.AnimoaAuth?.getUser?.();
-    if (!client || !user || isAdminUser) return null;
+    if (!client || !user) return null;
     const { data, error } = await client.rpc('get_my_animoa_internal_review');
     if (error) {
       if (!reviewFeatureUnavailable(error)) console.warn('Avis personnel inaccessible', error);
@@ -2299,7 +2275,7 @@
     if (!card) return;
     const config = await loadPublicReviewConfig();
     if (!card.isConnected || currentPage !== 'settings') return;
-    const available = String(config?.platform || '').toLowerCase() === 'animoa' && !isAdminUser;
+    const available = String(config?.platform || '').toLowerCase() === 'animoa';
     card.hidden = !available;
     if (!available) return;
     const [existing, summary] = await Promise.all([loadMyInternalReview(), loadInternalReviewSummary()]);
@@ -2317,8 +2293,8 @@
   async function openInternalReviewForm(mode = 'settings') {
     const config = publicReviewConfig || await loadPublicReviewConfig();
     const internalAvailable = String(config?.platform || '').toLowerCase() === 'animoa';
-    if (!internalAvailable && mode !== 'preview') return showToast('Les avis internes ne sont pas disponibles.');
-    const existing = mode === 'preview' ? null : await loadMyInternalReview({ force: true });
+    if (!internalAvailable) return showToast('Les avis internes ne sont pas disponibles.');
+    const existing = await loadMyInternalReview({ force: true });
     showReviewPrompt(config, { mode, existingReview: existing });
   }
 
@@ -2342,12 +2318,7 @@
     const comment = String(document.getElementById('internalReviewComment')?.value || '').trim();
     if (!Number.isInteger(rating) || rating < 1 || rating > 5) return showToast('Choisissez une note entre 1 et 5 étoiles.');
     if (comment.length > 1200) return showToast('Le commentaire est trop long.');
-    if (reviewPromptMode === 'preview') {
-      reviewPromptActive = false;
-      closeModal();
-      return showToast('Aperçu uniquement : aucun avis enregistré.');
-    }
-    const client = adminClient();
+    const client = supabaseClient();
     const automaticPrompt = reviewPromptMode === 'automatic';
     if (!client) {
       if (automaticPrompt) {
@@ -2388,7 +2359,7 @@
     return `<div class="review-summary-modal">
       <div class="review-summary-score"><span aria-hidden="true">★</span><strong>${formatReviewAverage(summary?.averageRating || 0)}/5</strong><small>${count} avis utilisateur${count > 1 ? 's' : ''}</small></div>
       <p>Cette note est calculée à partir des évaluations envoyées directement dans Animoa. Les commentaires et l’identité des utilisateurs ne sont jamais affichés ici.</p>
-      ${allowReview && !isAdminUser ? '<button type="button" class="primary-button" data-action="settings-open-review">Donner ou modifier mon avis</button>' : ''}
+      ${allowReview ? '<button type="button" class="primary-button" data-action="settings-open-review">Donner ou modifier mon avis</button>' : ''}
     </div>`;
   }
 
@@ -2407,7 +2378,7 @@
     if (!silent && action === 'later') showToast('La demande reviendra plus tard.');
     if (!silent && action === 'never') showToast('Cette demande ne sera plus affichée.');
 
-    const client = adminClient();
+    const client = supabaseClient();
     if (!client || window.AnimoaAuth?.isLocalPreview?.()) {
       reviewPromptRecording = false;
       return;
@@ -2425,9 +2396,9 @@
 
   async function ensureAndMaybeShowReviewPrompt() {
     if (reviewPromptCheckInFlight || reviewPromptIsLocallySuppressed()) return;
-    const client = adminClient();
+    const client = supabaseClient();
     const user = window.AnimoaAuth?.getUser?.();
-    if (!client || !user || isAdminUser || window.AnimoaAuth?.isLocalPreview?.()) return;
+    if (!client || !user || window.AnimoaAuth?.isLocalPreview?.()) return;
 
     reviewPromptCheckInFlight = true;
     try {
@@ -2462,637 +2433,7 @@
     }
   }
 
-  function adminClient() { return window.AnimoaAuth?.getClient?.() || null; }
-
-  async function resolveAdminAccess() {
-    const client = adminClient();
-    const user = window.AnimoaAuth?.getUser?.();
-    isAdminUser = false;
-    if (!client || !user || window.AnimoaAuth?.isLocalPreview?.()) return false;
-    try {
-      const { data: allowed, error } = await client.rpc('is_animoa_admin');
-      if (error) throw error;
-      isAdminUser = allowed === true;
-    } catch (error) {
-      console.warn('Vérification administrateur impossible', error);
-    }
-    const adminLink = document.getElementById('adminDrawerLink');
-    if (adminLink) adminLink.hidden = !isAdminUser;
-    return isAdminUser;
-  }
-
-  function adminDate(value) {
-    if (!value) return 'Date inconnue';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return String(value);
-    return new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
-  }
-
-  function readableSurveyValue(value) {
-    if (Array.isArray(value)) return value.length ? value.join(', ') : '—';
-    if (value && typeof value === 'object') return Object.values(value).filter(Boolean).join(', ') || '—';
-    if (value === true) return 'Oui';
-    if (value === false) return 'Non';
-    return String(value ?? '').trim() || '—';
-  }
-
-  function surveyFieldLabel(key) {
-    return ({
-      animals: 'Animaux', current_method: 'Organisation actuelle', useful_features: 'Fonctionnalités souhaitées',
-      testing_interest: 'Souhaite tester Animoa', email: 'Adresse e-mail', desired_use: 'Réponse libre',
-      rating: 'Note', comment: 'Commentaire', liked: 'Points appréciés', missing: 'Fonctionnalités manquantes',
-      issue: 'Problème rencontré', first_name: 'Prénom', status: 'Statut', private_note: 'Note privée', display_name: 'Nom', provider: 'Mode d’inscription', last_seen_at: 'Dernière connexion', created_at: 'Date d’inscription'
-    })[key] || key.replaceAll('_', ' ');
-  }
-
-  async function loadAdminData() {
-    if (!isAdminUser || adminLoading) return;
-    const client = adminClient();
-    if (!client) return;
-    adminLoading = true;
-    adminError = '';
-    if (currentPage === 'admin') renderPage();
-    try {
-      const usersResult = await client.from('animoa_profiles').select('*').order('created_at', { ascending: false });
-      if (usersResult.error) throw usersResult.error;
-      adminUsers = usersResult.data || [];
-
-      const surveyResult = await client.from('animoa_survey_responses').select('*').order('created_at', { ascending: false });
-      if (surveyResult.error) throw surveyResult.error;
-      adminResponses = surveyResult.data || [];
-
-      const feedbackResult = await client.from('animoa_feedback').select('*').order('created_at', { ascending: false });
-      if (feedbackResult.error && !reviewFeatureUnavailable(feedbackResult.error)) throw feedbackResult.error;
-      adminFeedback = feedbackResult.error ? [] : (feedbackResult.data || []);
-
-      adminReviewSetupMissing = false;
-      const reviewResult = await client.from('animoa_review_requests').select('*').order('updated_at', { ascending: false });
-      if (reviewResult.error && !reviewFeatureUnavailable(reviewResult.error)) throw reviewResult.error;
-      if (reviewResult.error) {
-        adminReviewSetupMissing = true;
-        adminReviewRequests = [];
-      } else {
-        adminReviewRequests = reviewResult.data || [];
-      }
-
-      const reviewConfigResult = await client.from('animoa_review_config').select('*').eq('id', true).maybeSingle();
-      if (reviewConfigResult.error && !reviewFeatureUnavailable(reviewConfigResult.error)) throw reviewConfigResult.error;
-      if (reviewConfigResult.error) {
-        adminReviewSetupMissing = true;
-        adminReviewConfig = null;
-      } else {
-        adminReviewConfig = reviewConfigResult.data || null;
-      }
-
-      const reviewSummaryProbe = await client.rpc('get_animoa_review_summary');
-      if (reviewSummaryProbe.error) {
-        if (!reviewFeatureUnavailable(reviewSummaryProbe.error)) throw reviewSummaryProbe.error;
-        adminReviewSetupMissing = true;
-      }
-
-      adminMediaSetupMissing = false;
-      const mediaResult = await client.from('animoa_media_library').select('*').order('imported_at', { ascending: false });
-      if (mediaResult.error) {
-        if (!reviewFeatureUnavailable(mediaResult.error)) throw mediaResult.error;
-        adminMediaSetupMissing = true;
-        adminMediaLibrary = [];
-      } else {
-        adminMediaLibrary = mediaResult.data || [];
-      }
-      await loadAdminMediaDriveStatus({ quiet: true });
-      window.AnimoaFacebookAdmin?.setMediaLibrary?.(adminMediaLibrary);
-      await window.AnimoaFacebookAdmin?.load?.({ mediaLibrary: adminMediaLibrary });
-    } catch (error) {
-      adminError = error.message || 'Impossible de charger les informations administratives.';
-    } finally {
-      adminLoading = false;
-      if (currentPage === 'admin') renderPage();
-    }
-  }
-
-  function adminPersonTitle(item, source) {
-    if (source === 'users') return item.display_name || item.email || 'Utilisateur Animoa';
-    return item.email || (source === 'feedback' ? 'Avis anonyme' : 'Questionnaire anonyme');
-  }
-
-  function adminStatusLabel(value) {
-    return ({ nouveau:'Nouveau', a_etudier:'À étudier', prevu:'Prévu', traite:'Traité' })[value] || value;
-  }
-
-  function adminStatusOptions(status) {
-    return ['nouveau','a_etudier','prevu','traite']
-      .map((value) => `<option value="${value}" ${status === value ? 'selected' : ''}>${adminStatusLabel(value)}</option>`)
-      .join('');
-  }
-
-  function adminProviderLabel(value) {
-    const provider = String(value || 'email').toLowerCase();
-    if (provider === 'google') return 'Google';
-    return 'E-mail';
-  }
-
-  function renderAdminUserCard(item) {
-    const title = adminPersonTitle(item, 'users');
-    const provider = adminProviderLabel(item.provider);
-    return `<details class="admin-accordion" data-admin-entry="users">
-      <summary class="admin-accordion-summary"><span class="admin-summary-main"><span class="admin-summary-title">${escapeHtml(title)}</span><span class="admin-summary-meta">${escapeHtml(provider)} · ${escapeHtml(adminDate(item.created_at))}</span></span><span class="admin-summary-side"><span class="admin-status status-inscrit">Inscrit</span><span class="admin-chevron">⌄</span></span></summary>
-      <div class="admin-accordion-body"><div class="admin-answer-grid">
-        <div class="admin-answer"><span>Adresse e-mail</span><strong>${escapeHtml(item.email || '—')}</strong></div>
-        <div class="admin-answer"><span>Nom</span><strong>${escapeHtml(item.display_name || 'Non renseigné')}</strong></div>
-        <div class="admin-answer"><span>Mode d’inscription</span><strong>${escapeHtml(provider)}</strong></div>
-        <div class="admin-answer"><span>Date d’inscription</span><strong>${escapeHtml(adminDate(item.created_at))}</strong></div>
-        <div class="admin-answer"><span>Dernière connexion</span><strong>${escapeHtml(adminDate(item.last_seen_at))}</strong></div>
-      </div>
-      <div class="admin-actions-mobile">${item.email ? `<button type="button" class="secondary-button admin-copy-email-button" data-action="admin-copy-email" data-email="${escapeHtml(item.email)}">Copier l’e-mail</button>` : ''}</div></div>
-    </details>`;
-  }
-
-  function renderAdminResponseCard(item, source = 'survey') {
-    if (source === 'users') return renderAdminUserCard(item);
-    const ignored = new Set(['id','created_at','updated_at','user_id','status','private_note']);
-    const details = Object.entries(item).filter(([key]) => !ignored.has(key)).map(([key,value]) => {
-      const readable = key === 'rating' && value ? `${Number(value)}/5 ${'★'.repeat(Number(value))}` : readableSurveyValue(value);
-      return `<div class="admin-answer"><span>${escapeHtml(surveyFieldLabel(key))}</span><strong>${escapeHtml(readable)}</strong></div>`;
-    }).join('');
-    const status=item.status||'nouveau';
-    return `<details class="admin-accordion" data-admin-entry="${source}">
-      <summary class="admin-accordion-summary"><span class="admin-summary-main"><span class="admin-summary-title">${escapeHtml(adminPersonTitle(item,source))}</span><span class="admin-summary-meta">${escapeHtml(adminDate(item.created_at))}</span></span><span class="admin-summary-side"><span class="admin-status status-${escapeHtml(status)}">${escapeHtml(adminStatusLabel(status))}</span><span class="admin-chevron">⌄</span></span></summary>
-      <div class="admin-accordion-body"><div class="admin-answer-grid">${details || '<p class="muted">Aucune réponse détaillée.</p>'}</div>
-      <div class="admin-note-editor"><label for="admin-note-${escapeHtml(source)}-${escapeHtml(item.id)}">Note privée</label><textarea id="admin-note-${escapeHtml(source)}-${escapeHtml(item.id)}" data-admin-note-source="${source}" data-admin-note-id="${escapeHtml(item.id)}" placeholder="Visible uniquement par vous">${escapeHtml(item.private_note || '')}</textarea></div>
-      <div class="admin-actions-mobile"><label class="admin-status-field"><span>Statut</span><select aria-label="Statut" data-admin-status-source="${source}" data-admin-id="${escapeHtml(item.id)}">${adminStatusOptions(status)}</select></label><button type="button" class="secondary-button admin-save-button" data-action="admin-save-note" data-admin-source="${source}" data-admin-id="${escapeHtml(item.id)}">Enregistrer la note</button>${item.email ? `<button type="button" class="secondary-button admin-copy-email-button" data-action="admin-copy-email" data-email="${escapeHtml(item.email)}">Copier l’e-mail</button>` : ''}<button type="button" class="text-button danger-text-button admin-delete-button" data-action="admin-delete-response" data-admin-source="${source}" data-admin-id="${escapeHtml(item.id)}">Supprimer cette entrée</button></div></div>
-    </details>`;
-  }
-
-  function adminFilteredItems(items) {
-    return adminStatusFilter === 'all' ? items : items.filter((item) => (item.status || 'nouveau') === adminStatusFilter);
-  }
-
-  function adminReviewProfile(item) {
-    return adminUsers.find((profile) => String(profile.user_id) === String(item.user_id)) || null;
-  }
-
-  function adminReviewPerson(item) {
-    const profile = adminReviewProfile(item);
-    return profile?.display_name || profile?.email || `Utilisateur ${String(item.user_id || '').slice(0, 8)}`;
-  }
-
-  function adminReviewState(item) {
-    if (item.status === 'submitted') return 'submitted';
-    if (item.status === 'clicked') return 'clicked';
-    if (item.status === 'dismissed') return 'dismissed';
-    if (item.status === 'closed') return 'closed';
-    const due = item.next_prompt_at && new Date(item.next_prompt_at).getTime() <= Date.now();
-    if (due) return 'eligible';
-    if (item.last_action === 'shown') return 'shown';
-    if (item.last_action === 'later') return 'postponed';
-    return 'waiting';
-  }
-
-  function adminReviewStateLabel(state, item) {
-    if (state === 'submitted') return 'Avis reçu';
-    if (state === 'clicked') return 'Ancien clic externe';
-    if (state === 'dismissed') return 'Ne plus afficher';
-    if (state === 'closed') return 'Relances terminées';
-    if (state === 'eligible') return Number(item.prompt_count || 0) ? 'Relance éligible' : 'Éligible';
-    if (state === 'shown') return 'Message affiché';
-    if (state === 'postponed') return Number(item.prompt_count || 0) === 1 ? 'Reporté de 7 jours' : 'Reporté de 30 jours';
-    return 'En attente';
-  }
-
-  function adminReviewCohortLabel(value) {
-    return value === 'existing_at_launch' ? 'Compte déjà présent au lancement' : 'Nouveau compte';
-  }
-
-  function renderAdminReviewCard(item) {
-    const state = adminReviewState(item);
-    const profile = adminReviewProfile(item);
-    const next = item.next_prompt_at ? adminDate(item.next_prompt_at) : 'Aucune nouvelle relance';
-    const lastPrompt = item.last_prompted_at ? adminDate(item.last_prompted_at) : 'Jamais affiché';
-    const lastAction = ({ shown: 'Message affiché', later: 'Plus tard', review: 'Ancien clic externe', submitted: 'Avis envoyé', never: 'Ne plus afficher', closed: 'Dernière relance terminée' })[item.last_action] || 'Aucune action';
-    return `<details class="admin-accordion admin-review-entry" data-admin-entry="reviews">
-      <summary class="admin-accordion-summary"><span class="admin-summary-main"><span class="admin-summary-title">${escapeHtml(adminReviewPerson(item))}</span><span class="admin-summary-meta">${escapeHtml(adminReviewCohortLabel(item.cohort))} · début ${escapeHtml(adminDate(item.started_at))}</span></span><span class="admin-summary-side"><span class="admin-status review-status-${escapeHtml(state)}">${escapeHtml(adminReviewStateLabel(state, item))}</span><span class="admin-chevron">⌄</span></span></summary>
-      <div class="admin-accordion-body"><div class="admin-answer-grid">
-        <div class="admin-answer"><span>Adresse e-mail</span><strong>${escapeHtml(profile?.email || '—')}</strong></div>
-        <div class="admin-answer"><span>Affichages</span><strong>${Number(item.prompt_count || 0)} sur 3</strong></div>
-        <div class="admin-answer"><span>Reports explicites</span><strong>${Number(item.snooze_count || 0)}</strong></div>
-        <div class="admin-answer"><span>Dernier affichage</span><strong>${escapeHtml(lastPrompt)}</strong></div>
-        <div class="admin-answer"><span>Dernière action</span><strong>${escapeHtml(lastAction)}</strong></div>
-        <div class="admin-answer"><span>Prochaine échéance</span><strong>${escapeHtml(next)}</strong></div>
-        ${item.submitted_at ? `<div class="admin-answer"><span>Avis reçu</span><strong>${escapeHtml(adminDate(item.submitted_at))}</strong></div>` : ''}
-        ${item.clicked_at ? `<div class="admin-answer"><span>Ancien clic externe</span><strong>${escapeHtml(adminDate(item.clicked_at))}</strong></div>` : ''}
-        ${item.dismissed_at ? `<div class="admin-answer"><span>Refus définitif</span><strong>${escapeHtml(adminDate(item.dismissed_at))}</strong></div>` : ''}
-      </div>
-      <div class="admin-actions-mobile">${profile?.email ? `<button type="button" class="secondary-button admin-copy-email-button" data-action="admin-copy-email" data-email="${escapeHtml(profile.email)}">Copier l’e-mail</button>` : ''}</div></div>
-    </details>`;
-  }
-
-  function adminFeedbackSummary() {
-    const latestByUser = new Map();
-    adminFeedback.forEach((item) => {
-      const rating = Number(item.rating);
-      if (!item.user_id || !Number.isFinite(rating) || rating < 1 || rating > 5) return;
-      const key = String(item.user_id);
-      const timestamp = new Date(item.updated_at || item.created_at || 0).getTime();
-      const previous = latestByUser.get(key);
-      if (!previous || timestamp >= previous.timestamp) latestByUser.set(key, { rating, timestamp });
-    });
-    const ratings = [...latestByUser.values()].map((item) => item.rating);
-    const average = ratings.length ? ratings.reduce((sum, value) => sum + value, 0) / ratings.length : 0;
-    return { count: ratings.length, average };
-  }
-
-  function renderAdminReviewConfig() {
-    if (adminReviewSetupMissing) {
-      return `<article class="card card-pad admin-review-config admin-review-missing"><div><p class="eyebrow">Configuration requise</p><h2>Installer les avis internes</h2><p>Exécutez le fichier <strong>supabase/sql/08_avis_internes.sql</strong> dans Supabase, puis actualisez cette page.</p></div></article>`;
-    }
-    const config = adminReviewConfig || {};
-    const summary = adminFeedbackSummary();
-    return `<article class="card card-pad admin-review-config">
-      <div class="card-title-row"><div><p class="eyebrow">Avis internes</p><h2>Avis des utilisateurs</h2><p>Les utilisateurs donnent une note sur 5 et peuvent écrire un commentaire. Les commentaires restent visibles uniquement dans votre Administration.</p></div><span class="push-status-badge ${config.enabled ? 'is-active' : ''}">${config.enabled ? 'Activée' : 'Désactivée'}</span></div>
-      <div class="admin-review-overview">
-        <div><span>Note moyenne</span><strong>${summary.count ? `${formatReviewAverage(summary.average)}/5` : '—'}</strong></div>
-        <div><span>Avis reçus</span><strong>${summary.count}</strong></div>
-        <div><span>Demandes éligibles</span><strong>${adminReviewRequests.filter((item) => adminReviewState(item) === 'eligible').length}</strong></div>
-      </div>
-      <label class="settings-toggle-row admin-review-enable-row"><span><strong>Activer les demandes automatiques</strong><small>La cadence reste 7 jours, puis 7 jours, puis 30 jours. Le bouton permanent reste disponible dans les Paramètres même si les relances sont désactivées.</small></span><input id="adminReviewEnabled" type="checkbox" ${config.enabled ? 'checked' : ''}></label>
-      <div class="admin-review-config-actions"><button type="button" class="secondary-button" data-action="admin-preview-review-message">Prévisualiser le formulaire</button><button type="button" class="primary-button" data-action="admin-save-review-config">Enregistrer</button></div>
-      <p class="admin-review-config-meta">Compteur lancé le ${escapeHtml(adminDate(config.feature_started_at))}. Seules la moyenne et le nombre d’avis sont montrés aux utilisateurs ; les commentaires restent privés.</p>
-    </article>`;
-  }
-
-  function adminFilteredReviewRequests() {
-    if (adminStatusFilter === 'all') return adminReviewRequests;
-    return adminReviewRequests.filter((item) => adminReviewState(item) === adminStatusFilter);
-  }
-
-
-  function adminMediaSourceLabel(source) {
-    return source === 'pixabay' ? 'Pixabay' : 'Pexels';
-  }
-
-  function adminMediaDuration(value) {
-    const seconds = Math.max(0, Number(value || 0));
-    if (!seconds) return 'Durée inconnue';
-    const minutes = Math.floor(seconds / 60);
-    const rest = String(seconds % 60).padStart(2, '0');
-    return minutes ? `${minutes}:${rest}` : `${seconds} s`;
-  }
-
-  function adminMediaSize(value) {
-    const bytes = Math.max(0, Number(value || 0));
-    if (!bytes) return 'Taille inconnue';
-    const mb = bytes / (1024 * 1024);
-    return `${mb < 10 ? mb.toFixed(1) : Math.round(mb)} Mo`;
-  }
-
-  function adminMediaOrientationLabel(value) {
-    return ({ portrait: 'Vertical', landscape: 'Horizontal', square: 'Carré' })[value] || 'Format inconnu';
-  }
-
-  function safeExternalUrl(value, allowedPattern) {
-    try {
-      const url = new URL(String(value || ''));
-      if (url.protocol !== 'https:' || (allowedPattern && !allowedPattern.test(url.hostname))) return '';
-      return url.href;
-    } catch { return ''; }
-  }
-
-  async function invokeAdminMedia(action, payload = {}) {
-    if (!isAdminUser) throw new Error('Accès administrateur requis.');
-    const client = adminClient();
-    if (!client || window.AnimoaAuth?.isLocalPreview?.()) throw new Error('Connectez-vous au compte administrateur Animoa.');
-    let { data: sessionData, error: sessionError } = await client.auth.getSession();
-    if (sessionError) throw new Error('Votre session Animoa est indisponible.');
-    let session = sessionData?.session || null;
-    if (!session?.access_token) {
-      const refreshed = await client.auth.refreshSession();
-      if (refreshed.error) throw new Error('Votre session Animoa a expiré.');
-      session = refreshed.data?.session || null;
-    }
-    if (!session?.access_token) throw new Error('Votre session Animoa a expiré.');
-    const config = window.ANIMOA_CONFIG || {};
-    const endpoint = `${String(config.supabaseUrl || '').replace(/\/$/, '')}/functions/v1/animoa-media-library`;
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.access_token}`,
-        apikey: String(config.supabaseAnonKey || '')
-      },
-      body: JSON.stringify({ action, ...payload })
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || result?.ok !== true) throw new Error(result?.error || `La Banque de médias a répondu avec l’erreur ${response.status}.`);
-    return result;
-  }
-
-  async function loadAdminMediaDriveStatus({ quiet = false } = {}) {
-    if (!isAdminUser) return false;
-    try {
-      const result = await invokeAdminMedia('status');
-      adminMediaDriveStatus = {
-        loaded: true,
-        connected: Boolean(result.connected),
-        email: String(result.email || ''),
-        rootFolderUrl: String(result.rootFolderUrl || ''),
-        connectedAt: String(result.connectedAt || '')
-      };
-      if (currentPage === 'admin' && adminActiveTab === 'media') renderPage();
-      return adminMediaDriveStatus.connected;
-    } catch (error) {
-      adminMediaDriveStatus = { loaded: true, connected: false, email: '', rootFolderUrl: '', connectedAt: '' };
-      if (!quiet) showToast(error.message || 'État de Google Drive indisponible.');
-      return false;
-    }
-  }
-
-  function initialiseGoogleDriveTokenClient() {
-    if (googleDriveTokenClient) return googleDriveTokenClient;
-    if (!googleCalendarConfigured()) throw new Error('Le client Google Animoa doit être configuré avant de connecter Drive.');
-    googleDriveTokenClient = window.google.accounts.oauth2.initCodeClient({
-      client_id: googleCalendarClientId(),
-      scope: 'openid email https://www.googleapis.com/auth/drive.file',
-      include_granted_scopes: true,
-      ux_mode: 'popup',
-      select_account: true,
-      callback: () => {},
-      error_callback: () => {}
-    });
-    return googleDriveTokenClient;
-  }
-
-  async function connectAdminMediaDrive() {
-    if (!isAdminUser || googleDriveRequestPending) return googleDriveRequestPending;
-    googleDriveRequestPending = (async () => {
-      await waitForGoogleIdentity();
-      const client = initialiseGoogleDriveTokenClient();
-      return new Promise((resolve, reject) => {
-        let settled = false;
-        const finish = (callback, value) => { if (!settled) { settled = true; callback(value); } };
-        const timeout = setTimeout(() => finish(reject, new Error('La demande Google Drive a expiré.')), 90_000);
-        client.callback = async (response) => {
-          clearTimeout(timeout);
-          if (response?.error || !response?.code) {
-            finish(reject, new Error(response?.error_description || 'Autorisation Google Drive refusée.'));
-            return;
-          }
-          try {
-            const result = await invokeAdminMedia('connect', { code: response.code, redirectUri: location.origin });
-            adminMediaDriveStatus = {
-              loaded: true,
-              connected: true,
-              email: String(result.email || ''),
-              rootFolderUrl: String(result.rootFolderUrl || ''),
-              connectedAt: new Date().toISOString()
-            };
-            finish(resolve, result);
-          } catch (error) { finish(reject, error); }
-        };
-        client.error_callback = (error) => {
-          clearTimeout(timeout);
-          const code = String(error?.type || error?.error || '');
-          finish(reject, new Error(code === 'popup_closed' ? 'La fenêtre Google a été fermée avant la fin.' : 'La connexion Google Drive a échoué.'));
-        };
-        try { client.requestCode(); } catch (error) { clearTimeout(timeout); finish(reject, error); }
-      });
-    })().finally(() => { googleDriveRequestPending = null; });
-    try {
-      const result = await googleDriveRequestPending;
-      showToast('Google Drive est connecté à la Banque de médias.');
-      renderPage();
-      return result;
-    } catch (error) {
-      showToast(error.message || 'Connexion Google Drive impossible.');
-      return null;
-    }
-  }
-
-  async function disconnectAdminMediaDrive() {
-    if (!isAdminUser || !confirm('Déconnecter Google Drive de la Banque de médias ? Les vidéos déjà enregistrées resteront dans votre Drive.')) return;
-    try {
-      await invokeAdminMedia('disconnect');
-      adminMediaDriveStatus = { loaded: true, connected: false, email: '', rootFolderUrl: '', connectedAt: '' };
-      showToast('Google Drive a été déconnecté.');
-      renderPage();
-    } catch (error) { showToast(error.message || 'Déconnexion impossible.'); }
-  }
-
-  async function searchAdminMedia(form) {
-    if (!isAdminUser || adminMediaSearching) return;
-    const formData = new FormData(form);
-    adminMediaSearchDraft = {
-      source: String(formData.get('source') || 'all'),
-      species: String(formData.get('species') || 'Chien'),
-      theme: String(formData.get('theme') || 'Jeu'),
-      orientation: String(formData.get('orientation') || 'portrait'),
-      query: String(formData.get('query') || '').trim()
-    };
-    adminMediaSearching = true;
-    adminMediaSearchError = '';
-    adminMediaWarnings = [];
-    renderPage();
-    try {
-      const result = await invokeAdminMedia('search', adminMediaSearchDraft);
-      const sourceItems = Array.isArray(result.items) ? result.items : [];
-      const hiddenSavedCount = sourceItems.filter((item) => Boolean(item?.savedToDrive)).length;
-      adminMediaResults = sourceItems.filter((item) => !item?.savedToDrive);
-      adminMediaWarnings = Array.isArray(result.warnings) ? result.warnings : [];
-      if (hiddenSavedCount) {
-        adminMediaWarnings.unshift(`${hiddenSavedCount} vidéo${hiddenSavedCount > 1 ? 's déjà téléchargées ont été masquées' : ' déjà téléchargée a été masquée'} pour éviter les doublons.`);
-      }
-      if (!adminMediaResults.length) {
-        adminMediaSearchError = hiddenSavedCount
-          ? 'Toutes les vidéos trouvées sont déjà dans votre médiathèque. Essayez un autre thème, une autre source ou une précision différente.'
-          : 'Aucune vidéo adaptée n’a été trouvée. Essayez un autre thème ou un autre format.';
-      }
-    } catch (error) {
-      adminMediaResults = [];
-      adminMediaSearchError = error.message || 'Recherche impossible.';
-    } finally {
-      adminMediaSearching = false;
-      renderPage();
-    }
-  }
-
-  async function saveAdminMediaToDrive(key) {
-    if (!isAdminUser || adminMediaSavingKey) return;
-    const media = adminMediaResults.find((item) => `${item.source}:${item.sourceId}` === key);
-    if (!media) return showToast('Vidéo introuvable.');
-    if (!adminMediaDriveStatus.connected) {
-      await connectAdminMediaDrive();
-      if (!adminMediaDriveStatus.connected) return;
-    }
-    adminMediaSavingKey = key;
-    renderPage();
-    try {
-      const result = await invokeAdminMedia('save', {
-        media,
-        species: adminMediaSearchDraft.species,
-        theme: adminMediaSearchDraft.theme
-      });
-      const saved = result.item || null;
-      if (saved?.id && !adminMediaLibrary.some((item) => String(item.id) === String(saved.id))) adminMediaLibrary.unshift(saved);
-      media.savedToDrive = true;
-      media.driveWebUrl = saved?.drive_web_url || media.driveWebUrl || '';
-      adminMediaResults = adminMediaResults.filter((item) => `${item.source}:${item.sourceId}` !== key);
-      if (result.rootFolderUrl) adminMediaDriveStatus.rootFolderUrl = String(result.rootFolderUrl);
-      showToast(result.alreadySaved ? 'Cette vidéo était déjà dans votre médiathèque et a été retirée des résultats.' : 'Vidéo ajoutée au Drive et retirée des résultats.');
-    } catch (error) {
-      showToast(error.message || 'Ajout au Drive impossible.');
-    } finally {
-      adminMediaSavingKey = '';
-      renderPage();
-    }
-  }
-
-  async function updateAdminMediaStatus(id, status) {
-    if (!isAdminUser || !['available', 'used', 'archived'].includes(status)) return;
-    const { error } = await adminClient().from('animoa_media_library').update({ status, updated_at: new Date().toISOString() }).eq('id', id);
-    if (error) return showToast(error.message || 'Mise à jour impossible.');
-    const item = adminMediaLibrary.find((entry) => String(entry.id) === String(id));
-    if (item) item.status = status;
-    showToast(status === 'used' ? 'Vidéo marquée comme utilisée.' : status === 'archived' ? 'Vidéo archivée.' : 'Vidéo remise dans les médias disponibles.');
-    renderPage();
-  }
-
-  function renderAdminMediaSearchCard(item) {
-    const key = `${item.source}:${item.sourceId}`;
-    const saving = adminMediaSavingKey === key;
-    const saved = Boolean(item.savedToDrive);
-    const sourceUrl = safeExternalUrl(item.sourcePageUrl, item.source === 'pixabay' ? /(^|\.)pixabay\.com$/i : /(^|\.)pexels\.com$/i);
-    const driveUrl = safeExternalUrl(item.driveWebUrl, /(^|\.)google\.com$/i);
-    return `<article class="card admin-media-card">
-      <div class="admin-media-preview"><video controls preload="metadata" playsinline muted poster="${escapeHtml(item.thumbnailUrl || '')}"><source src="${escapeHtml(item.videoUrl || '')}" type="video/mp4"></video><span class="admin-media-source">${escapeHtml(adminMediaSourceLabel(item.source))}</span></div>
-      <div class="admin-media-card-body"><div class="admin-media-title-row"><div><strong>${escapeHtml(adminMediaSearchDraft.species)} · ${escapeHtml(adminMediaSearchDraft.theme)}</strong><small>${escapeHtml(item.creatorName || 'Créateur non renseigné')}</small></div><span>${escapeHtml(adminMediaOrientationLabel(item.orientation))}</span></div>
-      <div class="admin-media-meta"><span>${escapeHtml(adminMediaDuration(item.duration))}</span><span>${escapeHtml(adminMediaSize(item.fileSize))}</span><span>${escapeHtml(`${item.width || '—'} × ${item.height || '—'}`)}</span></div>
-      <div class="admin-media-actions"><button type="button" class="primary-button" data-action="admin-media-save" data-media-key="${escapeHtml(key)}" ${saved || saving ? 'disabled' : ''}>${saving ? 'Ajout en cours…' : saved ? 'Déjà dans le Drive' : 'Ajouter au Drive'}</button>${driveUrl ? `<button type="button" class="secondary-button" data-action="admin-media-open" data-media-url="${escapeHtml(driveUrl)}">Ouvrir dans Drive</button>` : ''}${sourceUrl ? `<button type="button" class="text-button" data-action="admin-media-open" data-media-url="${escapeHtml(sourceUrl)}">Voir la source</button>` : ''}</div></div>
-    </article>`;
-  }
-
-  function renderAdminMediaLibraryCard(item) {
-    const driveUrl = safeExternalUrl(item.drive_web_url, /(^|\.)google\.com$/i);
-    const sourceUrl = safeExternalUrl(item.source_page_url, item.source === 'pixabay' ? /(^|\.)pixabay\.com$/i : /(^|\.)pexels\.com$/i);
-    const status = item.status || 'available';
-    return `<article class="card admin-media-library-card"><img src="${escapeHtml(item.thumbnail_url || 'assets/pet-placeholder.svg')}" alt="" loading="lazy"><div class="admin-media-library-copy"><div><strong>${escapeHtml(item.file_name || 'Vidéo Animoa')}</strong><small>${escapeHtml(adminMediaSourceLabel(item.source))} · ${escapeHtml(item.creator_name || 'Créateur non renseigné')}</small></div><div class="admin-media-library-tags"><span>${escapeHtml(item.species || 'Animal')}</span><span>${escapeHtml(item.theme || 'Autre')}</span><span>${status === 'used' ? 'Utilisée' : status === 'archived' ? 'Archivée' : 'Disponible'}</span></div><div class="admin-media-library-actions"><label><span>Statut</span><select data-action="admin-media-status" data-media-id="${escapeHtml(item.id)}"><option value="available" ${status === 'available' ? 'selected' : ''}>Disponible</option><option value="used" ${status === 'used' ? 'selected' : ''}>Utilisée</option><option value="archived" ${status === 'archived' ? 'selected' : ''}>Archivée</option></select></label>${driveUrl ? `<button type="button" class="secondary-button" data-action="admin-media-open" data-media-url="${escapeHtml(driveUrl)}">Ouvrir dans Drive</button>` : ''}${sourceUrl ? `<button type="button" class="text-button" data-action="admin-media-open" data-media-url="${escapeHtml(sourceUrl)}">Source</button>` : ''}</div></div></article>`;
-  }
-
-  function renderAdminMediaPanel() {
-    if (adminMediaSetupMissing) return `<div class="card card-pad admin-review-missing"><h2>Installation Supabase nécessaire</h2><p>Exécutez le fichier <strong>supabase/sql/10_banque_medias_admin.sql</strong>, puis déployez la fonction <strong>animoa-media-library</strong>. Cette rubrique restera inaccessible aux autres comptes.</p></div>`;
-    const draft = adminMediaSearchDraft;
-    const drive = adminMediaDriveStatus;
-    const driveUrl = safeExternalUrl(drive.rootFolderUrl, /(^|\.)google\.com$/i);
-    const results = adminMediaResults.length ? `<div class="admin-media-results">${adminMediaResults.map(renderAdminMediaSearchCard).join('')}</div>` : '';
-    const warnings = adminMediaWarnings.length ? `<div class="admin-media-warning">${adminMediaWarnings.map((item) => `<p>${escapeHtml(item)}</p>`).join('')}</div>` : '';
-    const error = adminMediaSearchError ? `<div class="admin-media-warning is-error">${escapeHtml(adminMediaSearchError)}</div>` : '';
-    const mediaCounts = adminMediaLibrary.reduce((counts, item) => {
-      const status = ['available', 'used', 'archived'].includes(item?.status) ? item.status : 'available';
-      counts[status] += 1;
-      return counts;
-    }, { available: 0, used: 0, archived: 0 });
-    const librarySummary = `<article class="card card-pad admin-media-library-summary">
-      <div class="admin-media-library-summary-heading"><div><p class="eyebrow">Dans votre Drive</p><h2>Médiathèque enregistrée</h2><p>Les fichiers sont conservés dans le dossier privé <strong>ANIMOA - MÉDIATHÈQUE</strong>, séparé de vos autres projets.</p></div><strong class="admin-media-total">${adminMediaLibrary.length}</strong></div>
-      <div class="admin-media-library-stats" aria-label="Résumé de la médiathèque"><div><span>Total</span><strong>${adminMediaLibrary.length}</strong></div><div><span>Disponibles</span><strong>${mediaCounts.available}</strong></div><div><span>Utilisées</span><strong>${mediaCounts.used}</strong></div><div><span>Archivées</span><strong>${mediaCounts.archived}</strong></div></div>
-      <div class="admin-media-library-summary-actions">${driveUrl ? `<button type="button" class="primary-button" data-action="admin-media-open" data-media-url="${escapeHtml(driveUrl)}">Ouvrir la médiathèque Drive</button>` : '<p>Connectez Google Drive pour ouvrir directement le dossier de la médiathèque.</p>'}</div>
-    </article>`;
-    return `<div class="admin-media-page">
-      <article class="card card-pad admin-media-security"><div><p class="eyebrow">Accès privé</p><h2>Banque de médias Animoa</h2><p>Cette rubrique et les recherches sont accessibles uniquement depuis votre compte administrateur. Les clés Pexels et Pixabay restent dans les secrets Supabase.</p></div><span class="push-status-badge is-active">Administratrice uniquement</span></article>
-      <article class="card card-pad admin-media-drive"><div class="card-title-row"><div><p class="eyebrow">Destination</p><h2>Google Drive</h2><p>${drive.connected ? `Connecté${drive.email ? ` avec ${escapeHtml(drive.email)}` : ''}. Les vidéos sont classées automatiquement par animal et par thème.` : 'Connectez votre Drive une seule fois pour y envoyer les vidéos sélectionnées.'}</p></div><span class="push-status-badge ${drive.connected ? 'is-active' : ''}">${drive.connected ? 'Connecté' : 'Non connecté'}</span></div><div class="admin-media-drive-actions">${drive.connected ? `${driveUrl ? `<button type="button" class="primary-button" data-action="admin-media-open" data-media-url="${escapeHtml(driveUrl)}">Ouvrir le dossier Drive</button>` : ''}<button type="button" class="secondary-button" data-action="admin-media-connect">Reconnecter</button><button type="button" class="text-button danger-text-button" data-action="admin-media-disconnect">Déconnecter</button>` : '<button type="button" class="primary-button" data-action="admin-media-connect">Connecter mon Google Drive</button>'}</div><p class="admin-media-drive-note">Animoa utilise l’autorisation limitée « drive.file » : l’application peut uniquement gérer les fichiers et dossiers qu’elle crée elle-même.</p></article>
-      <form id="adminMediaSearchForm" class="card card-pad admin-media-search-form"><div class="card-title-row"><div><p class="eyebrow">Recherche</p><h2>Trouver de nouvelles vidéos</h2><p>Choisissez le sujet. Les vidéos déjà téléchargées sont automatiquement masquées afin d’éviter les doublons.</p></div></div><div class="admin-media-search-grid"><label><span>Source</span><select name="source"><option value="all" ${draft.source === 'all' ? 'selected' : ''}>Pexels + Pixabay</option><option value="pexels" ${draft.source === 'pexels' ? 'selected' : ''}>Pexels</option><option value="pixabay" ${draft.source === 'pixabay' ? 'selected' : ''}>Pixabay</option></select></label><label><span>Animal</span><select name="species"><option ${draft.species === 'Chien' ? 'selected' : ''}>Chien</option><option ${draft.species === 'Chat' ? 'selected' : ''}>Chat</option><option ${draft.species === 'Lapin' ? 'selected' : ''}>Lapin</option><option ${draft.species === 'Oiseau' ? 'selected' : ''}>Oiseau</option><option ${draft.species === 'Animaux variés' ? 'selected' : ''}>Animaux variés</option></select></label><label><span>Thème</span><select name="theme"><option ${draft.theme === 'Jeu' ? 'selected' : ''}>Jeu</option><option ${draft.theme === 'Vétérinaire' ? 'selected' : ''}>Vétérinaire</option><option ${draft.theme === 'Santé' ? 'selected' : ''}>Santé</option><option ${draft.theme === 'Promenade' ? 'selected' : ''}>Promenade</option><option ${draft.theme === 'Alimentation' ? 'selected' : ''}>Alimentation</option><option ${draft.theme === 'Repos' ? 'selected' : ''}>Repos</option><option ${draft.theme === 'Vacances' ? 'selected' : ''}>Vacances</option><option ${draft.theme === 'Complicité' ? 'selected' : ''}>Complicité</option><option ${draft.theme === 'Toilettage' ? 'selected' : ''}>Toilettage</option></select></label><label><span>Format</span><select name="orientation"><option value="portrait" ${draft.orientation === 'portrait' ? 'selected' : ''}>Vertical TikTok / Reels</option><option value="landscape" ${draft.orientation === 'landscape' ? 'selected' : ''}>Horizontal Facebook</option><option value="square" ${draft.orientation === 'square' ? 'selected' : ''}>Carré</option><option value="all" ${draft.orientation === 'all' ? 'selected' : ''}>Tous les formats</option></select></label><label class="admin-media-query"><span>Précision facultative</span><input name="query" maxlength="100" value="${escapeHtml(draft.query)}" placeholder="Ex. golden retriever chez le vétérinaire"></label></div><button type="submit" class="primary-button admin-media-search-button" ${adminMediaSearching ? 'disabled' : ''}>${adminMediaSearching ? 'Recherche en cours…' : 'Rechercher des vidéos'}</button></form>
-      ${warnings}${error}${results}
-      <section class="admin-media-library">${librarySummary}</section>
-    </div>`;
-  }
-
-  function renderAdminPanel() {
-    const facebookCount = window.AnimoaFacebookAdmin?.count?.() || 0;
-    const tabs = `<div class="admin-tabs"><button class="admin-tab ${adminActiveTab==='users'?'active':''}" data-action="admin-tab" data-admin-tab="users">Inscrits (${adminUsers.length})</button><button class="admin-tab ${adminActiveTab==='survey'?'active':''}" data-action="admin-tab" data-admin-tab="survey">Questionnaires (${adminResponses.length})</button><button class="admin-tab ${adminActiveTab==='feedback'?'active':''}" data-action="admin-tab" data-admin-tab="feedback">Avis utilisateurs (${adminFeedback.length})</button><button class="admin-tab ${adminActiveTab==='reviews'?'active':''}" data-action="admin-tab" data-admin-tab="reviews">Demandes d’avis (${adminReviewRequests.length})</button><button class="admin-tab ${adminActiveTab==='media'?'active':''}" data-action="admin-tab" data-admin-tab="media">Banque de médias (${adminMediaLibrary.length})</button><button class="admin-tab ${adminActiveTab==='facebook'?'active':''}" data-action="admin-tab" data-admin-tab="facebook">Publications Facebook (${facebookCount})</button></div>`;
-    if (adminActiveTab === 'media') return `<section class="admin-section">${tabs}${renderAdminMediaPanel()}</section>`;
-    if (adminActiveTab === 'facebook') return `<section class="admin-section">${tabs}${window.AnimoaFacebookAdmin?.panelHtml?.({ mediaLibrary: adminMediaLibrary }) || '<div class="card card-pad admin-error">Le module Publications Facebook n’a pas pu être chargé.</div>'}</section>`;
-    const configs={
-      users:{items:adminUsers,empty:'Aucun compte inscrit pour le moment.',filters:[]},
-      survey:{items:adminResponses,empty:'Aucune réponse au questionnaire pour le moment.',filters:['all','nouveau','a_etudier','prevu','traite']},
-      feedback:{items:adminFeedback,empty:'Aucun avis interne enregistré pour le moment.',filters:['all','nouveau','a_etudier','prevu','traite']},
-      reviews:{items:adminReviewRequests,empty:'Aucune demande d’avis initialisée pour le moment.',filters:['all','waiting','eligible','shown','postponed','submitted','dismissed','closed']}
-    };
-    const current=configs[adminActiveTab] || configs.users;
-    const visible=adminActiveTab === 'users' ? current.items : (adminActiveTab === 'reviews' ? adminFilteredReviewRequests() : adminFilteredItems(current.items));
-    const reviewFilterLabels={waiting:'En attente',eligible:'Éligibles',shown:'Affichés',postponed:'Reportés',submitted:'Avis reçus',dismissed:'Refus',closed:'Terminés'};
-    const filters = current.filters.length ? `<div class="admin-filter-row">${current.filters.map(v=>`<button class="admin-filter ${adminStatusFilter===v?'active':''}" data-action="admin-filter" data-admin-filter="${v}">${v==='all'?'Tous':(reviewFilterLabels[v]||adminStatusLabel(v))}</button>`).join('')}</div>` : '';
-    const list = visible.length
-      ? visible.map(item=>adminActiveTab === 'reviews' ? renderAdminReviewCard(item) : renderAdminResponseCard(item,adminActiveTab)).join('')
-      : `<div class="card admin-empty">${current.empty}</div>`;
-    return `<section class="admin-section">${tabs}${adminActiveTab === 'reviews' ? renderAdminReviewConfig() : ''}${filters}<div class="admin-response-list">${list}</div></section>`;
-  }
-
-  function renderAdmin() {
-    if (!isAdminUser) return `${secondaryBackButton('home')}<section class="page-heading"><p class="eyebrow">Accès refusé</p><h1>Administration</h1><p>Cette rubrique est réservée à l’administrateur Animoa.</p></section>`;
-    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    const recentUsers = adminUsers.filter((item) => new Date(item.created_at).getTime() >= sevenDaysAgo).length;
-    const newSurvey=adminResponses.filter(i=>(i.status||'nouveau')==='nouveau').length;
-    const reviewEligible=adminReviewRequests.filter((item)=>adminReviewState(item)==='eligible').length;
-    const feedbackSummary=adminFeedbackSummary();
-    return `${secondaryBackButton('home')}<section class="page-heading admin-heading"><div><p class="eyebrow">Espace privé</p><h1>Administration</h1><p>Suivez les inscriptions, les avis, votre Banque de médias et vos publications Facebook.</p></div><button type="button" class="secondary-button" data-action="admin-refresh">Actualiser</button></section>
-      <section class="admin-stats"><article class="card"><span>Inscrits totaux</span><strong>${adminUsers.length}</strong></article><article class="card"><span>Nouveaux inscrits (7 j)</span><strong>${recentUsers}</strong></article><article class="card"><span>Nouveaux questionnaires</span><strong>${newSurvey}</strong></article><article class="card"><span>Avis reçus</span><strong>${feedbackSummary.count}</strong></article><article class="card"><span>Note moyenne</span><strong>${feedbackSummary.count ? `${formatReviewAverage(feedbackSummary.average)}/5` : '—'}</strong><small>${reviewEligible} demande${reviewEligible > 1 ? 's' : ''} éligible${reviewEligible > 1 ? 's' : ''}</small></article></section>
-      ${adminLoading?'<div class="card card-pad admin-message">Chargement…</div>':''}${adminError?`<div class="card card-pad admin-error">${escapeHtml(adminError)}</div>`:''}${renderAdminPanel()}`;
-  }
-
-  async function saveAdminReviewConfig() {
-    if (!isAdminUser || adminReviewSetupMissing) return;
-    const enabled = Boolean(document.getElementById('adminReviewEnabled')?.checked);
-    const { data: updated, error } = await adminClient()
-      .from('animoa_review_config')
-      .update({
-        platform: 'Animoa',
-        review_url: '',
-        enabled,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', true)
-      .select('*')
-      .maybeSingle();
-    if (error) return showToast(error.message || 'Enregistrement impossible.');
-    adminReviewConfig = updated || { ...(adminReviewConfig || {}), platform: 'Animoa', review_url: '', enabled };
-    publicReviewConfig = { enabled, platform: 'Animoa', review_url: '' };
-    showToast(enabled ? 'Les demandes automatiques sont activées.' : 'Les demandes automatiques sont désactivées.');
-    renderPage();
-  }
-
-  function previewAdminReviewMessage() {
-    showReviewPrompt(adminReviewConfig, { mode: 'preview' });
-  }
-
-  async function updateAdminStatus(source, id, status) {
-    if (!isAdminUser || source === 'users') return;
-    const table = source === 'feedback' ? 'animoa_feedback' : 'animoa_survey_responses';
-    const { error } = await adminClient().from(table).update({ status, updated_at: new Date().toISOString() }).eq('id', id);
-    if (error) return showToast(error.message || 'Mise à jour impossible.');
-    const collection = source === 'feedback' ? adminFeedback : adminResponses;
-    const item = collection.find((entry) => String(entry.id) === String(id));
-    if (item) item.status = status;
-    showToast('Statut mis à jour.');
-    renderPage();
-  }
-
-  async function deleteAdminResponse(source, id) {
-    if (!isAdminUser || source === 'users' || !confirm('Supprimer définitivement ce retour ?')) return;
-    const table = source === 'feedback' ? 'animoa_feedback' : 'animoa_survey_responses';
-    const { error } = await adminClient().from(table).delete().eq('id', id);
-    if (error) return showToast(error.message || 'Suppression impossible.');
-    if (source === 'feedback') adminFeedback = adminFeedback.filter((item) => String(item.id) !== String(id));
-    else adminResponses = adminResponses.filter((item) => String(item.id) !== String(id));
-    showToast('Retour supprimé.');
-    renderPage();
-  }
-
-  async function saveAdminNote(source,id,note) {
-    if (!isAdminUser || source === 'users') return;
-    const table=source==='feedback'?'animoa_feedback':'animoa_survey_responses';
-    const {error}=await adminClient().from(table).update({private_note:note,updated_at:new Date().toISOString()}).eq('id',id);
-    if (error) return showToast(error.message||'Enregistrement impossible.');
-    const collection=source==='feedback'?adminFeedback:adminResponses;
-    const item=collection.find(x=>String(x.id)===String(id)); if(item)item.private_note=note;
-    showToast('Note enregistrée.');
-  }
+  function supabaseClient() { return window.AnimoaAuth?.getClient?.() || null; }
 
   function renderPetContexts() {
     const pet = activePet();
@@ -3162,7 +2503,6 @@
 
   function setPage(page, options = {}) {
     const { fromBack = false } = options;
-    if (page === 'admin' && !isAdminUser) { showToast('Accès administrateur requis.'); return; }
     if (!fromBack && page !== currentPage) {
       pageHistory.push(currentPage);
       if (pageHistory.length > 24) pageHistory.shift();
@@ -3176,7 +2516,6 @@
     closeModal();
     renderNavigation();
     renderPage();
-    if (page === 'admin') loadAdminData();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     mainContent.focus({ preventScroll: true });
   }
@@ -3185,7 +2524,7 @@
     let targetPage = '';
     while (pageHistory.length && !targetPage) {
       const candidate = pageHistory.pop();
-      if (candidate && candidate !== currentPage && (candidate !== 'admin' || isAdminUser)) targetPage = candidate;
+      if (candidate && candidate !== currentPage) targetPage = candidate;
     }
     setPage(targetPage || fallbackPage || 'home', { fromBack: true });
   }
@@ -3207,7 +2546,7 @@
 
   function renderPage() {
     const pet = activePet();
-    if (!pet && !['animals', 'add-pet', 'settings', 'help', 'contact', 'privacy', 'legal', 'admin'].includes(currentPage)) currentPage = 'animals';
+    if (!pet && !['animals', 'add-pet', 'settings', 'help', 'contact', 'privacy', 'legal'].includes(currentPage)) currentPage = 'animals';
 
     const pages = {
       home: renderHome,
@@ -3222,8 +2561,7 @@
       help: renderHelp,
       contact: renderContact,
       privacy: renderPrivacy,
-      legal: renderLegal,
-      admin: renderAdmin
+      legal: renderLegal
     };
     const render = pages[currentPage] || renderHome;
     mainContent.innerHTML = render();
@@ -4342,10 +3680,10 @@
         ${secondaryBackButton('settings')}
         <div class="page-header"><div><p class="eyebrow">Informations</p><h1>Politique de confidentialité</h1></div></div>
         <article class="card card-pad legal-card">
-          <p class="legal-updated">Mise à jour : 2 août 2026 · Version bêta</p>
+          <p class="legal-updated">Mise à jour : 12 août 2026 · Version bêta</p>
           <h2>Données utilisées</h2><p>Animoa enregistre les informations nécessaires au compte et au carnet : adresse e-mail, profils des animaux, rendez-vous, informations de santé, poids, dépenses, souvenirs, photos, documents et préférences.</p>
-          <h2>Pourquoi ces données sont utilisées</h2><p>Elles servent uniquement à fournir le carnet Animoa, synchroniser les informations, envoyer les rappels demandés, sécuriser le compte, recueillir les avis volontaires et répondre aux messages adressés au support.</p>
-          <h2>Statistiques de fréquentation</h2><p>Animoa utilise Vercel Web Analytics pour compter de manière anonyme les visites et les pages consultées. Cette mesure d’audience ne dépose pas de cookie publicitaire et n’utilise pas les informations enregistrées dans le carnet de vos animaux.</p>
+          <h2>Pourquoi ces données sont utilisées</h2><p>Elles servent uniquement à fournir le carnet Animoa, synchroniser les informations, envoyer les rappels demandés, sécuriser le compte, recueillir les avis volontaires, améliorer le parcours d’inscription et répondre aux messages adressés au support.</p>
+          <h2>Statistiques de fréquentation et parcours d’inscription</h2><p>Animoa utilise Vercel Web Analytics pour compter de manière anonyme les visites et les pages consultées. Animoa enregistre également quatre étapes techniques du parcours — arrivée sur la page, clic sur « Créer un compte », compte créé et premier animal créé — afin de repérer les abandons et simplifier l’inscription. Avant connexion, ces événements utilisent uniquement un identifiant de session aléatoire ; après création du compte, les deux étapes de conversion sont associées au compte afin d’éviter les doublons. Le suivi n’enregistre ni le nom de l’animal, ni ses informations de santé, ni les documents, photos ou contenus du carnet.</p>
           <h2>Avis internes</h2><p>Lorsqu’un utilisateur choisit de donner son avis, Animoa enregistre sa note, son commentaire facultatif, son compte et la date d’envoi. Le commentaire et l’identité restent visibles uniquement par l’administrateur. Les autres utilisateurs voient seulement une moyenne globale et le nombre total d’avis.</p>
           <h2>Connexion au calendrier</h2><p>Lorsque vous l’autorisez, Animoa crée un calendrier Google séparé nommé « Animoa » et utilise l’accès uniquement pour créer, mettre à jour ou supprimer les événements enregistrés depuis l’application. Animoa ne consulte pas le contenu de vos calendriers personnels. Le jeton d’accès Google reste temporaire dans la session du navigateur et n’est pas enregistré dans le carnet Animoa.</p>
           <h2>Services techniques</h2><p>Le fonctionnement peut s’appuyer sur Supabase pour le compte et les données, Vercel pour l’hébergement de l’application et les statistiques anonymes de fréquentation, Google Agenda pour la synchronisation facultative des événements planifiés, Brevo pour les e-mails automatiques et Infomaniak pour la boîte de contact.</p>
@@ -4920,6 +4258,7 @@
       if (form.id === 'petForm') {
         const editingId = form.dataset.editing;
         const existing = editingId ? data.pets.find((pet) => pet.id === editingId) : null;
+        const wasFirstPet = !existing && data.pets.length === 0;
         const photoInput = form.querySelector('[name="photo"]');
         const file = selectedPhotoFile(photoInput);
         const removePhoto = formData.get('photoRemove') === '1';
@@ -4960,6 +4299,7 @@
 
         data.activePetId = petData.id;
         saveData();
+        if (wasFirstPet) window.AnimoaFunnel?.track?.('first_pet_created').catch?.(() => {});
         if (existing && oldImage !== image) await deleteMediaIfUnused(oldImage);
         closeModal(); setPage('pet'); showToast(existing ? 'Profil modifié.' : 'Animal ajouté.');
       }
@@ -5802,10 +5142,6 @@
     }
   }
 
-  window.addEventListener('animoa-admin-toast', (event) => {
-    if (event?.detail) showToast(String(event.detail));
-  });
-
   document.addEventListener('click', async (event) => {
     const target = event.target.closest('button, [data-action], [data-page], [data-add]');
     if (!target) return;
@@ -5826,35 +5162,12 @@
     if (add) openAddForm(add);
 
     if (action === 'open-menu') openDrawer();
-    if (action === 'admin-refresh') { adminUsers=[]; adminResponses=[]; adminFeedback=[]; adminReviewRequests=[]; adminReviewConfig=null; adminReviewSetupMissing=false; adminMediaLibrary=[]; adminMediaSetupMissing=false; adminMediaDriveStatus={ loaded:false, connected:false, email:'', rootFolderUrl:'', connectedAt:'' }; internalReviewSummary=null; await loadAdminData(); }
-    if (action === 'admin-tab') { adminActiveTab=target.dataset.adminTab||'users'; adminStatusFilter='all'; renderPage(); if (adminActiveTab === 'media' && !adminMediaDriveStatus.loaded) await loadAdminMediaDriveStatus({ quiet: true }); if (adminActiveTab === 'facebook') await window.AnimoaFacebookAdmin?.load?.({ mediaLibrary: adminMediaLibrary }); }
-    if (action === 'admin-media-connect') await connectAdminMediaDrive();
-    if (action === 'admin-media-disconnect') await disconnectAdminMediaDrive();
-    if (action === 'admin-media-save') await saveAdminMediaToDrive(target.dataset.mediaKey || '');
-    if (action === 'admin-media-open') {
-      const url = safeExternalUrl(target.dataset.mediaUrl, /(^|\.)(google\.com|pexels\.com|pixabay\.com)$/i);
-      if (url) window.open(url, '_blank', 'noopener,noreferrer');
-      else showToast('Lien externe invalide.');
-    }
-    if (action === 'admin-filter') { adminStatusFilter=target.dataset.adminFilter||'all'; renderPage(); }
-    if (action === 'admin-save-note') { const field=document.querySelector(`[data-admin-note-source="${target.dataset.adminSource}"][data-admin-note-id="${target.dataset.adminId}"]`); await saveAdminNote(target.dataset.adminSource,target.dataset.adminId,field?.value||''); }
-    if (action === 'admin-copy-email') { try { await navigator.clipboard.writeText(target.dataset.email||''); showToast('Adresse e-mail copiée.'); } catch { showToast('Copie impossible.'); } }
-    if (action === 'admin-delete-response') await deleteAdminResponse(target.dataset.adminSource, target.dataset.adminId);
-    if (action === 'admin-save-review-config') await saveAdminReviewConfig();
-    if (action === 'admin-preview-review-message') previewAdminReviewMessage();
     if (action === 'settings-open-review') await openInternalReviewForm('settings');
-    if (action === 'menu-open-review') { closeDrawer(); await openInternalReviewForm(isAdminUser ? 'preview' : 'settings'); }
     if (action === 'open-review-summary') await openReviewSummary();
     if (action === 'review-select-rating') selectReviewRating(target.dataset.reviewRating);
     if (action === 'review-submit') await submitInternalReview();
-    if (action === 'review-later') {
-      if (reviewPromptMode === 'preview') { closeModal(); showToast('Aperçu uniquement : aucun report enregistré.'); }
-      else await recordReviewAction('later');
-    }
-    if (action === 'review-never') {
-      if (reviewPromptMode === 'preview') { closeModal(); showToast('Aperçu uniquement : aucun refus enregistré.'); }
-      else await recordReviewAction('never');
-    }
+    if (action === 'review-later') await recordReviewAction('later');
+    if (action === 'review-never') await recordReviewAction('never');
     if (action === 'go-back') goBack(target.dataset.fallbackPage || 'home');
     if (action === 'close-menu') closeDrawer();
     if (action === 'open-add') openAddMenu();
@@ -6067,12 +5380,6 @@
     filePickerWindowScrollY = window.scrollY || 0;
   });
 
-  document.addEventListener('change', async (event) => {
-    if (event.target.matches('[data-admin-status-source]')) {
-      await updateAdminStatus(event.target.dataset.adminStatusSource, event.target.dataset.adminId, event.target.value);
-    }
-  });
-
   document.addEventListener('change', (event) => {
     if (event.target.matches('.date-picker-native')) {
       const control = event.target.closest('[data-date-control]');
@@ -6182,19 +5489,7 @@
     }
   }, true);
 
-  document.addEventListener('change', async (event) => {
-    const target = event.target;
-    if (target?.matches?.('select[data-action="admin-media-status"]')) {
-      await updateAdminMediaStatus(target.dataset.mediaId || '', target.value);
-    }
-  });
-
   document.addEventListener('submit', async (event) => {
-    if (event.target.matches('#adminMediaSearchForm')) {
-      event.preventDefault();
-      await searchAdminMedia(event.target);
-      return;
-    }
     if (event.target.matches('#supportForm')) {
       event.preventDefault();
       try { await handleSupportSubmit(event.target); }
@@ -6263,7 +5558,6 @@
     data = normalizeData(data);
     try { saveData(); } catch (error) { console.warn('Migration des données incomplète', error); }
     await cleanupUnusedMedia();
-    await resolveAdminAccess();
     renderNavigation();
     renderPage();
     queueReviewPromptCheck(1800);

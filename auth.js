@@ -54,7 +54,7 @@
       genericError: 'Une erreur est survenue. Réessayez dans un instant.',
       passwordLength: 'Le mot de passe doit contenir au moins 8 caractères.',
       emailRequired: 'Indiquez une adresse e-mail valide.',
-      accountCreated: 'Compte créé. Vérifiez maintenant votre boîte e-mail.',
+      accountCreated: 'Compte créé. Vous pouvez maintenant accéder à Animoa.',
       googleContinue: 'Continuer avec Google',
       googleExistingOnly: 'Connexion ou création de compte en quelques secondes.',
       googleUnavailable: 'La connexion Google n’est pas encore activée. Utilisez votre adresse e-mail pour le moment.',
@@ -97,7 +97,7 @@
       genericError: 'Something went wrong. Please try again in a moment.',
       passwordLength: 'The password must contain at least 8 characters.',
       emailRequired: 'Enter a valid email address.',
-      accountCreated: 'Account created. Now check your email.',
+      accountCreated: 'Account created. You can now access Animoa.',
       googleContinue: 'Continue with Google',
       googleExistingOnly: 'Sign in or create your account in a few seconds.',
       googleUnavailable: 'Google sign-in is not enabled yet. Use your email address for now.',
@@ -132,6 +132,7 @@
     appShell.hidden = true;
     document.body.classList.remove('auth-visible');
     document.body.classList.add('landing-visible');
+    window.AnimoaFunnel?.track?.('landing_view').catch?.(() => {});
   }
 
   function showShell() {
@@ -336,6 +337,14 @@
     }
   }
 
+  function trackFreshSignupIfNeeded() {
+    if (!currentUser || localPreview) return;
+    const createdAt = new Date(currentUser.created_at || 0).getTime();
+    if (!Number.isFinite(createdAt) || Date.now() - createdAt > 5 * 60 * 1000) return;
+    const provider = currentUser.app_metadata?.provider || currentUser.identities?.[0]?.provider || 'email';
+    window.AnimoaFunnel?.track?.('signup_success', { method: provider }).catch?.(() => {});
+  }
+
   function resolveAppReady() {
     const nextUserId = currentUser?.id || (localPreview ? 'local-preview' : null);
     if (readyResolved && readyUserId && readyUserId !== nextUserId) {
@@ -343,6 +352,7 @@
       return;
     }
     showApp();
+    trackFreshSignupIfNeeded();
     syncCurrentUserProfile().catch((error) => console.warn('Synchronisation du profil impossible', error));
     if (!readyResolved) {
       readyResolved = true;
@@ -400,6 +410,7 @@
     if (publicTarget) {
       event.preventDefault();
       const publicAction = publicTarget.dataset.publicAction;
+      if (publicAction === 'signup') window.AnimoaFunnel?.track?.('signup_click', { placement: publicTarget.closest('.hero-actions') ? 'hero' : 'public' }).catch?.(() => {});
       if (publicAction === 'login' || publicAction === 'signup') openAuthentication(publicAction);
       return;
     }
@@ -424,7 +435,7 @@
       resolveAppReady();
     }
     if (action === 'show-login') renderLogin('login');
-    if (action === 'show-signup') renderLogin('signup');
+    if (action === 'show-signup') { window.AnimoaFunnel?.track?.('signup_click', { placement: 'auth_switch' }).catch?.(() => {}); renderLogin('signup'); }
     if (action === 'public-home') showLanding();
     if (action === 'forgot') renderForgot();
     if (action === 'google') {
@@ -464,6 +475,7 @@
           if (error) throw error;
           if (data.session) {
             currentUser = data.user;
+            await window.AnimoaFunnel?.track?.('signup_success', { method: 'email' });
             resolveAppReady();
           } else renderConfirmation();
         } else {
